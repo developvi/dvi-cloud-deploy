@@ -1,16 +1,16 @@
 <?php
 /**
 Plugin Name: WPCloudDeploy
-Plugin URI: https://wpclouddeploy.com
+Plugin URI: https://developvi.com
 Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
-Version: 5.8.2
+Version: 5.8.4
 Requires at least: 5.8
 Requires PHP: 7.4
 Item Id: 1493
 Author: WPCloudDeploy
-Author URI: https://wpclouddeploy.com
+Author URI: https://developvi.com
 Domain Path: /languages
-GitHub Plugin URI: WPCloudDeploy/wp-cloud-deploy
+GitHub Plugin URI: developvi/wp-cloud-deploy
 Primary Branch: main
  */
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
@@ -19,7 +19,11 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
  * Class WPCD_Init.
  */
 class WPCD_Init {
-
+	protected $cache_key = 'wp-cloud-deploy_updater';
+	protected $cache_allowed = false;
+	protected $plugin_slug = 'wp-cloud-deploy' ;
+	protected $version ;
+	
 	/**
 	 * Construct function.
 	 */
@@ -27,7 +31,7 @@ class WPCD_Init {
 
 		$plugin_data       = get_plugin_data( __FILE__ );
 		$extra_plugin_data = get_file_data( __FILE__, array( 'ItemId' => 'Item Id' ) );
-
+		$this->version = $plugin_data['Version'];
 		if ( ! defined( 'wpcd_url' ) ) {
 			// Deprecated constants - lowercased.
 			define( 'wpcd_url', plugin_dir_url( __FILE__ ) );
@@ -40,8 +44,7 @@ class WPCD_Init {
 			define( 'wpcd_requires', '2.0.3' );
 			define( 'wpcd_rest_version', '1' );
 			define( 'wpcd_db_version', '1' );
-
-			// Redefine again as upper-case since we're going to be moving all constants to uppercase going forward.
+ 			// Redefine again as upper-case since we're going to be moving all constants to uppercase going forward.
 			// Note that there are additional constants here vs above since we added new ones.  But we're only
 			// adding new UPPERCASE ones.
 			define( 'WPCD_URL', plugin_dir_url( __FILE__ ) );
@@ -113,6 +116,10 @@ class WPCD_Init {
 			return false;
 		}
 
+        add_filter('plugins_api', [$this, 'updater_info'], 20, 3);
+        add_filter('site_transient_update_plugins', [$this, 'updater_update']);
+        add_action('upgrader_process_complete', [$this, 'updater_purge'], 10, 2);
+
 		/* Use init hook to load up required files */
 		add_action( 'init', array( $this, 'required_files' ), -20 );
 
@@ -136,7 +143,7 @@ class WPCD_Init {
 		add_filter( 'plugin_row_meta', array( $this, 'wpcd_append_support_and_faq_links' ), 10, 4 );
 
 		/* Attempt to get and show any upgrade notice for the next version of the plugin - @see https://wisdomplugin.com/add-inline-plugin-update-message/ */
-		add_action( 'in_plugin_update_message-wp-cloud-deploy/wpcd.php', array( $this, 'wpcd_plugin_update_message' ), 10, 2 );
+		// add_action( 'in_plugin_update_message-wp-cloud-deploy/wpcd.php', array( $this, 'wpcd_plugin_update_message' ), 10, 2 );
 
 		/* Load languages files */
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
@@ -148,6 +155,110 @@ class WPCD_Init {
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 10, 1 );
 	}
 
+    public function updater_request()
+    {
+
+        $remote = get_transient($this->cache_key);
+
+        if (false === $remote || !$this->cache_allowed) {
+
+            $remote = wp_remote_get(
+                'https://developvi.com/plugin-wpcd.json',
+                [
+                    'timeout' => 10,
+                    'headers' => [
+                        'Accept' => 'application/json'
+                    ]
+                ]
+            );
+
+            if (is_wp_error($remote) || 200 !== wp_remote_retrieve_response_code($remote) || empty(wp_remote_retrieve_body($remote))) {
+                return false;
+            }
+
+            set_transient($this->cache_key, $remote, DAY_IN_SECONDS);
+        }
+
+        $remote = json_decode(wp_remote_retrieve_body($remote));
+
+        return $remote;
+    }
+
+    function updater_info($response, $action, $args)
+    {
+         // do nothing if you're not getting plugin information right now
+        if ('plugin_information' !== $action) {
+            return $response;
+        }
+        // do nothing if it is not our plugin
+        if (empty($args->slug) || $this->plugin_slug !== $args->slug) {
+            return $response;
+        }
+
+        // get updates
+        $remote = $this->updater_request();
+
+        if (!$remote) {
+            return $response;
+        }
+
+        $response = new \stdClass();
+
+        $response->name           = $remote->name;
+        $response->slug           = $remote->slug;
+        $response->version        = $remote->version;
+        $response->tested         = $remote->tested;
+        $response->requires       = $remote->requires;
+        $response->author         = $remote->author;
+        $response->author_profile = $remote->author_profile;
+        $response->donate_link    = $remote->donate_link;
+        $response->homepage       = $remote->homepage;
+        $response->download_link  = $remote->download_url;
+        $response->trunk          = $remote->download_url;
+        $response->requires_php   = $remote->requires_php;
+        $response->last_updated   = $remote->last_updated;
+
+        $response->sections = [
+            'description'  => $remote->sections->description,
+            'installation' => $remote->sections->installation,
+            'changelog'    => $remote->sections->changelog
+        ];
+
+
+        return $response;
+    }
+
+    public function updater_update($transient)
+    {
+
+        if (empty($transient->checked)) {
+            return $transient;
+        }
+
+        $remote = $this->updater_request();
+
+        if ($remote && version_compare($this->version, $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<=') && version_compare($remote->requires_php, PHP_VERSION, '<')) {
+			$response              = new \stdClass();
+			$response->slug        = "wp-cloud-deploy";
+			$response->plugin      = "wp-cloud-deploy/wpcd.php";
+			$response->new_version = $remote->version;
+			$response->tested      = $remote->tested;
+			$response->package     = $remote->download_url;
+	
+            $transient->response[$response->plugin] = $response;
+        }
+
+        return $transient;
+    }
+
+    public function updater_purge($upgrader, $options)
+    {
+
+        if ($this->cache_allowed && 'update' === $options['action'] && 'plugin' === $options['type']) {
+            // just clean the cache when new plugin version is installed
+            delete_transient($this->cache_key);
+        }
+    }
 	/**
 	 * Create cron timers for use by other wpcd functions.
 	 * Three timers - 1 min, 2 min and 15 min.

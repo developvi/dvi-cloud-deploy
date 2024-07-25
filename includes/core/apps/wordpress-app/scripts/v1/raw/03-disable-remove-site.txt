@@ -69,7 +69,7 @@ then
 	if [ "$g_webserver_type" = "nginx" ]
 	then
 		mv /etc/nginx/sites-enabled/$domain /etc/nginx/sites-available/$domain
-		systemctl restart nginx
+		systemctl reload nginx
 	elif [ "$g_webserver_type" = "ols" ]  || [ "$g_webserver_type" = "ols-enterprise" ]
 	then
 		mkdir -p ${LSDIR}/conf/vhosts-disabled
@@ -101,7 +101,7 @@ then
 	if [ "$g_webserver_type" = "nginx" ]
 	then
 		mv /etc/nginx/sites-available/$domain /etc/nginx/sites-enabled/$domain
-		systemctl restart nginx
+		systemctl reload nginx
 	elif [ "$g_webserver_type" = "ols" ]  || [ "$g_webserver_type" = "ols-enterprise" ]
 	then
 		mv ${LSDIR}/conf/vhosts-disabled/$domain ${VHDIR}/$domain

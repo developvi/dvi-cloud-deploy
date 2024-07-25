@@ -212,7 +212,7 @@ else
 fi
 
 # Restart Webserver
-gf_restart_webserver
+gf_restart_webserver "false" "false"
 
 # prepare for ssh public key authentication
 mkdir -p "/var/www/$domain/.ssh_$user_name/"

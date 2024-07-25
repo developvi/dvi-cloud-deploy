@@ -207,7 +207,7 @@ then
 		echo 'RewriteRule ^phpMyAdmin/.*$ - [R=403,NC,L]' >> /var/www/$domain/html/.htaccess
 	fi
 
-	gf_restart_webserver
+gf_restart_webserver "false" "false"
 	echo
 	echo "phpMyAdmin access restrictions enabled for $domain"
 	exit
@@ -225,7 +225,7 @@ then
 		sed -i '/RewriteRule ^phpMyAdmin/d' /var/www/$domain/html/.htaccess
 	fi
 
-	gf_restart_webserver
+gf_restart_webserver "false" "false"
 	echo
 	echo "phpMyAdmin access restrictions disabled for $domain"
 	exit
@@ -249,7 +249,7 @@ then
 		# We need to only insert this right before the matching phpmyadmin redirect
 		sed -i "/RewriteRule \^phpMyAdmin.*/i $(printf %q "$ip_rewrite_allow")"  /var/www/$domain/html/.htaccess
 	fi
-	gf_restart_webserver
+gf_restart_webserver "false" "false"
 
 	echo
 	echo "$whitelistip added to the phpMyAdmin whitelist for $domain"
@@ -287,7 +287,7 @@ then
 		sed -i '/RewriteCond %{REMOTE_ADDR} !'$(printf %q "$ip_rewrite")'/d' /var/www/$domain/html/.htaccess
 	fi
 
-	gf_restart_webserver
+	gf_restart_webserver "false" "false"
 	echo
 	echo "$whitelistip removed from the phpMyAdmin whitelist for $domain"
 	exit

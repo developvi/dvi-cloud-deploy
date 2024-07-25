@@ -278,7 +278,7 @@ su - $new_user_name -c "wp --skip-plugins config shuffle-salts"
 
 if [ "$g_webserver_type" = "nginx" ]
 then
-	systemctl restart php$php_version-fpm
+	systemctl reload php$php_version-fpm
 	# reissue certificate if previous domain had https enabled and was not a multisite wildcard
 	if ! grep -q 'server_name \.' /etc/nginx/sites-enabled/$new_domain && [[ -e /etc/letsencrypt/live/$old_domain/fullchain.pem ]]
 	then
@@ -362,7 +362,7 @@ then
 fi
 
 echo "cleaning up and restarting web server..."
-gf_restart_webserver
+gf_restart_webserver "false" "false"
 
 echo "Setting up SSH user for new domain..."
 sed -i "/Match User $old_user_name/,+2 d" /etc/ssh/sshd_config

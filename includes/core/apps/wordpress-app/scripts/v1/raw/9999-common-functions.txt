@@ -363,13 +363,21 @@ function gf_select_domain_nginx_ols() {
 ###################################################################
 # shellcheck disable=SC2120
 function gf_restart_webserver() {
-	local killall
+	local killall restart
+	restart="${2:-true}"
 	killall="${1:-false}"
 	# Restart Appropriate Webserver
 	if [ "$g_webserver_type" = "nginx" ]
 	then
-		# restart nginx
-		systemctl restart nginx
+		if [ "$restart" = "true" ]
+		then
+			# restart nginx
+			systemctl restart nginx
+		else
+			# reload nginx
+			systemctl reload nginx
+		fi
+
 	elif [ "$g_webserver_type" = "ols" ]  || [ "$g_webserver_type" = "ols-enterprise" ]
 	then
 		if [ "$killall" = "true" ]
@@ -790,7 +798,7 @@ php_admin_value[session.use_only_cookies] = 1
 php_admin_value[session.use_trans_sid] = 0" > /etc/php/$php_version/fpm/pool.d/$php_domain.conf
 	if [[ ! -f /etc/wpcd/php-versions-disabled/$php_version ]]
 	then
-		systemctl restart php$php_version-fpm
+		systemctl reload php$php_version-fpm
 	fi
 }
 

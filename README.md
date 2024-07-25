@@ -126,6 +126,19 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+5.8.4
+------
+* New: Added an update message inside the plugin in WordPress to receive the latest versions of the plugin.
+
+5.8.3
+------
+* Fix: Prevent server restart nginx when creating a site.
+* Fix: Prevent server restart nginx when changing the domain.
+
+5.8.2
+------
+* Tweak: WPAPP - Updated WP version list to latest versions.
+
 5.8.1
 ------
 * Tweak: WPAPP - Updated WP version list to latest versions.
@@ -1229,6 +1242,7 @@ Skipped.
 * magnific-popup (assets/js, assets/css)
 
 ## Contributing
+ * [eslam el sherif](https://github.com/eslam-dev): Project Manager
  * [elindydotcom](https://github.com/elindydotcom): Project Manager
  * [Bhargav Bhanderi](https://github.com/bhargavcreolestudios)
  * [Muhammad Tahir Nazir](https://github.com/tahir1235)
