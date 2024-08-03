@@ -126,6 +126,10 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+5.8.5
+------
+* Fix compatibility issue with MariaDB 10.4+ dump files .
+
 5.8.4
 ------
 * New: Added an update message inside the plugin in WordPress to receive the latest versions of the plugin.
