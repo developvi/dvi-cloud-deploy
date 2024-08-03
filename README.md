@@ -129,6 +129,7 @@ Note: Even though the entire git development history isn't available on github, 
 5.8.5
 ------
 * Fix compatibility issue with MariaDB 10.4+ dump files .
+* Tweak: WPAPP - Updated WP version list to latest versions.
 
 5.8.4
 ------
