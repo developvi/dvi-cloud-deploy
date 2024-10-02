@@ -126,6 +126,14 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+5.8.6
+-----
+* Fix: Resolved the issue with "One Click Login" generation. The problem occurred when the login link was not sent.
+* Enhancement: The WordPress version fetching mechanism was improved Previously, it relied on a manually updated array; this has been upgraded to an API that automatically fetches the latest versions. This is considered a new feature.
+* New: Added apply_filters('wpcd_allowed_min_wp_version', $min_version); to allow users to specify the minimum allowed WordPress version, with a default set to 6.1.4.
+* New: Introduced a new setting (option) named "Min Allowed WP Versions" in the WPCD settings to enable users to set the minimum allowed WordPress version.
+
+
 5.8.5
 ------
 * Fix compatibility issue with MariaDB 10.4+ dump files .

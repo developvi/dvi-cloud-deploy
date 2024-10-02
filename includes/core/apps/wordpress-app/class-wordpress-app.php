@@ -754,24 +754,57 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 	 *
 	 * @return array.
 	 */
-	public static function get_wp_versions() {
+	public static function get_wp_versions()
+    {
 
-		// @SEE: https://wordpress.org/download/releases/
-		$versions          = array( 'latest', '6.6.1','6.5.5', '6.4.5', '6.3.4', '6.2.5', '6.1.6', '6.0.7', '5.9.9', '5.8.9', '5.7.11', '5.6.13', '5.5.14', '5.4.15', '5.3.17', '5.2.20' );
-		$override_versions = wpcd_get_option( 'wordpress_app_allowed_wp_versions' );
+        // Retrieve cached versions if available
+        $versions = get_transient('developvi_wp_versions');
 
-		if ( ! empty( $override_versions ) ) {
-			$versions = $override_versions;
-		}
+        if (false === $versions) {
+            // Make a request to fetch the latest WP versions
+            $response = wp_remote_get('https://api.wordpress.org/core/version-check/1.7/');
 
-		// Possibly add in the 'nightly' version option.
-		if ( wpcd_get_option( 'wordpress_app_versions_show_nightly' ) ) {
-			$versions = array_merge( $versions, array( 'nightly' ) );
-		}
+            // Return if the request was unsuccessful
+            if (200 !== wp_remote_retrieve_response_code($response)) {
+                return;
+            }
 
-		return apply_filters( 'wpcd_allowed_wp_versions', $versions );
+            // Decode the response body
+            $body = json_decode(wp_remote_retrieve_body($response), true);
+            $versions = array_column($body['offers'], 'version');
+            $versions[] = 'latest';
+            $min_version = trim(wpcd_get_option('wpcd_allowed_min_wp_version'));
+            if (empty($min_version)) {
+                $min_version = '6.1.4';
+            }
+            $min_version = apply_filters('wpcd_allowed_min_wp_version', $min_version);
 
-	}
+            // Filter versions greater than or equal to $min_version
+            $versions = array_filter($versions, function ($version) use ($min_version) {
+                return version_compare($version, $min_version, '>=');
+            });
+
+            // Sort versions in reverse order
+            rsort($versions);
+
+            // Cache the versions for a week
+            set_transient('developvi_wp_versions', $versions, DAY_IN_SECONDS);
+        }
+        $versions[0] = 'latest';
+        // Check for override versions from options
+        $override_versions = wpcd_get_option('wordpress_app_allowed_wp_versions');
+        if (!empty($override_versions)) {
+            $versions = $override_versions;
+        }
+
+        // Add the 'nightly' version if enabled
+        if (wpcd_get_option('wordpress_app_versions_show_nightly')) {
+            $versions[] = 'nightly';
+        }
+
+        // Apply any filters and return the versions
+        return apply_filters('wpcd_allowed_wp_versions', $versions);
+    }
 
 	/**
 	 * Return a default OS version based on whether settings has one or not.
