@@ -1306,6 +1306,14 @@ class WORDPRESS_APP_SETTINGS extends WPCD_APP_SETTINGS {
 				'tab'               => 'wordpress-app-general-wpadmin',
 			),
 			array(
+				'id'                => 'wpcd_allowed_min_wp_version',
+				'type'              => 'text',
+				'size'              => 10,
+				'name'              => __( 'Min Allowed WP Versions', 'wpcd' ),
+				'tooltip'           => __( 'Add the least supported WordPress version or leave it blank.', 'wpcd' ),
+				'tab'               => 'wordpress-app-general-wpadmin',
+			),
+			array(
 				'id'      => 'wordpress_app_versions_show_nightly',
 				'type'    => 'checkbox',
 				'name'    => __( 'Show \'Nightly\' as a Version Option?', 'wpcd' ),

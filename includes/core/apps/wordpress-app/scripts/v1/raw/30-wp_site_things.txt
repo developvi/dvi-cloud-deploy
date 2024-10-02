@@ -303,7 +303,7 @@ if [[ $action == "wp_site_get_passwordless_link" || $action == "8" ]]; then
     admin_user=(${adminusers[@]})
 
     # Get passwordless link
-    link=$(su - $user_name -c "wp login create $admin_user --url-only --expires=180")
+    link=$(su - $user_name -c "wp login create $admin_user --url-only --expires=180 --url=https://$user_name")
 
     echo
     echo $link
@@ -334,7 +334,7 @@ if [[ $action == "wp_site_get_passwordless_link_selected_user" || $action == "9"
     su - $user_name -c "wp login install --activate --yes"
 
     # Get passwordless link
-    link=$(su - $user_name -c "wp login create $login_user --url-only --expires=180")
+    link=$(su - $user_name -c "wp login create $login_user --url-only --expires=180 --url=https://$user_name")
 
     echo
     echo $link
