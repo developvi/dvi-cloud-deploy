@@ -132,6 +132,7 @@ Note: Even though the entire git development history isn't available on github, 
 * New: Added is_ubuntu_24_4 function to detect if the system is running Ubuntu 24.04.
 * New: Added restart_ssh_service function to restart the correct SSH service based on Ubuntu version (either ssh for Ubuntu 24.04 or sshd for other versions).
 * Enhancement: Replaced direct usage of systemctl restart sshd with the new restart_ssh_service function for better flexibility and compatibility across different Ubuntu versions.
+* Fix: Removed the conditional check that prevented the installation of non-Nginx web servers on Ubuntu 24.04, as OpenLiteSpeed (OLS) now officially supports Ubuntu 24.04.
 
 
 
