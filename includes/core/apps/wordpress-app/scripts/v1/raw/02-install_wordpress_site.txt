@@ -219,7 +219,7 @@ mkdir -p "/var/www/$domain/.ssh_$user_name/"
 echo "Match User $user_name
 PasswordAuthentication yes
 AuthorizedKeysFile /var/www/$domain/.ssh_$user_name/authorized_keys" >> /etc/ssh/sshd_config
-systemctl restart sshd
+restart_ssh_service
 
 # Custom post-processing scripts.
 if [[ -n "$post_processing_script_site" ]] # True if the length of string is non-zero. https://www.shellcheck.net/wiki/SC2236

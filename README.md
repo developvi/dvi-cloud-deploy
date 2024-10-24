@@ -126,6 +126,16 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+5.9.0
+-----
+* Fix :cache permission issue in WPCD_Init class
+* New: Added is_ubuntu_24_4 function to detect if the system is running Ubuntu 24.04.
+* New: Added restart_ssh_service function to restart the correct SSH service based on Ubuntu version (either ssh for Ubuntu 24.04 or sshd for other versions).
+* Enhancement: Replaced direct usage of systemctl restart sshd with the new restart_ssh_service function for better flexibility and compatibility across different Ubuntu versions.
+
+
+
+
 5.8.6
 -----
 * Fix: Resolved the issue with "One Click Login" generation. The problem occurred when the login link was not sent.

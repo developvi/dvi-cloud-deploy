@@ -91,7 +91,7 @@ AuthorizedKeysFile /var/www/$domain/.ssh_$user/authorized_keys" >> /etc/ssh/sshd
 
 	mkdir -p /var/www/$domain/.ssh_$user/
 
-	systemctl restart sshd.service
+	restart_ssh_service
 	echo
 	echo "Added SFTP user $user"
 	exit
@@ -127,7 +127,7 @@ then
 		rmdir -rf /var/www/$domain/.ssh_$user  #might not always delete the folder but at least we make the attempt.
 	fi	
 
-	systemctl restart sshd.service
+	restart_ssh_service
 	echo
 	echo "Removed SFTP user $user"
 	exit

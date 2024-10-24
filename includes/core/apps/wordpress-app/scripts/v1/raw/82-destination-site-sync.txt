@@ -122,7 +122,7 @@ then
 			sed -i '1s/^/PermitRootLogin without-password\n/' /etc/ssh/sshd_config
 		fi
 	fi
-	service sshd restart
+	restart_ssh_service
 fi
 # Verify root user can login.
 
