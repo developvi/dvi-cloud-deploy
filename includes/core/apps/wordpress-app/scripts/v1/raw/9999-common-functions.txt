@@ -2024,7 +2024,14 @@ is_ubuntu_24_4() {
         return 1  # Return false (exit code 1)
     fi
 }
-
+# Function to restart the appropriate SSH service based on Ubuntu version
+restart_ssh_service() {
+    if is_ubuntu_24_4; then
+        systemctl restart ssh
+    else
+        systemctl restart sshd
+    fi
+}
 
 ###############################################################################################
 ### Set the openbase directive for php for a tenant in a multi-tenant site.
