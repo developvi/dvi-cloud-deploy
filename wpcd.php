@@ -20,7 +20,6 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
  */
 class WPCD_Init {
 	protected $cache_key = 'wp-cloud-deploy_updater';
-	protected $cache_allowed = false;
 	protected $plugin_slug = 'wp-cloud-deploy' ;
 	protected $version ;
 	
@@ -160,7 +159,7 @@ class WPCD_Init {
 
         $remote = get_transient($this->cache_key);
 
-        if (false === $remote || !$this->cache_allowed) {
+        if (false === $remote) {
 
             $remote = wp_remote_get(
                 'https://developvi.com/plugin-wpcd.json',
