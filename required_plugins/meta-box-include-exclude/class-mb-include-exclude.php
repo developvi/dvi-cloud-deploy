@@ -17,6 +17,7 @@ class MB_Include_Exclude {
 	 * @var string
 	 */
 	protected static $post_id;
+	protected static $term_id;
 
 	/**
 	 * Check if meta box is displayed or not.
@@ -32,6 +33,7 @@ class MB_Include_Exclude {
 		}
 
 		self::$post_id = self::get_current_post_id();
+		self::$term_id = self::get_current_term_id();
 
 		if ( isset( $meta_box['include'] ) ) {
 			$show = self::maybe_exclude_include( 'include', $meta_box );
@@ -88,18 +90,19 @@ class MB_Include_Exclude {
 			$conditions['parent_post_tag'] = $conditions['parent_tag'];
 			unset( $conditions['parent_tag'] );
 		}
+
 		foreach ( $conditions as $key => $terms ) {
 			if ( 0 !== strpos( $key, 'parent_' ) ) {
 				continue;
 			}
 			$taxonomy  = substr( $key, 7 );
-			$condition = self::check_parent_terms( $taxonomy, $terms );
+			$condition = self::$term_id ? self::check_parent_terms( $taxonomy, $terms ) : self::check_post_parent_terms( $taxonomy, $terms );
 
 			if ( self::combine( $value, $condition, $relation ) ) {
 				return $value;
 			}
 
-			unset( $condition[ $key ] );
+			unset( $conditions[ $key ] );
 		}
 
 		// By taxonomy, including category and post_tag.
@@ -114,7 +117,7 @@ class MB_Include_Exclude {
 		}
 
 		foreach ( $conditions as $key => $terms ) {
-			$condition = self::check_terms( $key, $terms );
+			$condition = self::$term_id ? self::check_terms( $terms ) : self::check_post_terms( $key, $terms );
 			if ( self::combine( $value, $condition, $relation ) ) {
 				return $value;
 			}
@@ -181,7 +184,7 @@ class MB_Include_Exclude {
 	 *
 	 * @return bool
 	 */
-	protected static function check_terms( $taxonomy, $terms ) {
+	protected static function check_post_terms( $taxonomy, $terms ) {
 		$terms = RWMB_Helpers_Array::from_csv( $terms );
 
 		$post_terms = wp_get_post_terms( self::$post_id, $taxonomy );
@@ -199,6 +202,14 @@ class MB_Include_Exclude {
 	}
 
 	/**
+	 * Check if the current term in an array.
+	 */
+	protected static function check_terms( array $terms ) : bool {
+		$terms = RWMB_Helpers_Array::from_csv( $terms );
+		return self::$term_id && in_array( self::$term_id, $terms );
+	}
+
+	/**
 	 * Check if current post has specific term
 	 *
 	 * @param string $taxonomy Taxonomy name.
@@ -206,7 +217,7 @@ class MB_Include_Exclude {
 	 *
 	 * @return bool
 	 */
-	protected static function check_parent_terms( $taxonomy, $terms ) {
+	protected static function check_post_parent_terms( $taxonomy, $terms ) {
 		$terms = RWMB_Helpers_Array::from_csv( $terms );
 
 		$post_terms = wp_get_post_terms( self::$post_id, $taxonomy );
@@ -225,6 +236,14 @@ class MB_Include_Exclude {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Check if the current term has parent in an array.
+	 */
+	protected static function check_parent_terms( string $taxonomy, array $terms ) : bool {
+		$terms = RWMB_Helpers_Array::from_csv( $terms );
+		return self::$term_id && in_array( wp_get_term_taxonomy_parent_id( self::$term_id, $taxonomy ), $terms );
 	}
 
 	/**
@@ -291,6 +310,9 @@ class MB_Include_Exclude {
 			// If edit other's profile, check edited user.
 			$user_id = intval( $_REQUEST['user_id'] );
 			$user    = get_userdata( $user_id );
+			if ( empty( $user ) ) {
+				wp_die( esc_html__( 'Invalid user ID.', 'meta-box-include-exclude' ) );
+			}
 
 			$roles = array_map( 'strtolower', RWMB_Helpers_Array::from_csv( $roles ) );
 			$roles = array_intersect( $user->roles, $roles );
@@ -364,7 +386,22 @@ class MB_Include_Exclude {
 			return get_the_ID();
 		}
 		$post_id = isset( $_GET['post'] ) ? $_GET['post'] : ( isset( $_POST['post_ID'] ) ? $_POST['post_ID'] : false );
+
 		return is_numeric( $post_id ) ? absint( $post_id ) : false;
+	}
+
+	/**
+	 * Get current term ID.
+	 */
+	protected static function get_current_term_id() : int {
+		if ( ! is_admin() ) {
+			return 0;
+		}
+		if ( isset( $GLOBALS['pagenow'] ) && 'term.php' === $GLOBALS['pagenow'] && isset( $_GET['tag_ID'] ) ) {
+			return absint( $_GET['tag_ID'] );
+		}
+
+		return 0;
 	}
 
 	/**
