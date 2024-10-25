@@ -3,7 +3,7 @@
  * Plugin Name: Meta Box Show Hide
  * Plugin URI: https://metabox.io/plugins/meta-box-show-hide/
  * Description: Easily show/hide meta boxes by various conditions using JavaScript.
- * Version: 1.3.0
+ * Version: 1.3.1
  * Author: MetaBox.io
  * Author URI: https://metabox.io
  * License: GPL2+
@@ -12,7 +12,9 @@
  * @subpackage Meta Box Show Hide
  */
 
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
 
 if ( ! class_exists( 'MB_Show_Hide' ) ) {
 
@@ -37,9 +39,9 @@ if ( ! class_exists( 'MB_Show_Hide' ) ) {
 		 * @param RW_Meta_Box $obj The meta box object.
 		 */
 		public function js_data( RW_Meta_Box $obj ) {
-			$meta_box   = $obj->meta_box;
+			$meta_box = $obj->meta_box;
 			$conditions = array( 'show', 'hide' );
-			$data       = '';
+			$data = '';
 
 			foreach ( $conditions as $condition ) {
 				if ( empty( $meta_box[ $condition ] ) ) {
