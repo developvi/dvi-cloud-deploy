@@ -32,7 +32,32 @@
 	 * @param state  Force group to have a state.
 	 */
 	group.toggle.updateState = function( $group, state ) {
-		var $input = $group.children( '.rwmb-group-state' ).last().find( 'input' );
+		let $input;
+		
+		// If meta box column is enabled, the group state is stored in > .rwmb-row > ... > .rwmb-group-state.
+		// Cloneable groups.
+		if ( $group.children( '.rwmb-row' ).length ) {
+			$input = $group.children( '.rwmb-row' )
+						.last()
+						.children( '.rwmb-column' )
+						.children( '.rwmb-group-state' )
+						.find( 'input' );
+		} 
+		// Non-cloneable groups.
+		else if ( $group.children( '.rwmb-input' ).first().children( '.rwmb-row' ).length ) {
+			$input = $group.children( '.rwmb-input' )
+						.first()
+						.children( '.rwmb-row' )
+						.last()
+						.children( '.rwmb-column' )
+						.children( '.rwmb-group-state' )
+						.find( 'input' );
+		}
+		// Without meta box column.
+		else {
+			$input = $group.children( '.rwmb-group-state' ).last().find( 'input' );
+		}
+
 		if ( ! $input.length && ! state ) {
 			return;
         }
@@ -113,7 +138,7 @@
 			}
 		}
 
-		content = content.replace( '{#}', index );
+		content = content.replace( '{#}', index - 1 );
 		fields.forEach( processField );
 
 		$title.text( content );
@@ -239,7 +264,19 @@
 	group.clone.replaceId = function ( level, index ) {
 		var $input = $( this ),
 			id = $input.attr( 'id' );
-		if ( ! id ) {
+
+		// Update index only for sub fields in a group
+		if ( ! $input.closest( '.rwmb-group-clone' ).length ) {
+			return;
+		}
+		
+		if ( ! id || index === 0 ) {
+			return;
+		}
+
+		if ( index === 1 ) {
+			id = id.replace( '_rwmb_template', '' );
+			$input.attr( 'id', id );
 			return;
 		}
 
