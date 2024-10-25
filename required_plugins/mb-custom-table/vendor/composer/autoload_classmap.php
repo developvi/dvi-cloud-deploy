@@ -21,4 +21,5 @@ return array(
     'MetaBox\\CustomTable\\Model\\MetaBox' => $baseDir . '/src/Model/MetaBox.php',
     'MetaBox\\CustomTable\\Model\\Model' => $baseDir . '/src/Model/Model.php',
     'MetaBox\\CustomTable\\Storage' => $baseDir . '/src/Storage.php',
+    'MetaBox\\CustomTable\\Utils\\Resolver' => $baseDir . '/src/Utils/Resolver.php',
 );

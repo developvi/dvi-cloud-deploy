@@ -140,9 +140,12 @@ class Admin {
 
 		$this->handle_delete();
 
-		$this->list_table = new ListTable( [
+		$args = [
 			'model' => $this->model,
-		] );
+		];
+		$list_table = new ListTable( $args );
+		$this->list_table = apply_filters( 'mbct_list_table_object', $list_table, $args );
+
 		$args             = [
 			'label'   => __( 'Number of lines per page', 'mb-custom-table' ),
 			'default' => 20,
@@ -198,7 +201,7 @@ class Admin {
 		wp_enqueue_style( 'mbct-list-table', MBCT_URL . 'assets/list-table.css', [], filemtime( MBCT_DIR . '/assets/list-table.css' ) );
 		wp_enqueue_script( 'mbct-list-table', MBCT_URL . 'assets/list-table.js', [ 'jquery' ], filemtime( MBCT_DIR . '/assets/list-table.js' ), true );
 		wp_localize_script( 'mbct-list-table', 'MbctListTable', [
-			'nonceDelete' => wp_create_nonce( 'delete-items' ),
+			'nonceBulkActions' => wp_create_nonce( 'bulk-actions' ),
 			'confirm'     => __( 'Are you sure you want to delete? This action cannot be undone.', 'mb-custom-table' ),
 		] );
 	}
