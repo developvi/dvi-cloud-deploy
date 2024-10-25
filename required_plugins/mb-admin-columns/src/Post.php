@@ -61,7 +61,8 @@ class Post extends Base {
 			$config = wp_parse_args( $field['admin_columns'], $config );
 		}
 
-		$value = rwmb_the_value( $field['id'], '', $post_id, false );
+		$value = rwmb_the_value( $field['id'], [ 'link' => false ], $post_id, false );
+
 		if ( $config['link'] === 'view' ) {
 			$link  = get_permalink( $post_id );
 			$value = '<a href="' . esc_url( $link ) . '">' . $value . '</a>';

@@ -50,7 +50,7 @@ class Taxonomy extends Base {
 			$config = wp_parse_args( $field['admin_columns'], $config );
 		}
 
-		$value = rwmb_the_value( $field['id'], [ 'object_type' => 'term' ], $term_id, false );
+		$value = rwmb_the_value( $field['id'], [ 'object_type' => 'term', 'link' => false ], $term_id, false );
 		if ( $config['link'] === 'view' ) {
 			$link  = get_term_link( $term_id );
 			$value = '<a href="' . esc_url( $link ) . '">' . $value . '</a>';

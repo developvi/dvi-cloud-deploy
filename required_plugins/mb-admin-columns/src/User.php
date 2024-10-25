@@ -50,7 +50,7 @@ class User extends Base {
 			$config = wp_parse_args( $field['admin_columns'], $config );
 		}
 
-		$value = rwmb_the_value( $field['id'], [ 'object_type' => 'user' ], $user_id, false );
+		$value = rwmb_the_value( $field['id'], [ 'object_type' => 'user', 'link' => false ], $user_id, false );
 		if ( $config['link'] === 'view' ) {
 			$link  = get_author_posts_url( $user_id );
 			$value = '<a href="' . esc_url( $link ) . '">' . $value . '</a>';
