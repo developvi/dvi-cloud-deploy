@@ -131,6 +131,7 @@ Note: Even though the entire git development history isn't available on github, 
 * Fix : the caching issue related to checking the plugin version.
 * Fix : Addressed server inaccessibility issue caused by metabox behavior changes in version 5.9.11, allowing admin users to access `wpcd_app_server` post types by overriding capability checks.
 
+* New: support for Ubuntu 24.04.
 * New: Added is_ubuntu_24_4 function to detect if the system is running Ubuntu 24.04.
 * New: Added restart_ssh_service function to restart the correct SSH service based on Ubuntu version (either ssh for Ubuntu 24.04 or sshd for other versions).
 * Enhancement: Replaced direct usage of systemctl restart sshd with the new restart_ssh_service function for better flexibility and compatibility across different Ubuntu versions.
