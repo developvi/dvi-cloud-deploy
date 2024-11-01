@@ -3,7 +3,7 @@
  * Plugin Name: Meta Box Conditional Logic
  * Plugin URI:  https://metabox.io/plugins/meta-box-conditional-logic/
  * Description: Control the visibility of meta boxes and fields or even HTML elements with ease.
- * Version:     1.6.21
+ * Version:     1.6.24
  * Author:      MetaBox.io
  * Author URI:  https://metabox.io
  * License:     GPL2+
@@ -13,7 +13,9 @@
  */
 
 // Prevent loading this file directly.
-defined( 'ABSPATH' ) || exit;
+if ( ! defined( 'ABSPATH' ) ) {
+	return;
+}
 
 if ( ! function_exists( 'mb_conditional_logic_load' ) ) {
 	/**

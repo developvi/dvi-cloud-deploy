@@ -2012,6 +2012,26 @@ function gf_get_metadata(){
 		wpcd_metavalue=$defaultvalue
 	fi
 }
+# Function to check if the Ubuntu version is 24.04
+
+is_ubuntu_24_4() {
+    ubuntu_version=$(lsb_release -rs)
+
+    # Check if the Ubuntu version is 24.04
+    if [ "$ubuntu_version" == "24.04" ]; then
+        return 0  # Return true (exit code 0)
+    else
+        return 1  # Return false (exit code 1)
+    fi
+}
+# Function to restart the appropriate SSH service based on Ubuntu version
+restart_ssh_service() {
+    if is_ubuntu_24_4; then
+        systemctl restart ssh
+    else
+        systemctl restart sshd
+    fi
+}
 
 ###############################################################################################
 ### Set the openbase directive for php for a tenant in a multi-tenant site.

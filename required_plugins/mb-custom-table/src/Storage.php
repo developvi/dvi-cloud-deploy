@@ -52,7 +52,7 @@ class Storage {
 		$meta_value = wp_unslash( $meta_value );
 
 		$row              = Cache::get( $object_id, $this->table );
-		$values           = isset( $row[ $meta_key ] ) ? maybe_unserialize( $row[ $meta_key ] ) : array();
+		$values           = isset( $row[ $meta_key ] ) ? maybe_unserialize( $row[ $meta_key ] ) : [];
 		$values[]         = $meta_value;
 		$row[ $meta_key ] = $values;
 
@@ -77,7 +77,7 @@ class Storage {
 			return false;
 		}
 		$meta_value = wp_unslash( $meta_value );
-		if ( '' === $meta_value || array() === $meta_value ) {
+		if ( '' === $meta_value || [] === $meta_value ) {
 			$meta_value = null;
 		}
 		$row              = Cache::get( $object_id, $this->table );
@@ -105,7 +105,7 @@ class Storage {
 	 */
 	public function delete( $object_id, $meta_key = '', $meta_value = '', $delete_all = false ) {
 		if ( ! $meta_key ) {
-			Cache::set( $object_id, $this->table, null );
+			Cache::set( $object_id, $this->table, [] );
 
 			return true;
 		}

@@ -3,7 +3,7 @@
 Plugin Name: WPCloudDeploy
 Plugin URI: https://developvi.com
 Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
-Version: 5.8.6
+Version: 5.9.0
 Requires at least: 5.8
 Requires PHP: 7.4
 Item Id: 1493
@@ -20,7 +20,6 @@ require_once ABSPATH . 'wp-admin/includes/plugin.php';
  */
 class WPCD_Init {
 	protected $cache_key = 'wp-cloud-deploy_updater';
-	protected $cache_allowed = false;
 	protected $plugin_slug = 'wp-cloud-deploy' ;
 	protected $version ;
 	
@@ -160,7 +159,7 @@ class WPCD_Init {
 
         $remote = get_transient($this->cache_key);
 
-        if (false === $remote || !$this->cache_allowed) {
+        if (false === $remote) {
 
             $remote = wp_remote_get(
                 'https://developvi.com/plugin-wpcd.json',
@@ -1279,6 +1278,7 @@ class WPCD_Init {
 	}
 
 }
+
 
 /**
  * Get WPCD running.

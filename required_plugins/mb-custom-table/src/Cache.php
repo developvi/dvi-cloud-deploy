@@ -2,17 +2,8 @@
 namespace MetaBox\CustomTable;
 
 class Cache {
-	public static function get( $object_id, $table ): array {
+	private static function query_get( int $object_id, string $table ): array {
 		global $wpdb;
-
-		if ( ! $object_id ) {
-			return [];
-		}
-
-		$row = wp_cache_get( $object_id, self::get_cache_group( $table ) );
-		if ( false !== $row ) {
-			return is_array( $row ) ? $row : [];
-		}
 
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
@@ -21,7 +12,38 @@ class Cache {
 			),
 			ARRAY_A
 		);
-		$row = is_array( $row ) ? $row : [];
+
+		return is_array( $row ) ? $row : [];
+	}
+
+	/**
+	 * Get a row
+	 * 
+	 * @param int|string|null $object_id Row ID
+	 * @param string $table Table name
+	 * @param bool $force Force to get from DB, not from cache
+	 * 
+	 * @return array
+	 */
+	public static function get( $object_id, string $table, bool $force = false ): array {
+		global $wpdb;
+
+		if ( ! $object_id ) {
+			return [];
+		}
+
+		if ( $force ) {
+			return self::query_get( $object_id, $table );
+		}
+
+		$row = wp_cache_get( $object_id, self::get_cache_group( $table ) );
+
+		if ( false !== $row ) {
+			return is_array( $row ) ? $row : [];
+		}
+
+		$row = self::query_get( $object_id, $table );
+
 		self::set( $object_id, $table, $row );
 
 		return $row;
@@ -29,16 +51,16 @@ class Cache {
 
 	/**
 	 * Set a row to cache.
-	 *
-	 * @param int    $object_id Object ID.
-	 * @param string $table     Table name.
-	 * @param array  $row       Row data.
 	 */
-	public static function set( $object_id, $table, $row ) {
+	public static function set( int $object_id, string $table, array $row ) {
 		wp_cache_set( $object_id, $row, self::get_cache_group( $table ) );
 	}
 
-	public static function delete( $object_id, $table ) {
+	public static function delete( ?int $object_id, string $table ) {
+		if ( ! $object_id ) {
+			return;
+		}
+
 		wp_cache_delete( $object_id, self::get_cache_group( $table ) );
 	}
 

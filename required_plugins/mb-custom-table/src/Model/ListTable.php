@@ -26,8 +26,7 @@ class ListTable extends \WP_List_Table {
 		$page     = $this->get_pagenum();
 
 		$where = apply_filters( "mbct_{$this->model->name}_query_where", '' );
-		$order = apply_filters( "mbct_{$this->model->name}_query_order", '' );
-
+		$order = apply_filters( "mbct_{$this->model->name}_query_order", 'ORDER BY ID DESC' );
 		$this->set_pagination_args( [
 			'total_items' => $this->get_total_items( $where ),
 			'per_page'    => $per_page,
@@ -38,6 +37,7 @@ class ListTable extends \WP_List_Table {
 		$sql    = "SELECT * FROM $this->table $where $order $limit $offset";
 
 		$sql = apply_filters( "mbct_{$this->model->name}_prepare_items", $sql );
+
 
 		$this->items = $wpdb->get_results( $sql, 'ARRAY_A' );
 	}

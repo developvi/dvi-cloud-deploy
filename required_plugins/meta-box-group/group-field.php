@@ -12,6 +12,9 @@
  * @package    Meta Box
  * @subpackage Meta Box Group
  */
+
+use MetaBox\Support\Arr;
+
 class RWMB_Group_Field extends RWMB_Field {
 	/**
 	 * Queue to store the group fields' meta(s). Used to get child field meta.
@@ -200,22 +203,24 @@ class RWMB_Group_Field extends RWMB_Field {
 	 * @return mixed
 	 */
 	public static function meta( $post_id, $saved, $field ) {
-		$meta = self::raw_meta( $post_id, $field );
+		$raw_meta = self::call( $field, 'raw_meta', $post_id );
+		$single_std = self::call( 'get_single_std', $field );
+		$std = self::call( 'get_std', $field );
 
 		// Use $field['std'] only when the meta box hasn't been saved (i.e. the first time we run).
-		$meta = ! $saved ? $field['std'] : $meta;
-
-		// Make sure returned value is an array.
-		if ( empty( $meta ) ) {
-			$meta = [];
-		}
+		$meta = ! $saved ? $std : $raw_meta;
 
 		// If cloneable, make sure each sub-value is an array.
 		if ( $field['clone'] ) {
-			// Make sure there's at least 1 sub-value.
-			if ( empty( $meta ) ) {
-				$meta[0] = [];
+			$meta = is_array( $meta ) ? $meta : [];
+			
+			// If clone empty start is enabled, and the field is already stored
+			// we need to prepend 1 item for the template.
+			if ( ! $field['clone_empty_start'] && empty( $meta ) ) {
+				array_unshift( $meta, $single_std );
 			}
+
+			array_unshift( $meta, $single_std );
 
 			foreach ( $meta as $k => $v ) {
 				$meta[ $k ] = (array) $v;
@@ -243,7 +248,7 @@ class RWMB_Group_Field extends RWMB_Field {
 			$new = [];
 		}
 		$new = self::get_sub_values( $field['fields'], $new, $post_id );
-
+		
 		return self::sanitize( $new, $old, $post_id, $field );
 	}
 
@@ -259,9 +264,10 @@ class RWMB_Group_Field extends RWMB_Field {
 		$fields = array_filter( $fields, function( $field ) {
 			return in_array( $field['type'], [ 'file', 'image', 'group' ], true );
 		} );
-
+		
 		foreach ( $fields as $field ) {
-			$value = isset( $new[ $field['id'] ] ) ? $new[ $field['id'] ] : [];
+			// Remove the first item of $new because it's the template.
+			$value = $new[ $field['id'] ] ?? [];
 
 			if ( 'group' === $field['type'] ) {
 				$value               = $field['clone'] ? RWMB_Clone::value( $value, [], $post_id, $field ) : self::get_sub_values( $field['fields'], $value, $post_id );
@@ -492,5 +498,27 @@ class RWMB_Group_Field extends RWMB_Field {
 		$output .= '</ul>';
 
 		return $output;
+	}
+
+	protected static function get_std( array $field ) {
+		if ( empty( $field['std'] ) ) {
+			return [];
+		}
+
+		$depth = 1;
+
+		if ( $field['clone'] ) {
+			$depth++;
+		}
+
+		return Arr::to_depth( $field['std'], $depth );
+	}
+
+	protected static function get_single_std( array $field ) {
+		if ( empty( $field['std'] ) ) {
+			return [];
+		}
+
+		return Arr::to_depth( $field[ 'std' ], 1 );
 	}
 }

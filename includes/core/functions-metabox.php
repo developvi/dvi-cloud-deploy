@@ -156,4 +156,23 @@ function wpcd_end_card( $tab ) {
 
 }
 
+ // This code addresses an issue where servers are inaccessible due to changes in metabox behavior starting from version 5.9.11
+add_filter( 'map_meta_cap', 'custom_map_meta_cap_for_eslam', 10, 4 );
 
+function custom_map_meta_cap_for_eslam( $caps, $cap, $user_id, $args ) {
+    // Check if the required capability is `read_post` and the user is an admin using `wpcd_is_admin()`
+    if ( 'read_post' === $cap and wpcd_is_admin() ) {
+        // Get the post ID from the arguments to check its post type
+        $post_id = isset( $args[0] ) ? $args[0] : 0;
+        $post_type = get_post_type( $post_id );
+
+        // Check if the post type is specifically `wpcd_app_server`
+        if ( 'wpcd_app_server' === $post_type ) {
+            // Override capability check and allow reading the post
+            return array( 'exist' ); // Grant access without additional permissions
+        }
+    }
+
+    // Return the original capabilities if the conditions above are not met
+    return $caps;
+}

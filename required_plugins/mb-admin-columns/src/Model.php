@@ -58,9 +58,9 @@ class Model extends Base {
 		);
 	}
 
-	public function sort( $order ) {
-		if ( $order || empty( $_REQUEST['orderby'] ) ) {
-			return '';
+	public function sort( string $order ): string {
+		if ( empty( $_REQUEST['orderby'] ) ) {
+			return $order;
 		}
 		$order  = 'ORDER BY ' . esc_sql( $_REQUEST['orderby'] );
 		$order .= ! empty( $_REQUEST['order'] ) ? ' ' . esc_sql( $_REQUEST['order'] ) : ' ASC';

@@ -153,7 +153,7 @@ QUERY
 
 	user_name=$(echo $domain | cut -c1-32)
 	sed -i "/Match User $user_name/,+2 d" /etc/ssh/sshd_config
-	systemctl restart sshd
+	restart_ssh_service
 	userdel $user_name
 	
 	# Before attempting to remove the site from the www folder, make sure we have a value in the $domain var.

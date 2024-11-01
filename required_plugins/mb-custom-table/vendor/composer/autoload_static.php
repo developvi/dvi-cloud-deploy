@@ -40,6 +40,7 @@ class ComposerStaticInitd945ee7ed165fe78611a90a5171f2ea6
         'MetaBox\\CustomTable\\Model\\MetaBox' => __DIR__ . '/../..' . '/src/Model/MetaBox.php',
         'MetaBox\\CustomTable\\Model\\Model' => __DIR__ . '/../..' . '/src/Model/Model.php',
         'MetaBox\\CustomTable\\Storage' => __DIR__ . '/../..' . '/src/Storage.php',
+        'MetaBox\\CustomTable\\Utils\\Resolver' => __DIR__ . '/../..' . '/src/Utils/Resolver.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

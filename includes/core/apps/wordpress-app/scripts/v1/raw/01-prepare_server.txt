@@ -34,14 +34,7 @@ else
 	exit 1
 fi
 
-# Cannot install OLS on Ubuntu 24.04
-echo "Ubuntu version is $GV_UBUNTU_VERSION / $GV_UBUNTU_VERSION_STRING"
-if [[ $GV_UBUNTU_VERSION == "24.04"  && "$webserver_type" != "nginx" ]]
-then
-	echo "Installation of $webserver_type on $GV_UBUNTU_VERSION_STRING is not yet supported."
-	echo "Installation of this server has failed. Exiting process!"
-	exit 1
-fi
+
 
 if [[ "$interactive" != "no" ]]
 then

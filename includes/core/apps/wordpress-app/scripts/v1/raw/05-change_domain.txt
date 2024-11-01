@@ -370,7 +370,7 @@ mv /var/www/$new_domain/.ssh_$old_domain/ /var/www/$new_domain/.ssh_$new_domain/
 echo "Match User $new_user_name
 PasswordAuthentication yes
 AuthorizedKeysFile /var/www/$new_domain/.ssh_$new_user_name/authorized_keys" >> /etc/ssh/sshd_config
-systemctl restart sshd
+restart_ssh_service
 
 echo
 echo "Domain $old_domain changed to $new_domain"

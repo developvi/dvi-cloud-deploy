@@ -1081,7 +1081,7 @@ then
 			sed -i "$line s/.*/PasswordAuthentication yes/" /etc/ssh/sshd_config
 		fi
 		echo "SSH password auth has been enabled for user $ssh_user"
-		systemctl restart sshd
+		restart_ssh_service
 		exit
 	fi
 
@@ -1098,7 +1098,7 @@ then
 		echo "PasswordAuthentication yes" >> /etc/ssh/sshd_config
 	fi
 	echo "SSH password auth has been enabled for user $ssh_user"
-	systemctl restart sshd
+	restart_ssh_service
 	exit
 fi
 
@@ -1129,7 +1129,7 @@ then
 			sed -i '2s/^/PasswordAuthentication no\n/' /etc/ssh/sshd_config
 		fi
 		echo "SSH password auth has been disabled for user $ssh_user"
-		systemctl restart sshd
+		restart_ssh_service
 		exit
 	fi
 
@@ -1146,7 +1146,7 @@ then
 		echo "PasswordAuthentication no" >> /etc/ssh/sshd_config
 	fi
 	echo "SSH password auth has been disabled for user $ssh_user"
-	systemctl restart sshd
+	restart_ssh_service
 	exit
 fi
 

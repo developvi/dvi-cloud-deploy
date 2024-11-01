@@ -1,6 +1,3 @@
-.rwmb-field {
-	display: flex;
-}
 .rwmb-field.hidden {
 	display: none;
 }
@@ -17,7 +14,7 @@
 	float: none;
 }
 .rwmb-label {
-	width: 210px;
+	width: 200px;
 	padding: 14px 10px 14px 0;
 	font-weight: bold;
 	font-size: 14px;
@@ -26,17 +23,12 @@
 	padding: 9px 10px;
 	vertical-align: middle;
 }
-.rwmb-label ~ .rwmb-input {
-	flex: 1;
-}
 @media (max-width: 782px) {
 	.rwmb-field {
 		flex-direction: column;
 	}
-	.rwmb-input, .rwmb-label {
-		display: block;
-		width: auto;
-		vertical-align: middle;
+	.rwmb-label {
+		width: 100%;
 	}
 	.rwmb-label {
 		padding-top: 10px;
@@ -55,16 +47,8 @@
 .rwmb-clone {
 	background-color: transparent;
 }
-.rwmb-group-wrapper .rwmb-label,
-.rwmb-group-wrapper .rwmb-input {
-	display: block;
-}
 .rwmb-group-wrapper > .rwmb-input:first-of-type {
 	padding-left: 220px;
-}
-.rwmb-field:not(.rwmb-group-wrapper) .rwmb-label,
-.rwmb-field:not(.rwmb-group-wrapper) .rwmb-input {
-	float: left;
 }
 .rwmb-group-collapsible > .rwmb-input > .rwmb-group-clone {
 	border-color: #ddd;
