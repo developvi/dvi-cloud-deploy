@@ -761,8 +761,14 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
         $versions = get_transient('developvi_wp_versions');
 
         if (false === $versions) {
+			$min_version = trim(wpcd_get_option('wpcd_allowed_min_wp_version'));
+            if (empty($min_version)) {
+                $min_version = '6.1.4';
+            }
+            $min_version = apply_filters('wpcd_allowed_min_wp_version', $min_version);
+
             // Make a request to fetch the latest WP versions
-            $response = wp_remote_get('https://api.wordpress.org/core/version-check/1.7/');
+            $response = wp_remote_get("https://api.wordpress.org/core/version-check/1.7/?version=$min_version");
 
             // Return if the request was unsuccessful
             if (200 !== wp_remote_retrieve_response_code($response)) {
@@ -773,16 +779,7 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
             $body = json_decode(wp_remote_retrieve_body($response), true);
             $versions = array_column($body['offers'], 'version');
             $versions[] = 'latest';
-            $min_version = trim(wpcd_get_option('wpcd_allowed_min_wp_version'));
-            if (empty($min_version)) {
-                $min_version = '6.1.4';
-            }
-            $min_version = apply_filters('wpcd_allowed_min_wp_version', $min_version);
-
-            // Filter versions greater than or equal to $min_version
-            $versions = array_filter($versions, function ($version) use ($min_version) {
-                return version_compare($version, $min_version, '>=');
-            });
+       
 
             // Sort versions in reverse order
             rsort($versions);
