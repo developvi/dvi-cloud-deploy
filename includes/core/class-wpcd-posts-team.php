@@ -782,14 +782,15 @@ class WPCD_POSTS_TEAM {
 					'meta_key'     => 'wpcd_assigned_teams',
 					'meta_value'   => $post_id,
 					'meta_compare' => 'IN',
-					'numberposts'  => -1,
+					'posts_per_page' => 1,
 					'fields'       => 'ids',
 				);
-
-				$posts = get_posts( $args );
-
-				if ( count( $posts ) ) {
-					$value = sprintf( '<a href="%s" target="_blank">%d</a>', esc_url( admin_url( 'edit.php?post_type=wpcd_app_server&team_id=' . $post_id ) ), count( $posts ) );
+			
+				$query = new WP_Query( $args );
+				$count = $query->found_posts;
+			
+				if ( $count ) {
+					$value = sprintf( '<a href="%s" target="_blank">%d</a>', esc_url( admin_url( 'edit.php?post_type=wpcd_app_server&team_id=' . $post_id ) ), $count );
 				} else {
 					$value = 0;
 				}
@@ -802,14 +803,15 @@ class WPCD_POSTS_TEAM {
 					'meta_key'     => 'wpcd_assigned_teams',
 					'meta_value'   => $post_id,
 					'meta_compare' => 'IN',
-					'numberposts'  => -1,
+					'posts_per_page'  => 1,
 					'fields'       => 'ids',
 				);
 
-				$posts = get_posts( $args );
-
-				if ( count( $posts ) ) {
-					$value = sprintf( '<a href="%s" target="_blank">%d</a>', esc_url( admin_url( 'edit.php?post_type=wpcd_app&team_id=' . $post_id ) ), count( $posts ) );
+				$query = new WP_Query( $args );
+				$count = $query->found_posts;
+			
+				if ( $count ) {
+					$value = sprintf( '<a href="%s" target="_blank">%d</a>', esc_url( admin_url( 'edit.php?post_type=wpcd_app&team_id=' . $post_id ) ), $count );
 				} else {
 					$value = 0;
 				}
