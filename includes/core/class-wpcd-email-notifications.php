@@ -1728,33 +1728,14 @@ class WPCD_EMAIL_NOTIFICATIONS {
 		$first_btn    = true;
 		$last_btn     = true;
 		$start        = $page * $per_page;
-
-		// Get total sent email entries.
-		$all_sent_emails   = array(
-			'post_type'   => 'wpcd_sent_emails',
-			'post_status' => 'private',
-			'numberposts' => -1,
-			'orderby'     => 'date',
-			'order'       => 'DESC',
-			'meta_query'  => array(
-				array(
-					'key'     => 'wpcd_sent_email_parent_id',
-					'value'   => $parent_id,
-					'compare' => '=',
-				),
-			),
-		);
-		$count_sent_emails = get_posts( $all_sent_emails );
-		$count             = count( $count_sent_emails );
-
-		// Check and get all the sent emails either for server or site.
+		// Define the query arguments to get both count and paginated results
 		$sent_emails_args = array(
 			'post_type'      => 'wpcd_sent_emails',
 			'post_status'    => 'private',
 			'orderby'        => 'date',
 			'order'          => 'DESC',
-			'posts_per_page' => $per_page,
-			'offset'         => $start,
+			'posts_per_page' => $per_page, // Number of items per page
+			'offset'         => $start,    // Starting point for pagination
 			'meta_query'     => array(
 				array(
 					'key'     => 'wpcd_sent_email_parent_id',
@@ -1763,7 +1744,14 @@ class WPCD_EMAIL_NOTIFICATIONS {
 				),
 			),
 		);
-		$get_sent_emails  = get_posts( $sent_emails_args );
+
+		// Run the query
+		$query = new WP_Query( $sent_emails_args );
+
+		// Get the count of total matching posts
+		$count = $query->found_posts;
+		$get_sent_emails = $query->get_posts();
+
 
 		$html = '';
 
