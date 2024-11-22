@@ -446,26 +446,25 @@ class WPCD_Server extends WPCD_Base {
 	}
 
 	/**
-	 * Get the server name on the server record
+	 * Get the server name on the server record.
 	 *
-	 * @TODO: The server name is the post title
-	 * or in a post meta field.  Right now it
-	 * might be inconsistent which is which.
-	 * For now, we're going to return the
-	 * post title.
+	 * @param int $post_id Post ID of the server record.
 	 *
-	 * @param int $post_id post id of server record.
-	 *
-	 * @return string the server name
+	 * @return string|false The server name if available, or false on failure.
 	 */
 	public function get_server_name( $post_id ) {
-		$post = get_post( $post_id );
-		if ( $post ) {
-			return $post->post_title;
-		} else {
-			return false;
+		// Attempt to get the server name from the meta field 'wpcd_server_name'
+		$server_name = get_post_meta( $post_id, 'wpcd_server_name', true );
+
+		// If the meta field is empty, fallback to using the post title
+		if ( ! empty( $server_name ) ) {
+			return $server_name;
 		}
+
+		// Fallback to post title if available, or false if post does not exist
+		return get_the_title( $post_id ) ?: false;
 	}
+
 
 	/**
 	 * Get the server region on the server record
