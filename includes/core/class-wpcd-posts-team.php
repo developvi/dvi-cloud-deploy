@@ -357,37 +357,45 @@ class WPCD_POSTS_TEAM {
 	 */
 	public function wpcd_get_permissions( $object_type, $only_ids = false ) {
 
+		// Set up query arguments.
 		$args = array(
-			'post_type'   => 'wpcd_permission_type',
-			'post_status' => 'private',
-			'numberposts' => -1,
-			'order'       => 'ASC',
-			'meta_query'  => array(
+			'post_type'      => 'wpcd_permission_type',
+			'post_status'    => 'private',
+			'posts_per_page' => -1, // Retrieve all matching posts
+			'order'          => 'ASC',
+			'meta_query'     => array(
 				array(
 					'key'     => 'wpcd_object_type',
 					'value'   => $object_type,
 					'compare' => '=',
 				),
 			),
+			// Optimize query for only IDs if $only_ids is true.
+			'fields'         => $only_ids ? 'ids' : '',
 		);
-
-		$posts       = get_posts( $args );
+	
+		// Use WP_Query for better control.
+		$query = new WP_Query( $args );
+	
+		// Initialize the permissions array.
 		$permissions = array();
-		if ( count( $posts ) ) {
-			foreach ( $posts as $post ) {
-				$post_id = $post->ID;
-				$title   = get_the_title( $post_id );
-
+	
+		if ( $query->have_posts() ) {
+			foreach ( $query->posts as $post ) {
 				if ( $only_ids ) {
-					$permissions[] = (string) $post_id;
+					// If only IDs are required.
+					$permissions[] = (string) ( is_numeric( $post ) ? $post : $post->ID );
 				} else {
-					$permissions[ $post_id ] = $title;
+					// If titles are also needed.
+					$permissions[ $post->ID ] = $post->post_title;
 				}
 			}
 		}
-
+	
 		return $permissions;
 	}
+	
+
 
 	/**
 	 * To get the list of groups for specified group type from wpcd_permission_type cpt.
