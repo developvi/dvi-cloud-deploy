@@ -598,27 +598,20 @@ class WPCD_Server extends WPCD_Base {
 		$args = array(
 			'post_type'      => 'wpcd_app',
 			'post_status'    => 'private',
-			'posts_per_page' => 9999,
 			'meta_query'     => array(
 				array(
 					'key'   => 'parent_post_id',
 					'value' => $post_id,
 				),
 			),
+			'fields'         => 'ids', // Only retrieve post IDs to reduce memory usage
+			'posts_per_page' => 1, // Limit the query to 1 post
 		);
 
-		$posts = get_posts( $args );
+		$query = new WP_Query( $args );
 
-		$cnt_posts = 0;
-
-		if ( ! empty( $posts ) ) {
-			$cnt_posts = count( $posts );
-		}
-
-		return $cnt_posts;
-
+		return $query->found_posts; // Return the count directly
 	}
-
 	/**
 	 * Get the list of apps on a server.
 	 *
