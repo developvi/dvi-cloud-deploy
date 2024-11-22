@@ -554,40 +554,36 @@ class WPCD_Server extends WPCD_Base {
 		return get_post_meta( $post_id, 'wpcd_server_provider_instance_id', true );
 	}
 
-	/**
-	 * Returns an server ID using the instance of a server.
+/**
+	 * Returns a server ID using the instance of a server.
 	 *
-	 * @param int $instance_id  The server instance id used to locate the server post id.
+	 * @param int $instance_id The server instance ID used to locate the server post ID.
 	 *
-	 * @return int|boolean app post id or false or error message
+	 * @return int|false The server post ID or false if not found or if multiple results are found.
 	 */
 	public function get_server_id_by_instance_id( $instance_id ) {
 
-		$posts = get_posts(
+		$query = new WP_Query(
 			array(
-				'post_type'   => 'wpcd_app_server',
-				'post_status' => 'private',
-				'numberposts' => -1,
-				'meta_query'  => array(
+				'post_type'      => 'wpcd_app_server',
+				'post_status'    => 'private',
+				'posts_per_page' => 1, // Limit to one result for efficiency
+				'meta_query'     => array(
 					array(
 						'key'   => 'wpcd_server_provider_instance_id',
 						'value' => $instance_id,
 					),
 				),
-			),
+				'fields'         => 'ids', // Only retrieve post IDs
+			)
 		);
 
-		// Too many posts?  Bail out.
-		if ( count( $posts ) <> 1 ) {
-			return false;
+		// Check if exactly one post was found
+		if ( $query->found_posts === 1 ) {
+			return $query->posts[0]; // Return the single post ID
 		}
 
-		if ( $posts ) {
-			return $posts[0]->ID;
-		} else {
-			return false;
-		}
-
+		return false; // Return false if no post or multiple posts found
 	}
 
 	/**
