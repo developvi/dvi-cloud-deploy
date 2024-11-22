@@ -407,38 +407,44 @@ class WPCD_POSTS_TEAM {
 	 */
 	public function wpcd_get_permission_groups( $group, $only_ids = false ) {
 
+		// Set up query arguments.
 		$args = array(
-			'post_type'   => 'wpcd_permission_type',
-			'post_status' => 'private',
-			'numberposts' => -1,
-			'order'       => 'ASC',
-			'meta_query'  => array(
+			'post_type'      => 'wpcd_permission_type',
+			'post_status'    => 'private',
+			'posts_per_page' => -1, // Retrieve all matching posts
+			'order'          => 'ASC',
+			'meta_query'     => array(
 				array(
 					'key'     => 'wpcd_permission_group',
 					'value'   => $group,
 					'compare' => '=',
 				),
 			),
+			// Optimize query for only IDs if $only_ids is true.
+			'fields'         => $only_ids ? 'ids' : '',
 		);
-
-		$posts       = get_posts( $args );
+	
+		// Use WP_Query for better control.
+		$query = new WP_Query( $args );
+	
+		// Initialize the permissions array.
 		$permissions = array();
-		if ( count( $posts ) ) {
-			foreach ( $posts as $post ) {
-				$post_id = $post->ID;
-				$title   = get_the_title( $post_id );
-
+	
+		if ( $query->have_posts() ) {
+			foreach ( $query->posts as $post ) {
 				if ( $only_ids ) {
-					$permissions[] = (string) $post_id;
+					// Add only the post ID if $only_ids is true.
+					$permissions[] = (string) ( is_numeric( $post ) ? $post : $post->ID );
 				} else {
-					$permissions[ $post_id ] = $title;
+					// Add the post ID and title if $only_ids is false.
+					$permissions[ $post->ID ] = $post->post_title;
 				}
 			}
 		}
-
+	
 		return $permissions;
 	}
-
+	
 	/**
 	 * This will store/update permissions in custom table
 	 *
