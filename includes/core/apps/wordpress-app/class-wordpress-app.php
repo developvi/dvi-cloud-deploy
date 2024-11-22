@@ -5694,31 +5694,35 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 			return false;
 		}
 
-		// Ok, so far the server is still available for commands.  Lets check the app records.
-		$args = array(
-			'post_type'      => 'wpcd_app',
-			'post_status'    => 'private',
-			'posts_per_page' => -1,
-			'meta_query'     => array(
-				array(
-					'key'   => 'parent_post_id',
-					'value' => $server_id,
+		    // Check app records for in-progress actions.
+			$args = array(
+				'post_type'      => 'wpcd_app',
+				'post_status'    => 'private',
+				'posts_per_page' => 1, // Limit to 1 result for efficiency
+				'meta_query'     => array(
+					'relation' => 'AND',
+					array(
+						'key'   => 'parent_post_id',
+						'value' => $server_id,
+					),
+					array(
+						'key'   => 'wpcd_app_wordpress-app_action_status',
+						'value' => 'in-progress',
+					),
 				),
-				array(
-					'key'   => 'wpcd_app_wordpress-app_action_status',
-					'value' => 'in-progress',
-				),
-			),
-		);
-
-		$app_posts = get_posts( $args );
-
-		if ( $app_posts ) {
-			return false;
+				'fields'         => 'ids', // Fetch only IDs to reduce memory usage
+			);
+		
+			$query = new WP_Query( $args );
+		
+			// If there are any matching posts, the server is not available.
+			if ( $query->have_posts() ) {
+				return false;
+			}
+		
+			return $is_available;	
 		}
-
-		return $is_available;
-	}
+	
 
 	/**
 	 * Checks a special transient to see if aptget is running on the server.
