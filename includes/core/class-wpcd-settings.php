@@ -238,6 +238,8 @@ class WPCD_Settings {
 								'other'          => __( 'Other', 'wpcd' ),
 							),
 							'select_all_none' => true,
+							'default'         => array()
+
 						),
 						array(
 							'name'    => __( 'Only include messages with the following text', 'wpcd' ),
@@ -332,6 +334,7 @@ class WPCD_Settings {
 								'other'          => __( 'Other', 'wpcd' ),
 							),
 							'select_all_none' => true,
+							'default'         => array()
 						),
 
 					),
