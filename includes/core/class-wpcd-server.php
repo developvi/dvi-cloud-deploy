@@ -580,7 +580,7 @@ class WPCD_Server extends WPCD_Base {
 
 		// Check if exactly one post was found
 		if ( $query->found_posts === 1 ) {
-			return $query->posts[0]; // Return the single post ID
+			return $query->posts[0]->ID; // Return the single post ID
 		}
 
 		return false; // Return false if no post or multiple posts found
