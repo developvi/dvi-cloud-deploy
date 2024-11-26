@@ -126,6 +126,50 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+
+5.9.2
+----
+
+* Tweak: Renamed function custom_map_meta_cap_for_eslam to custom_map_meta_cap_for_server_access for better clarity and alignment with naming conventions.
+
+* Tweak: Updated the label for ubuntu2404lts from "Ubuntu 24.04 LTS (Important Restrictions - See Docs!)" to "Ubuntu 24.04 LTS" for cleaner presentation.
+
+* New: Added support for PHP 8.4 in various components, including version checks, configuration files, and logging. Updated scripts for installation and management of PHP 8.4.
+
+* New: Added support for PHP 8.4 in server preparation script, including updates to php.ini configurations and Redis installation.
+
+* Enh: Refactored get_wp_versions to optimize version retrieval by dynamically appending the version parameter to the API request (?version=$min_version), ensuring only relevant versions are fetched directly from the source, thereby eliminating the need for local filtering with array_filter and version_compare
+
+* Fix: Update passwordless link generation to use domain variable instead of username
+
+* Enh: Added 'default' => array() to 'logging_and_tracing_types_debug_log' and 'logging_and_tracing_types' fields to properly initialize default selections, ensuring that no log types are pre-selected by default. This avoids potential database performance issues caused by logging all types unnecessarily.
+
+* Fix: Ensure exclude message text is an array or object before processing to prevent potential errors in logging logic
+* Fix: Comment out the command to stop PHP-FPM service during domain change to prevent unintended service disruption
+
+5.9.1
+----
+* Enh: Optimized post retrieval in `includes/templates/sent_email_details_popup.php` by replacing get_posts with get_post for improved performance and reduced memory usage.
+* Enh: Improved get_server_name function to prioritize fetching the server name from the wpcd_server_name meta field, with a fallback to the post title for consistency and better data handling.
+
+* Enh: Optimized get_server_id_by_instance_id function by replacing get_posts with WP_Query for better performance and scalability. Limited results to a single post and retrieved only post IDs to reduce overhead. Improved logic to handle multiple results gracefully.
+
+* Enh: Optimized get_app_count function by replacing get_posts with WP_Query, limiting results to IDs only, and using found_posts to reduce memory usage and improve performance.
+
+* Enh: Improved wpcd_sent_emails_list_pagination by switching from get_posts to WP_Query for efficient querying and better performance. Optimized logic for retrieving total counts and paginated results, reducing memory usage and improving scalability.
+
+* Enh: Improved notification retrieval by replacing get_posts with get_post for better performance and standardized metadata access with get_post_meta for consistency and efficiency.
+
+* Enh: Optimized wpcd_is_server_available_for_commands by replacing get_posts with WP_Query, limiting results to a single post, and reducing memory usage with fields => 'ids'. Improved overall performance and scalability.
+
+* Enh: Simplified wpcd_get_permissions by directly accessing post titles from the WP_Post object and handling IDs efficiently when fields => 'ids' is used. Improved code readability and performance.
+
+* Enh: Refactored wpcd_get_permission_groups to use WP_Query with optional fields => 'ids', improving performance and memory efficiency. Simplified metadata and title retrieval by accessing the WP_Post object directly.
+
+* Enh: Replaced get_posts with WP_Query in WPCD_POSTS_TEAM class for improved performance and memory efficiency. Limited results to a single post and updated logic for count retrieval.
+
+
+
 5.9.0
 -----
 * Fix : the caching issue related to checking the plugin version.
