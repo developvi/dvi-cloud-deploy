@@ -146,7 +146,7 @@ Note: Even though the entire git development history isn't available on github, 
 
 * Fix: Ensure exclude message text is an array or object before processing to prevent potential errors in logging logic
 * Fix: Comment out the command to stop PHP-FPM service during domain change to prevent unintended service disruption
-
+* New: Added PayPal donation and Discord community links to plugin action links
 5.9.1
 ----
 * Enh: Optimized post retrieval in `includes/templates/sent_email_details_popup.php` by replacing get_posts with get_post for improved performance and reduced memory usage.
