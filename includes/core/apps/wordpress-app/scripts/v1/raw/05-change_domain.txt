@@ -199,7 +199,7 @@ sed -i "s/$old_domain/$new_domain/g" /etc/wp-backup.conf 2> /dev/null
 if [ "$g_webserver_type" = "nginx" ]
 then
 	php_version=$(ls /etc/php/*/fpm/pool.d/$old_domain.conf | cut -d '/' -f 4)
-	systemctl stop php$php_version-fpm
+	# systemctl stop php$php_version-fpm
 	rename_nginx_site_confs
 elif [ "$g_webserver_type" = "ols" ]  || [ "$g_webserver_type" = "ols-enterprise" ]
 then
