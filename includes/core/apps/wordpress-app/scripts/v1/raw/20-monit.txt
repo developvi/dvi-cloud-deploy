@@ -435,6 +435,16 @@ echo 'check process memcached with pidfile "/var/run/memcached/memcached.pid"
 
 # Add php checks (nginx only)
 if [ "$g_webserver_type" = "nginx" ] ; then
+	echo 'check process php84-fpm with pidfile /var/run/php/php8.4-fpm.pid
+    start program = "/bin/systemctl start php8.4-fpm"
+    stop program  = "/bin/systemctl stop php8.4-fpm"
+    if cpu is greater than '$Alert_cpu'% for 3 cycles then alert
+    if cpu is greater than '$Restart_cpu'% for 5 cycles then restart
+    if totalmem > '$Restart_memory' MB then alert
+' > /etc/monit/conf-available/php84
+
+# Add php checks (nginx only)
+if [ "$g_webserver_type" = "nginx" ] ; then
 	echo 'check process php83-fpm with pidfile /var/run/php/php8.3-fpm.pid
     start program = "/bin/systemctl start php8.3-fpm"
     stop program  = "/bin/systemctl stop php8.3-fpm"
@@ -494,6 +504,9 @@ echo 'check system '$domain'
 	ln -s /etc/monit/conf-available/"$g_webserver_type" /etc/monit/conf-enabled/"$g_webserver_type"
 	
 	if [ "$g_webserver_type" = "nginx" ] ; then
+		if [[ ! -f /etc/wpcd/php-versions-disabled/php8.4 ]]; then
+			ln -s /etc/monit/conf-available/php84 /etc/monit/conf-enabled/php84
+		fi	
 		if [[ ! -f /etc/wpcd/php-versions-disabled/php8.3 ]]; then
 			ln -s /etc/monit/conf-available/php83 /etc/monit/conf-enabled/php83
 		fi	

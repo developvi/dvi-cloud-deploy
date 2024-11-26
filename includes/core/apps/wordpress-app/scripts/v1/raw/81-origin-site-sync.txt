@@ -179,6 +179,7 @@ else
 	ssh -o StrictHostKeyChecking=no -i "~$localuser/.ssh/id_rsa" $sshuser@$destination_ip "[[ ! -f /etc/wpcd/php-versions-disabled/8.1 ]] && sudo systemctl restart php8.1-fpm" < /dev/null
 	ssh -o StrictHostKeyChecking=no -i "~$localuser/.ssh/id_rsa" $sshuser@$destination_ip "[[ ! -f /etc/wpcd/php-versions-disabled/8.2 ]] && sudo systemctl restart php8.2-fpm" < /dev/null
 	ssh -o StrictHostKeyChecking=no -i "~$localuser/.ssh/id_rsa" $sshuser@$destination_ip "[[ ! -f /etc/wpcd/php-versions-disabled/8.3 ]] && sudo systemctl restart php8.3-fpm" < /dev/null
+	ssh -o StrictHostKeyChecking=no -i "~$localuser/.ssh/id_rsa" $sshuser@$destination_ip "[[ ! -f /etc/wpcd/php-versions-disabled/8.4 ]] && sudo systemctl restart php8.4-fpm" < /dev/null
 	ssh -o StrictHostKeyChecking=no -i "~$localuser/.ssh/id_rsa" $sshuser@$destination_ip "sudo systemctl restart nginx" < /dev/null
 fi
 ssh -o StrictHostKeyChecking=no -i "~$localuser/.ssh/id_rsa" $sshuser@$destination_ip "sudo systemctl restart cron" < /dev/null

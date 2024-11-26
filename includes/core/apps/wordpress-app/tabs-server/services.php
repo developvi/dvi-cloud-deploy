@@ -387,6 +387,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 				case 'php-server-restart-php81':
 				case 'php-server-restart-php82':
 				case 'php-server-restart-php83':
+				case 'php-server-restart-php84':
 					$result = $this->do_php_restart( $id, $action );
 					break;
 				case 'php-server-activate-php56':
@@ -399,6 +400,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 				case 'php-server-activate-php81':
 				case 'php-server-activate-php82':
 				case 'php-server-activate-php83':
+				case 'php-server-activate-php84':
 					$result = $this->do_php_activation_toggle( $id, $action );
 					break;
 				case 'php-server-deactivate-php56':
@@ -411,6 +413,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 				case 'php-server-deactivate-php81':
 				case 'php-server-deactivate-php82':
 				case 'php-server-deactivate-php83':
+				case 'php-server-deactivate-php84':
 					$result = $this->do_php_activation_toggle( $id, $action );
 					break;
 				case 'ubuntu-pro-toggle':
@@ -1255,6 +1258,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			'php81' => $default_status,
 			'php82' => $default_status,
 			'php83' => $default_status,
+			'php84' => $default_status,
 		);
 
 		// Unset php80 and 81 elements as necessary.
@@ -1272,7 +1276,9 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 		if ( ! $this->is_php_83_installed( $id ) ) {
 			unset( $php_services_status['php83'] );
 		}		
-
+		if ( ! $this->is_php_84_installed( $id ) ) {
+			unset( $php_services_status['php84'] );
+		}		
 		// Add in old php versions (5.6, 7.1, 7.2, 7.3) as necessary.
 		if ( $this->is_old_php_version_installed( $id, '56' ) ) {
 			$php_services_status['php56'] = $default_status;
@@ -1959,6 +1965,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			'php81' => 'sudo service php8.1-fpm status',
 			'php82' => 'sudo service php8.2-fpm status',
 			'php83' => 'sudo service php8.3-fpm status',
+			'php84' => 'sudo service php8.4-fpm status',
 		);
 
 		if ( $this->is_old_php_version_installed( $id, '56' ) ) {
@@ -2036,6 +2043,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			'php-server-restart-php81' => 'sudo service php8.1-fpm restart',
 			'php-server-restart-php82' => 'sudo service php8.2-fpm restart',
 			'php-server-restart-php83' => 'sudo service php8.3-fpm restart',
+			'php-server-restart-php84' => 'sudo service php8.4-fpm restart',
 		);
 
 		if ( isset( $php_services[ $action ] ) ) {
@@ -2138,7 +2146,11 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 				$php_version = 8.3;
 				$php_key     = 'php83';
 				break;
-
+			case 'php-server-activate-php84':
+				$action      = 'php_version_enable';
+				$php_version = 8.4;
+				$php_key     = 'php84';
+			break;
 			case 'php-server-deactivate-php56':
 				$action      = 'php_version_disable';
 				$php_version = 5.6;
@@ -2189,6 +2201,12 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 				$php_version = 8.3;
 				$php_key     = 'php83';
 				break;
+			case 'php-server-deactivate-php84':
+				$action      = 'php_version_disable';
+				$php_version = 8.4;
+				$php_key     = 'php84';
+				break;
+	
 		}
 
 		// Get the full command to be executed by ssh.
@@ -2439,6 +2457,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			'php-server-restart-php81' => 'php81',
 			'php-server-restart-php82' => 'php82',
 			'php-server-restart-php83' => 'php83',
+			'php-server-restart-php84' => 'php84',
 		);
 
 		if ( isset( $php_services[ $service ] ) ) {

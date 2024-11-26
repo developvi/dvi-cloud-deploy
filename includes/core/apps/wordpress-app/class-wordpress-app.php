@@ -1294,14 +1294,40 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 
 		return false;
 	}	
+	
+	/**
+	 * Returns a boolean true/false if PHP 83 is supposed to be installed.
+	 *
+	 * @param int $server_id ID of server being interrogated.
+	 *
+	 * @return boolean
+	 */
+	public function is_php_84_installed( $server_id ) {
 
+		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
+
+		if ( version_compare( $initial_plugin_version, '5.9.1' ) > -1 ) {
+			// Versions of the plugin after 5.9.1 automatically install PHP 8.4.
+			return true;
+		} else {
+			// See if it was manually installed via an upgrade process - which would leave a meta field value behind on the server CPT record.
+			$is_php84_installed = (bool) $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_php84_installed', true );   // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
+			if ( true === $is_php84_installed ) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		return false;
+	}	
 	/**
 	 * Returns a boolean true/false if a particular PHP version is active.
 	 * Version 4.16 and later of WPCD deactivated earlier versions of PHP
 	 * by default.  Only if the user explicitly activated it was it enabled.
 	 *
 	 * @param int    $server_id ID of server being interrogated.
-	 * @param string $php_version PHP version - eg: php56, php71, php72, php73, php74, php81, php82, php83 etc.
+	 * @param string $php_version PHP version - eg: php56, php71, php72, php73, php74, php81, php82, php83, php84 etc.
 	 *
 	 * @return boolean
 	 */
@@ -1341,6 +1367,11 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 					break;
 				case 'php83':
 					if ( ! $this->is_php_83_installed( $server_id ) ) {
+						$return = false;
+					}
+					break;
+				case 'php84':
+					if ( ! $this->is_php_84_installed( $server_id ) ) {
 						$return = false;
 					}
 					break;
@@ -2077,6 +2108,12 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 		} else {
 			$php83 = array();
 		}
+		// Create single element array if php 8.4 is installed.
+		if ( $this->is_php_84_installed( $id ) ) {
+			$php84 = array( '8.4' => '8.4' );
+		} else {
+			$php84 = array();
+		}
 
 		// Array of other PHP versions.
 		switch ( $webserver_type ) {
@@ -2136,7 +2173,8 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 			$php80,
 			$php81,
 			$php82,
-			$php83
+			$php83,
+			$php84,
 		);
 
 		// Filter out inactive versions.  Only applies to NGINX.  OLS always have all versions listed in the above switch statement active.
@@ -2153,7 +2191,8 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 					'php80' => '8.0',
 					'php81' => '8.1',
 					'php82' => '8.2',
-					'php82' => '8.3',
+					'php83' => '8.3',
+					'php84' => '8.4',
 				);
 				foreach ( $php_versions as $php_version_key => $php_version ) {
 					if ( ! $this->is_php_version_active( $server_id, $php_version_key ) ) {
@@ -5136,6 +5175,7 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 				'8.1' => '8.1',
 				'8.2' => '8.2',
 				'8.3' => '8.3',
+				'8.4' => '8.4',
 			);
 			$php_version         = $this->generate_meta_dropdown( 'wpapp_php_version', __( 'PHP Version', 'wpcd' ), $php_version_options );
 			echo wpcd_kses_select( $php_version );
