@@ -250,6 +250,7 @@ if [ "$g_webserver_type" = "nginx" ] ; then
 	sed -i "s%.*pm.status_path.*%pm.status_path=/status81%g" /etc/php/8.1/fpm/pool.d/www.conf
 	sed -i "s%.*pm.status_path.*%pm.status_path=/status82%g" /etc/php/8.2/fpm/pool.d/www.conf
 	sed -i "s%.*pm.status_path.*%pm.status_path=/status83%g" /etc/php/8.3/fpm/pool.d/www.conf
+	sed -i "s%.*pm.status_path.*%pm.status_path=/status84%g" /etc/php/8.4/fpm/pool.d/www.conf
 
 	echo "Restarting PHP processes..."
 	number_of_php=$(ls /etc/php/ | wc -l)

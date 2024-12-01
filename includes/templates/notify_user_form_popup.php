@@ -34,27 +34,20 @@ if ( is_user_logged_in() ) {
 
 	// Check if data need to add or update the existing.
 	if ( '0' !== (string) $post_id ) {
-		// Check post_id in wpcd_notify_user.
-		$notify_args = array(
-			'post_type'      => 'wpcd_notify_user',
-			'post_status'    => 'private',
-			'posts_per_page' => -1,
-			'p'              => $post_id,
-			'author'         => $current_user_id,
-		);
-
-		$alert_found = get_posts( $notify_args );
-
-		if ( ! empty( $alert_found ) ) {
+		// Retrieve the post directly using get_post.
+		$alert_found = get_post( $post_id );
+	
+		if ( $alert_found && $alert_found->post_type == 'wpcd_notify_user' && $alert_found->post_status == 'private' && $alert_found->post_author == $current_user_id ) {
+			// Fetch metadata associated with the post.
 			$profile_name        = get_post_meta( $post_id, 'wpcd_notify_user_profile_name', true );
 			$email_address       = get_post_meta( $post_id, 'wpcd_notify_user_email_addresses', true );
 			$slack_webhook       = get_post_meta( $post_id, 'wpcd_notify_user_slack_webhooks', true );
 			$zapier_webhook      = get_post_meta( $post_id, 'wpcd_notify_user_zapier_webhooks', true );
 			$send_to_zapier      = get_post_meta( $post_id, 'wpcd_notify_user_zapier_send', true );
-			$selected_servers    = get_metadata( 'post', $post_id, 'wpcd_notify_user_servers', false );
-			$selected_sites      = get_metadata( 'post', $post_id, 'wpcd_notify_user_sites', false );
-			$selected_types      = get_metadata( 'post', $post_id, 'wpcd_notify_user_type', false );
-			$selected_references = get_metadata( 'post', $post_id, 'wpcd_notify_user_reference', false );
+			$selected_servers    = get_post_meta( $post_id, 'wpcd_notify_user_servers', false );
+			$selected_sites      = get_post_meta( $post_id, 'wpcd_notify_user_sites', false );
+			$selected_types      = get_post_meta( $post_id, 'wpcd_notify_user_type', false );
+			$selected_references = get_post_meta( $post_id, 'wpcd_notify_user_reference', false );
 		}
 	}
 

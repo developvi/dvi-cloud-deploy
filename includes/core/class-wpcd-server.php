@@ -446,26 +446,25 @@ class WPCD_Server extends WPCD_Base {
 	}
 
 	/**
-	 * Get the server name on the server record
+	 * Get the server name on the server record.
 	 *
-	 * @TODO: The server name is the post title
-	 * or in a post meta field.  Right now it
-	 * might be inconsistent which is which.
-	 * For now, we're going to return the
-	 * post title.
+	 * @param int $post_id Post ID of the server record.
 	 *
-	 * @param int $post_id post id of server record.
-	 *
-	 * @return string the server name
+	 * @return string|false The server name if available, or false on failure.
 	 */
 	public function get_server_name( $post_id ) {
-		$post = get_post( $post_id );
-		if ( $post ) {
-			return $post->post_title;
-		} else {
-			return false;
+		// Attempt to get the server name from the meta field 'wpcd_server_name'
+		$server_name = get_post_meta( $post_id, 'wpcd_server_name', true );
+
+		// If the meta field is empty, fallback to using the post title
+		if ( ! empty( $server_name ) ) {
+			return $server_name;
 		}
+
+		// Fallback to post title if available, or false if post does not exist
+		return get_the_title( $post_id ) ?: false;
 	}
+
 
 	/**
 	 * Get the server region on the server record
@@ -555,40 +554,36 @@ class WPCD_Server extends WPCD_Base {
 		return get_post_meta( $post_id, 'wpcd_server_provider_instance_id', true );
 	}
 
-	/**
-	 * Returns an server ID using the instance of a server.
+/**
+	 * Returns a server ID using the instance of a server.
 	 *
-	 * @param int $instance_id  The server instance id used to locate the server post id.
+	 * @param int $instance_id The server instance ID used to locate the server post ID.
 	 *
-	 * @return int|boolean app post id or false or error message
+	 * @return int|false The server post ID or false if not found or if multiple results are found.
 	 */
 	public function get_server_id_by_instance_id( $instance_id ) {
 
-		$posts = get_posts(
+		$query = new WP_Query(
 			array(
-				'post_type'   => 'wpcd_app_server',
-				'post_status' => 'private',
-				'numberposts' => -1,
-				'meta_query'  => array(
+				'post_type'      => 'wpcd_app_server',
+				'post_status'    => 'private',
+				'posts_per_page' => 1, // Limit to one result for efficiency
+				'meta_query'     => array(
 					array(
 						'key'   => 'wpcd_server_provider_instance_id',
 						'value' => $instance_id,
 					),
 				),
-			),
+				'fields'         => 'ids', // Only retrieve post IDs
+			)
 		);
 
-		// Too many posts?  Bail out.
-		if ( count( $posts ) <> 1 ) {
-			return false;
+		// Check if exactly one post was found
+		if ( $query->found_posts === 1 ) {
+			return $query->posts[0]->ID; // Return the single post ID
 		}
 
-		if ( $posts ) {
-			return $posts[0]->ID;
-		} else {
-			return false;
-		}
-
+		return false; // Return false if no post or multiple posts found
 	}
 
 	/**
@@ -603,27 +598,20 @@ class WPCD_Server extends WPCD_Base {
 		$args = array(
 			'post_type'      => 'wpcd_app',
 			'post_status'    => 'private',
-			'posts_per_page' => 9999,
 			'meta_query'     => array(
 				array(
 					'key'   => 'parent_post_id',
 					'value' => $post_id,
 				),
 			),
+			'fields'         => 'ids', // Only retrieve post IDs to reduce memory usage
+			'posts_per_page' => 1, // Limit the query to 1 post
 		);
 
-		$posts = get_posts( $args );
+		$query = new WP_Query( $args );
 
-		$cnt_posts = 0;
-
-		if ( ! empty( $posts ) ) {
-			$cnt_posts = count( $posts );
-		}
-
-		return $cnt_posts;
-
+		return $query->found_posts; // Return the count directly
 	}
-
 	/**
 	 * Get the list of apps on a server.
 	 *

@@ -3,7 +3,7 @@
 Plugin Name: WPCloudDeploy
 Plugin URI: https://developvi.com
 Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
-Version: 5.9.0
+Version: 5.9.2
 Requires at least: 5.8
 Requires PHP: 7.4
 Item Id: 1493
@@ -942,6 +942,8 @@ class WPCD_Init {
 	public function wpcd_append_support_and_faq_links( $links_array, $plugin_file_name, $plugin_data, $status ) {
 		if ( strpos( $plugin_file_name, basename( __FILE__ ) ) ) {
 
+			$links_array[] = '<a href="https://www.paypal.com/paypalme/elsherifsoft" style="color: #39b54a;font-weight: bold;" target="_blank"><span class="dashicons dashicons-star-filled" aria-hidden="true" style="font-size:14px;line-height:1.3"></span> Sponsor</a>';
+			$links_array[] = '<a href="https://discord.com/invite/kjhta4xQc2" target="_blank"><span class="dashicons dashicons-megaphone" aria-hidden="true" style="font-size:14px;line-height:1.3;margin-right:5px;"></span> Join Our Discord Community</a>';
 			// You can still use `array_unshift()` to add links at the beginning.
 			$links_array[] = '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/" target="_blank">Quick Start</a>';
 			$links_array[] = '<a href="https://wpclouddeploy.com/doc-landing/" target="_blank">Documentation</a>';
@@ -952,6 +954,7 @@ class WPCD_Init {
 
 			$links_array[] = '<a href="https://wpclouddeploy.com/pricing/" target="_blank">Premium Options</a>';
 			$links_array[] = '<a href="https://wpclouddeploy.com/support/" target="_blank">Support</a>';
+
 		}
 
 		return $links_array;

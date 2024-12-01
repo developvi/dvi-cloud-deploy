@@ -261,15 +261,18 @@ class WPCD_ERROR_LOG extends WPCD_POSTS_LOG {
 		// Check for excluded text.
 		if ( $ok_to_log ) {
 			$exclude_msg_txt = wpcd_get_early_option( 'exclude_msg_txt' );
-			foreach ( $exclude_msg_txt as $exclude ) {
-				if ( ! empty( $exclude ) && isset( $exclude['exclude_msg'] ) && ( ! empty( $exclude['exclude_msg'] ) ) ) {
-					if ( strpos( $msg, $exclude['exclude_msg'] ) !== false ) {
-						$ok_to_log = false;
-						break;
+			if(is_array($exclude_msg_txt) or is_object($exclude_msg_txt)){
+
+				foreach ( $exclude_msg_txt as $exclude ) {
+					if ( ! empty( $exclude ) && isset( $exclude['exclude_msg'] ) && ( ! empty( $exclude['exclude_msg'] ) ) ) {
+						if ( strpos( $msg, $exclude['exclude_msg'] ) !== false ) {
+							$ok_to_log = false;
+							break;
+						}
 					}
 				}
 			}
-		}
+			}
 
 		// Check to see if the log entry meets the include message criteria.
 		if ( $ok_to_log ) {

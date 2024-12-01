@@ -5,19 +5,16 @@
  * @package wpcd
  */
 
-// Check post_id in wpcd_notify_user.
-$entry_args = array(
-	'post_type'      => 'wpcd_sent_emails',
-	'post_status'    => 'private',
-	'posts_per_page' => -1,
-	'p'              => $post_id,
-);
-
-$entry_found = get_posts( $entry_args );
-
 $email_body = '';
-if ( ! empty( $entry_found ) ) {
-	$email_body = get_post_meta( $post_id, 'wpcd_sent_email_email_body', true );
+
+// Use get_post to retrieve the post directly by its ID.
+$entry_found = get_post( $post_id );
+
+// Check post_id in wpcd_notify_user.
+
+if ( $entry_found and $entry_found->post_type == 'wpcd_sent_emails' and  $entry_found->post_status == 'private' ) {
+    // If the post exists and matches the expected post type and status, retrieve the meta data.
+    $email_body = get_post_meta( $post_id, 'wpcd_sent_email_email_body', true );
 }
 
 ?>
