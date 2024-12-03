@@ -126,7 +126,10 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
-
+5.9.3
+----
+* Update: update composer package 
+* Update: update statistics tracking URL
 5.9.2
 ----
 
