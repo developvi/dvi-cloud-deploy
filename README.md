@@ -130,6 +130,7 @@ Note: Even though the entire git development history isn't available on github, 
 ----
 * Update: update composer package 
 * Update: update statistics tracking URL
+
 5.9.2
 ----
 
