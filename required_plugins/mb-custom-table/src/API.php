@@ -71,11 +71,11 @@ class API {
 
 	/**
 	 * Get a row from table.
-	 * 
-	 * @param int $object_id Row ID
+	 *
+	 * @param int    $object_id Row ID
 	 * @param string $table Table name
-	 * @param bool $force Force to get from DB, not from cache
-	 * 
+	 * @param bool   $force Force to get from DB, not from cache
+	 *
 	 * @return mixed
 	 */
 	public static function get( int $object_id, string $table, bool $force = true ) {
@@ -86,16 +86,16 @@ class API {
 
 	/**
 	 * Set $object_id to null for auto-increment table (for models).
-	 * 
-	 * @param ?int $object_id
+	 *
+	 * @param ?int   $object_id
 	 * @param string $table
-	 * 
+	 *
 	 * @return bool|int Rows inserted.
 	 */
 	public static function add( ?int $object_id, string $table, array $row ) {
 		global $wpdb;
 		$row['ID'] = $object_id;
-		$row       = array_map( function ($item) {
+		$row       = array_map( function ( $item ) {
 			return self::maybe_serialize( $item );
 		}, $row );
 		$row       = apply_filters( 'mbct_add_data', $row, $object_id, $table );
@@ -112,13 +112,13 @@ class API {
 	 * @return bool|int Rows affected.
 	 */
 	public static function update( int $object_id, string $table, array $row ) {
-		if ( empty ( $row ) ) {
+		if ( empty( $row ) ) {
 			self::delete( $object_id, $table );
 			return false;
 		}
 
 		global $wpdb;
-		$row = array_map( function ($item) {
+		$row = array_map( function ( $item ) {
 			return self::maybe_serialize( $item );
 		}, $row );
 		$row = apply_filters( 'mbct_update_data', $row, $object_id, $table );
@@ -133,7 +133,7 @@ class API {
 
 	/**
 	 * Delete a row from table.
-	 * 
+	 *
 	 * @return bool|int Rows affected.
 	 */
 	public static function delete( int $object_id, string $table ) {
@@ -149,9 +149,9 @@ class API {
 
 	/**
 	 * Don't use WordPress's maybe_serialize() because it double-serializes if the data is already serialized.
-	 * 
+	 *
 	 * @param mixed $data
-	 * 
+	 *
 	 * @return mixed
 	 */
 	private static function maybe_serialize( $data ) {
@@ -160,7 +160,7 @@ class API {
 
 	/**
 	 * Get value of a field.
-	 * 
+	 *
 	 * @return mixed
 	 */
 	public static function get_value( string $field_id, int $object_id, string $table ) {

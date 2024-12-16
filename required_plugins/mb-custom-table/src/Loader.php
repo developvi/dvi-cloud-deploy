@@ -1,6 +1,8 @@
 <?php
 namespace MetaBox\CustomTable;
 
+use MetaBox\CustomTable\Utils\Helpers;
+
 class Loader {
 	public function __construct() {
 		add_filter( 'rwmb_meta_box_class_name', [ $this, 'meta_box_class_name' ], 10, 2 );
@@ -29,7 +31,7 @@ class Loader {
 
 	public function get_storage( $storage, $object_type, $meta_box ) {
 		if ( $meta_box && $this->uses_custom_table( $meta_box ) ) {
-			$storage        = new Storage;
+			$storage        = new Storage();
 			$storage->table = $meta_box->table;
 		}
 
@@ -49,7 +51,7 @@ class Loader {
 
 		$is_rest     = defined( 'REST_REQUEST' ) && REST_REQUEST;
 		$object_type = $this->get_saved_object_type( $is_rest );
-		$meta_boxes  = $this->get_meta_boxes_for( $object_type, $object_id );
+		$meta_boxes  = $this->get_meta_boxes_from_post_request();
 
 		// Remove un-validated meta box (like not included in the front end), which don't trigger `rwmb_after_save_post` hook.
 		if ( ! $is_rest ) {
@@ -57,7 +59,7 @@ class Loader {
 		}
 
 		// Only update data when the last meta box saves data.
-		$count++;
+		++$count;
 		if ( $count < count( $meta_boxes ) && ! $is_rest ) {
 			return;
 		}
@@ -206,6 +208,24 @@ class Loader {
 		return $meta_boxes;
 	}
 
+	private function get_meta_boxes_from_post_request(): array {
+		$meta_boxes = [];
+		$post       = $_POST;
+
+		foreach ( $post as $key => $value ) {
+			if ( 0 !== strpos( $key, 'nonce_' ) ) {
+				continue;
+			}
+			$meta_box_id = substr( $key, 6 );
+			$meta_box    = rwmb_get_registry( 'meta_box' )->get( $meta_box_id );
+			if ( $meta_box ) {
+				$meta_boxes[] = $meta_box;
+			}
+		}
+
+		return $meta_boxes;
+	}
+
 	private function get_saved_object_type( bool $is_rest ): string {
 		$object_type = rwmb_request()->post( 'object_type' );
 		if ( $is_rest && $object_type ) {
@@ -223,7 +243,7 @@ class Loader {
 			if ( 0 === strpos( $hook, 'edited_' ) || 0 === strpos( $hook, 'created_' ) ) {
 				return 'term';
 			}
-			if ( 'mbct_model_edit_load' === $hook ) {
+			if ( in_array( $hook, [ 'mbct_model_edit_load', 'rwmb_frontend_save_model' ] ) ) {
 				return 'model';
 			}
 		}

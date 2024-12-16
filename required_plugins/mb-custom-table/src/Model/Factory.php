@@ -13,7 +13,11 @@ class Factory {
 		return $model;
 	}
 
-	public static function get( $key ) {
+	public static function get( $key = null ) {
+		if ( is_null( $key ) ) {
+			return self::$data;
+		}
+
 		return self::$data[ $key ] ?? null;
 	}
 

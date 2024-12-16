@@ -162,7 +162,7 @@ class Storage {
 
 	public function insert_row( $row ) {
 		global $wpdb;
-		$id  = $row[ 'ID' ] ?? null;
+		$id  = $row['ID'] ?? null;
 		$row = apply_filters( 'mbct_add_data', $row, $id, $this->table );
 		do_action( 'mbct_before_add', $id, $this->table, $row );
 		$output = $wpdb->insert( $this->table, $row );

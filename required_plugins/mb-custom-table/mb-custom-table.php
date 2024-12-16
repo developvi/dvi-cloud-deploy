@@ -3,7 +3,7 @@
  * Plugin Name: MB Custom Table
  * Plugin URI:  https://metabox.io/plugins/mb-custom-table/
  * Description: Save custom fields data to custom table instead of the default meta tables.
- * Version:     2.1.13
+ * Version:     2.2.0
  * Author:      MetaBox.io
  * Author URI:  https://metabox.io
  * License:     GPL2+
@@ -38,7 +38,7 @@ if ( ! function_exists( 'mb_custom_table_load' ) ) {
 		list( , $url ) = RWMB_Loader::get_path( __DIR__ );
 		define( 'MBCT_URL', $url );
 
-		new MetaBox\CustomTable\Loader;
-		new MetaBox\CustomTable\Model\Ajax;
+		new MetaBox\CustomTable\Loader();
+		new MetaBox\CustomTable\Model\Ajax();
 	}
 }

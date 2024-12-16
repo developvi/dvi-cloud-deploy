@@ -18,11 +18,11 @@ class Cache {
 
 	/**
 	 * Get a row
-	 * 
+	 *
 	 * @param int|string|null $object_id Row ID
-	 * @param string $table Table name
-	 * @param bool $force Force to get from DB, not from cache
-	 * 
+	 * @param string          $table Table name
+	 * @param bool            $force Force to get from DB, not from cache
+	 *
 	 * @return array
 	 */
 	public static function get( $object_id, string $table, bool $force = false ): array {
