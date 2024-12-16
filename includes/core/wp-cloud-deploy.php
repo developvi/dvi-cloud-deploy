@@ -119,9 +119,6 @@ class WP_CLOUD_DEPLOY {
 		/* Replace the provider descriptions with white label descriptions */
 		add_filter( 'wpcd_get_cloud_providers', array( &$this, 'wpcd_get_cloud_providers_white_label_desc' ), 10, 1 );
 
-		/* Add some license nag notices */
-		add_action( 'admin_notices', array( $this, 'license_notices_server_limit' ) );
-
 		// Set some options that the Wisdom plugin will pick up.
 		add_action( 'wpcd_wisdom_custom_options', array( $this, 'set_wisdom_custom_options' ) );
 
@@ -175,19 +172,6 @@ class WP_CLOUD_DEPLOY {
 	 */
 	public function set_wisdom_schedule( $schedule ) {
 		return 'weekly';
-	}
-
-	/**
-	 * Show license notice if number of servers exceed the amount allowed by the current license.
-	 */
-	public function license_notices_server_limit() {
-		if ( WPCD_License::show_license_tab() ) {
-			if ( ! WPCD_License::check_server_limit() ) {
-				$class   = 'notice notice-error';
-				$message = __( 'WPCloudDeploy: You have reached or exceeded the number of servers allowed with your license.', 'wpcd' );
-				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-			}
-		}
 	}
 
 
