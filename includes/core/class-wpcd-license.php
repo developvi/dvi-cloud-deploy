@@ -395,39 +395,6 @@ class WPCD_License {
 		return 5; // Should never get here!
 	}
 
-	/**
-	 * Check to see if we have exceeded the maximum number of allowed servers
-	 *
-	 * Note that this check includes ALL server types including WP, VPN, BASIC SERVER etc.
-	 *
-	 * @return boolean true=more servers are allowed; false = allowed server count limit reached.
-	 */
-	public static function check_server_limit() {
-
-		$count_posts = wp_count_posts( 'wpcd_app_server' )->private;
-		if ( self::get_server_limit() > $count_posts ) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
-
-	/**
-	 * Check to see if we have exceeded the maximum number of allowed wp sites
-	 *
-	 * @return boolean true=more wp sites are allowed; false = allowed wpsite count limit reached.
-	 */
-	public static function check_wpsite_limit() {
-
-		$count_posts = wp_count_posts( 'wpcd_app' )->private;
-		if ( self::get_wpsite_limit() > $count_posts ) {
-			return true;
-		} else {
-			return false;
-		}
-
-	}
 
 	/**
 	 * Function to determine whether to show license tab and/or do certain license related things.
