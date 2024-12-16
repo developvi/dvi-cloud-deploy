@@ -58,12 +58,6 @@ class WPCD_Settings {
 		// Action hook to test provider connection.
 		add_action( 'wp_ajax_wpcd_provider_test_provider_connection', array( $this, 'wpcd_provider_test_provider_connection' ) );
 
-		// Action hook to check for plugin updates. This is initiated via a button on the license tab on the settings screen.
-		add_action( 'wp_ajax_wpcd_check_for_updates', array( $this, 'wpcd_check_for_updates' ) );
-
-		// Action hook to validate licenses. This is initiated via a button on the license tab on the settings screen.
-		add_action( 'wp_ajax_wpcd_validate_licenses', array( $this, 'wpcd_validate_licenses' ) );
-
 		// Action hook to reset defaults brand colors.
 		add_action( 'wp_ajax_wpcd_reset_defaults_brand_colors', array( $this, 'wpcd_reset_defaults_brand_colors' ) );
 
@@ -2387,59 +2381,6 @@ class WPCD_Settings {
 		return $html;
 	}
 
-	/**
-	 * Check for updates via an AJAX call.
-	 *
-	 * Action Hook: wp_ajax_wpcd_check_for_updates
-	 */
-	public function wpcd_check_for_updates() {
-
-		// nonce check.
-		check_ajax_referer( 'wpcd-update-check', 'nonce' );
-
-		// Permissions check.
-		if ( ! wpcd_is_admin() ) {
-
-			$error_msg = array( 'msg' => __( 'You are not allowed to perform this action - only admins are permitted here.', 'wpcd' ) );
-			wp_send_json_error( $error_msg );
-			wp_die();
-
-		}
-
-		do_action( 'wpcd_log_error', 'Admin requested immediate software update check.', 'trace', __FILE__, __LINE__, array(), false );
-
-		WPCD_License::check_for_updates();  // Use wp_remote_post to check the status of each individual plugin/add-on and sets a transient that is displayed on the license tab.
-
-		WPCD_License::update_plugins(); // This one calls the actual EDD updater class.
-
-		wp_die();
-	}
-
-	/**
-	 * Validate licenses via an AJAX call.
-	 *
-	 * Action Hook: wp_ajax_wpcd_check_for_licenses
-	 */
-	public function wpcd_validate_licenses() {
-
-		// nonce check.
-		check_ajax_referer( 'wpcd-license-validate', 'nonce' );
-
-		// Permissions check.
-		if ( ! wpcd_is_admin() ) {
-
-			$error_msg = array( 'msg' => __( 'You are not allowed to perform this action - only admins are permitted here.', 'wpcd' ) );
-			wp_send_json_error( $error_msg );
-			wp_die();
-
-		}
-
-		do_action( 'wpcd_log_error', 'Admin requested immediate license validation check on all licenses.', 'trace', __FILE__, __LINE__, array(), false );
-
-		WPCD_License::validate_all_licenses();
-
-		wp_die();
-	}
 
 	/**
 	 * Reset defaults brand colors via an AJAX call.
