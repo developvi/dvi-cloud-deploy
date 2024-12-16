@@ -67,15 +67,9 @@ class WPCD_Settings {
 		// Action hook to reset defaults brand colors.
 		add_action( 'wp_ajax_wpcd_reset_defaults_brand_colors', array( $this, 'wpcd_reset_defaults_brand_colors' ) );
 
-		// Action hook to check licenses after fields are saved.  This is initiated via a checkbox on the license tab on the settings screen.
-		add_action( 'rwmb_after_save_field', array( $this, 'check_license' ), 10, 5 );
-
 		// Action hook to handle wisdom opt-out settings after fields are saved.  This is initiated via a checkbox on the license tab on the settings screen.
 		add_action( 'rwmb_after_save_field', array( $this, 'handle_wisdom_opt_out' ), 10, 5 );
 
-		// Action hook to check for updates when the WP admin screen is initialized.
-		// This hook used to be admin_init but changed to init to support auto updates feaure released in WP 5.5.0.
-		add_action( 'init', array( $this, 'check_for_updates' ) );
 
 		$this->display_settings();
 
@@ -2194,58 +2188,6 @@ class WPCD_Settings {
 	/**
 	 * Metabox.io Callback function after saving settings fields.
 	 *
-	 * This one will be used to check the license fields.
-	 * Note that this function is called once for each settings field.
-	 * So we need to check to make sure that the field is one we're
-	 * interested in handling here.
-	 *
-	 * Filter Hook: rwmb_after_save_field
-	 *
-	 * @param string $not_used set to null because it's not used.
-	 * @param array  $field field settings.
-	 * @param string $new new value of field.
-	 * @param string $old old value of field.
-	 * @param int    $object_id the metabox object id.
-	 */
-	public function check_license( $not_used, $field, $new, $old, $object_id ) {
-		if ( true === is_admin() ) {
-
-			/* Is the field a license field for the core plugin? If so, check licenses for the core plugin. */
-			$core_item_id = WPCD_ITEM_ID;
-			if ( "wpcd_item_license_$core_item_id" === $field['id'] && $new !== $old ) {
-				WPCD_License::check_license( $new, WPCD_ITEM_ID );
-			}
-
-			/* Is the field a license field for one of the add-ons? If so, check licenses for the addon. */
-			$add_ons = apply_filters( 'wpcd_register_add_ons_for_licensing', array() );  // The array of existing add-ons.
-			foreach ( $add_ons as $item ) {
-				if ( ! empty( $item ) ) {
-					foreach ( $item as $item_id => $item_name ) {
-						if ( "wpcd_item_license_$item_id" === $field['id'] && $new !== $old ) {
-							WPCD_License::check_license( $new, $item_id );
-						}
-					}
-				}
-			}
-
-			/* Do we need to force a software update check right away? */
-			if ( 'wpcd_license_force_update_check' === $field['id'] && ( 1 === ( (int) $new ) ) ) {
-				do_action( 'wpcd_log_error', 'Admin requested immediate software update check.', 'trace', __FILE__, __LINE__, array(), false );
-				WPCD_License::check_for_updates();  // Use wp_remote_post to check the status of each individual plugin/add-on and sets a transient that is displayed on the license tab.
-				WPCD_License::update_plugins(); // This one calls the actual EDD updater class.
-			}
-
-			/* Do we need to force a license check on all licenses immediately? */
-			if ( 'wpcd_license_force_license_check' === $field['id'] && ( 1 === ( (int) $new ) ) ) {
-				do_action( 'wpcd_log_error', 'Admin requested immediate license validation check on all licenses.', 'trace', __FILE__, __LINE__, array(), false );
-				WPCD_License::validate_all_licenses();
-			}
-		}
-	}
-
-	/**
-	 * Metabox.io Callback function after saving settings fields.
-	 *
 	 * This one will be used to set a standard WordPress option called 'wisdom_opt_out'
 	 * to let the Wisdom plugin know that the user has opted out of sharing statistics.
 	 *
@@ -2339,26 +2281,6 @@ class WPCD_Settings {
 			require_once wpcd_path . 'includes/core/class-wpcd-license.php';
 		}
 
-		if ( true === WPCD_License::show_license_tab() ) {
-
-			// Check for software updates - the EDD class checker caches update checks once per week so no need for us to handle it.
-			WPCD_License::update_plugins();
-
-			// Check for license changes or expiration.
-			if ( ! get_transient( 'wpcd_license_check_delay' ) ) {
-
-				do_action( 'wpcd_log_error', "Validating all licenses on init. If this message shows up too many times, it means that transients aren't working as they should.", 'error', __FILE__, __LINE__, array(), false );
-				WPCD_License::validate_all_licenses();
-
-				// Write the transient so we can avoid checking for a period of time.
-				$delay_check_period = wpcd_get_early_option( 'wpcd_license_check_period' );
-				if ( empty( $delay_check_period ) ) {
-					$delay_check_period = 24;  // 24 hours before next check ;
-				}
-				$delay_check_period = ( ( (int) $delay_check_period ) * 3600 );  // convert hours to seconds.
-				set_transient( 'wpcd_license_check_delay', '1', $delay_check_period );
-			}
-		}
 	}
 
 	/**
