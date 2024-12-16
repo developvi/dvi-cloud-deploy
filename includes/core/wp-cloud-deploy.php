@@ -121,7 +121,6 @@ class WP_CLOUD_DEPLOY {
 
 		/* Add some license nag notices */
 		add_action( 'admin_notices', array( $this, 'license_notices_server_limit' ) );
-		add_action( 'admin_notices', array( $this, 'license_notices_wpsite_limit' ) );
 
 		// Set some options that the Wisdom plugin will pick up.
 		add_action( 'wpcd_wisdom_custom_options', array( $this, 'set_wisdom_custom_options' ) );
@@ -191,18 +190,6 @@ class WP_CLOUD_DEPLOY {
 		}
 	}
 
-	/**
-	 * Show license notice if number of wpsites exceed the amount allowed by the current license.
-	 */
-	public function license_notices_wpsite_limit() {
-		if ( WPCD_License::show_license_tab() ) {
-			if ( ! WPCD_License::check_wpsite_limit() ) {
-				$class   = 'notice notice-error';
-				$message = __( 'WPCloudDeploy: You have reached or exceeded the number of WordPress sites allowed with your license.', 'wpcd' );
-				printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-			}
-		}
-	}
 
 	/**
 	 * Since WordPress doesn't properly handle position ordering of post type admin menu entries located in submenus,
