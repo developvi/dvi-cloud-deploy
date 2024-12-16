@@ -254,7 +254,7 @@ class WPCD_Init {
     public function updater_purge($upgrader, $options)
     {
 
-        if ($this->cache_allowed && 'update' === $options['action'] && 'plugin' === $options['type']) {
+        if ('update' === $options['action'] && 'plugin' === $options['type']) {
             // just clean the cache when new plugin version is installed
             delete_transient($this->cache_key);
         }
@@ -504,7 +504,6 @@ class WPCD_Init {
 		/* Load up some licensing files. */
 		if ( true === is_admin() ) {
 			require_once WPCD_PATH . '/includes/vendor/WPCD_EDD_SL_Plugin_Updater.php';
-			require_once WPCD_PATH . '/includes/core/class-wpcd-license.php';
 		}
 
 		/* Load up our files */
@@ -1017,18 +1016,15 @@ class WPCD_Init {
 		$return = $msg;
 
 		$screen = get_current_screen();
+		$post_type_contains = isset( $screen->post_type ) &&  strpos( $screen->post_type, 'wpcd' ) !== false;
+		$taxonomy_contains = isset( $screen->taxonomy ) && strpos( $screen->taxonomy, 'wpcd' ) !== false ;
+		$page_contains = isset( $_GET['page'] ) && strpos( $_GET['page'], 'dvi' ) !== false ;
+ 		if ( ( is_object( $screen ) && ( $page_contains || $post_type_contains || $taxonomy_contains) ) ) {
 
-		/* @TODO: The list of post types and taxonomies used below should be a global function that is filtered and called by add-ons to add their own CPT to the arrays. */
-		if ( ( is_object( $screen ) && ( in_array( $screen->post_type, array( 'wpcd_app', 'wpcd_app_server', 'wpcd_cloud_provider', 'wpcd_ssh_log', 'wpcd_team', 'wpcd_command_log', 'wpcd_pending_log', 'wpcd_error_log', 'wpcd_schedules', 'wpcd_snapshots', 'wpcd_permission_type', 'wpcd_notify_log', 'wpcd_notify_user', 'wpcd_notify_sent' ), true ) || in_array( $screen->taxonomy, array( 'wpcd_app_group', 'wpcd_app_server_group', 'wpcd_reporting_group' ), true ) ) ) ) {
 
-			if ( defined( 'WPCD_LONG_NAME' ) && ! empty( WPCD_LONG_NAME ) ) {
-				$product_name = WPCD_LONG_NAME;
-			} else {
-				$product_name = 'WPCloudDeploy';
-			}
 
 			/* Translators: %1$s is the WPCD Product Name; %2$s is the WPCD product version. */
-			$return = sprintf( __( 'Powered by %1$s %2$s.', 'wpcd' ), $product_name, WPCD_VERSION ) . '<br />' . $return;
+			$return = sprintf( __( 'Powered by %1$s %2$s.', 'wpcd' ), 'developvi', WPCD_VERSION ) . '<br />' . $return;
 
 		}
 
