@@ -1076,124 +1076,6 @@ class WPCD_Settings {
 					);
 				}
 
-				// Show license fields.
-				if ( ! defined( 'WPCD_HIDE_LICENSE_TAB' ) || ( defined( 'WPCD_HIDE_LICENSE_TAB' ) && ( ! WPCD_HIDE_LICENSE_TAB ) && ( 1 === get_current_blog_id() ) ) ) {
-
-					$core_item_id = WPCD_ITEM_ID;
-
-					$meta_boxes[] = array(
-						'id'             => 'license',
-						'title'          => __( 'License And Automatic Updates', 'wpcd' ),
-						'settings_pages' => 'wpcd_settings',
-						'tab'            => 'license',
-						'fields'         => array_merge(
-							array(
-								array(
-									'type' => 'heading',
-									'name' => 'Core License',
-									'desc' => __( 'The license for the core WPCD plugin', 'wpcd' ),
-								),
-								array(
-									'name'       => __( 'License', 'wpcd' ),
-									'id'         => "wpcd_item_license_$core_item_id",
-									'type'       => 'text',
-									'size'       => 40,
-									'desc'       => empty( wpcd_get_early_option( "wpcd_item_license_$core_item_id" ) ) ? __( 'Please enter your license key for the core plugin. Note: If you have an ALL ACCESS or BUSINESS bundle license please do not use those bundle keys; instead use the CORE plugin license key.', 'wpcd' ) : get_transient( "wpcd_license_notes_for_$core_item_id" ) . '<br />' . get_transient( "wpcd_license_updates_for_$core_item_id" ),
-									'attributes' => array(
-										'spellcheck' => 'false',
-									),
-								),
-
-								array(
-									'type' => 'heading',
-									'name' => 'Add-on Licenses',
-									'desc' => __( 'The licenses for installed add-ons', 'wpcd' ),
-								),
-							),
-							$this->get_license_fields_for_add_ons(),
-							array(
-
-								array(
-									'type' => 'divider',
-								),
-
-								array(
-									'type' => 'heading',
-									'name' => 'License And Update Check Options',
-									'desc' => __( 'Options that control the license and update checks', 'wpcd' ),
-								),
-								array(
-									'name'        => __( 'WPCD Store URL', 'wpcd' ),
-									'id'          => 'wpcd_store_url',
-									'type'        => 'text',
-									'size'        => 91,
-									'std'         => 'https://wpclouddeploy.com',
-									'placeholder' => 'https://wpclouddeploy.com',
-									'desc'        => __( 'Enter the url to the WPCD store.  If left blank it will be set to https://wpclouddeploy.com.', 'wpcd' ),
-								),
-								array(
-									'name'        => __( 'Period For Checking Licenses', 'wpcd' ),
-									'id'          => 'wpcd_license_check_period',
-									'type'        => 'number',
-									'min'         => 1,
-									'std'         => 24,
-									'placeholder' => 24,
-									'desc'        => __( 'How often should we check for license expiration and validity?  This value is specified in hours.', 'wpcd' ),
-								),
-								array(
-									'name'        => __( 'Timeout', 'wpcd' ),
-									'id'          => 'wpcd_license_check_timeout',
-									'type'        => 'number',
-									'min'         => 15,
-									'std'         => 30,
-									'placeholder' => 30,
-									'desc'        => __( 'Set a timeout in seconds for each call we make to the licensing server.', 'wpcd' ),
-								),
-								array(
-									'type'       => 'button',
-									'name'       => __( 'Check for updates', 'wpcd' ),
-									'std'        => __( 'Check for updates', 'wpcd' ),
-									'attributes' => array(
-										'id'               => 'wpcd-check-for-updates',
-										'data-action'      => 'wpcd_check_for_updates',
-										'data-nonce'       => wp_create_nonce( 'wpcd-update-check' ),
-										'data-loading_msg' => __( 'Please wait...', 'wpcd' ),
-									),
-									'tooltip'    => __( 'After the screen refreshes, navigate to the WordPress Updates screen to see notices of any new WPCD updates that might be available.', 'wpcd' ),
-								),
-								array(
-									'type'       => 'button',
-									'name'       => __( 'Validate licenses', 'wpcd' ),
-									'std'        => __( 'Validate licenses', 'wpcd' ),
-									'attributes' => array(
-										'id'               => 'wpcd-validate-licenses',
-										'data-action'      => 'wpcd_validate_licenses',
-										'data-nonce'       => wp_create_nonce( 'wpcd-license-validate' ),
-										'data-loading_msg' => __( 'Please wait...', 'wpcd' ),
-									),
-									'tooltip'    => __( 'After the screen refreshes, scroll up to see license detail messages under each license key field.', 'wpcd' ),
-								),
-								array(
-									'name'    => __( 'Force Update Check', 'wpcd' ),
-									'id'      => 'wpcd_license_force_update_check',
-									'type'    => 'checkbox',
-									'std'     => 0,
-									'desc'    => __( 'Check this box and save settings to force an update check immediately. Use this option if the buttons above do not seem to be working.', 'wpcd' ),
-									'tooltip' => __( 'You should uncheck this box and save again to turn this off - otherwise you will be taking an unncessary performance penalty every time you save this screen.', 'wpcd' ),
-								),
-								array(
-									'name'    => __( 'Force License Check', 'wpcd' ),
-									'id'      => 'wpcd_license_force_license_check',
-									'type'    => 'checkbox',
-									'std'     => 0,
-									'desc'    => __( 'Check this box and save settings to force an immediate license check on all licenses. Use this option if the buttons above do not seem to be working.', 'wpcd' ),
-									'tooltip' => __( 'You should uncheck this box and save again to turn this off - otherwise you will be taking an unncessary performance penalty every time you save this screen.', 'wpcd' ),
-								),
-							),
-						),
-					);
-
-				}
 
 				// Enable saving filter on the a random field so we can clear the provider cache when settings are saved.
 				add_filter( 'rwmb_wpcd_show_server_list_short_desc_value', array( &$this, 'wpcd_clear_all_providers_cache' ), 10, 3 );
@@ -1243,9 +1125,6 @@ class WPCD_Settings {
 		$tabs['misc']    = __( 'Misc', 'wpcd' );
 		$tabs['logging'] = __( 'Logging and Tracing', 'wpcd' );
 		$tabs['tools']   = __( 'Tools', 'wpcd' );
-		if ( ! defined( 'WPCD_HIDE_LICENSE_TAB' ) || ( defined( 'WPCD_HIDE_LICENSE_TAB' ) && ! WPCD_HIDE_LICENSE_TAB ) ) {
-			$tabs['license'] = __( 'License & Updates', 'wpcd' );
-		}
 
 		if ( wpcd_data_sync_allowed() ) {
 			$tabs['data-sync'] = __( 'Data Sync', 'wpcd' );
