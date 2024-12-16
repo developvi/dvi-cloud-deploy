@@ -351,49 +351,7 @@ class WPCD_License {
 
 	}
 
-	/**
-	 * Get the maximum number of servers allowed for this product.
-	 *
-	 * Because EDD doesn't really have a 'server count' we'll use its license limit instead
-	 * which is stored in an option.
-	 *
-	 * @return int maximum number of servers allowed with the current license.
-	 */
-	public static function get_server_limit() {
-		$server_limit = get_option( 'wpcd_license_limit' );
-		if ( 'unlimited' === (string) $server_limit ) {
-			return 9999999;
-		} else {
-			if ( empty( $server_limit ) ) {
-				return 3;  // Default allow 3 servers.
-			} else {
-				return (int) $server_limit;
-			}
-		}
-		return 3; // Should never get here!
-	}
-
-	/**
-	 * Get the maximum number of WordPress sites allowed for this product.
-	 *
-	 * Because EDD doesn't really have a 'WordPress sites count' we'll use its license limit instead
-	 * which is stored in an option.
-	 *
-	 * @return int maximum number of sites allowed with the current license.
-	 */
-	public static function get_wpsite_limit() {
-		$server_limit = get_option( 'wpcd_license_limit' );
-		if ( 'unlimited' === (string) $server_limit ) {
-			return 9999999;
-		} else {
-			if ( empty( $server_limit ) ) {
-				return 5; // Default allow 5 sites.
-			} else {
-				return  ( ( (int) $server_limit ) * 3 );  // We'll allow up to three sites per server if a server limit is set.
-			}
-		}
-		return 5; // Should never get here!
-	}
+	
 
 
 	/**
