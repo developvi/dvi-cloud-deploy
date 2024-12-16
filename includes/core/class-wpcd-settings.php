@@ -61,7 +61,6 @@ class WPCD_Settings {
 		// Action hook to reset defaults brand colors.
 		add_action( 'wp_ajax_wpcd_reset_defaults_brand_colors', array( $this, 'wpcd_reset_defaults_brand_colors' ) );
 
-		// Action hook to handle wisdom opt-out settings after fields are saved.  This is initiated via a checkbox on the license tab on the settings screen.
 		add_action( 'rwmb_after_save_field', array( $this, 'handle_wisdom_opt_out' ), 10, 5 );
 
 
@@ -2223,59 +2222,8 @@ class WPCD_Settings {
 		}
 	}
 
-	/**
-	 * Return an array of license fields for each add-on.
-	 *
-	 * @return array
-	 */
-	public function get_license_fields_for_add_ons() {
 
-		/* The array of fields to return. */
-		$fields = array();
 
-		/* The array of existing add_ons.  */
-		$add_ons = apply_filters( 'wpcd_register_add_ons_for_licensing', array() );
-
-		foreach ( $add_ons as $item ) {
-			if ( ! empty( $item ) ) {
-				foreach ( $item as $item_id => $item_name ) {
-					$fields[] = array(
-						'name'       => "{$item_name['name']}",
-						'id'         => "wpcd_item_license_$item_id",
-						'type'       => 'text',
-						'size'       => 40,
-						'desc'       => empty( wpcd_get_early_option( "wpcd_item_license_$item_id" ) ) ? __( 'Please enter your license key for this item.', 'wpcd' ) : get_transient( "wpcd_license_notes_for_$item_id" ) . '<br />' . get_transient( "wpcd_license_updates_for_$item_id" ),
-						'attributes' => array(
-							'spellcheck' => 'false',
-						),
-					);
-				}
-			}
-		}
-
-		return $fields;
-
-	}
-
-	/**
-	 * Check for plugin & license updates
-	 *
-	 * Action Hook: init
-	 */
-	public static function check_for_updates() {
-
-		// To support auto-updates feature released in WP 5.5 , this needs to run during the wp_version_check cron job for privileged users.
-		$doing_cron = defined( 'DOING_CRON' ) && DOING_CRON;
-		if ( ! current_user_can( 'manage_options' ) && ! $doing_cron ) {
-			return;
-		}
-
-		// License check class file needs to be loaded here.
-		if ( ! class_exists( 'WPCD_License' ) ) {
-			require_once wpcd_path . 'includes/core/class-wpcd-license.php';
-		}
-
-	}
 
 	/**
 	 * Gets the HTML for received files
