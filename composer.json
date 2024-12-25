@@ -1,5 +1,5 @@
 {
-    "name": "developvi/dv-cloud-deploy",
+    "name": "developvi/dvi-cloud-deploy",
     "description": "Deploy cloud servers and apps from inside the WordPress Admin dashboard.",
     "authors": [
         {
@@ -10,7 +10,7 @@
     "type": "wordpress-plugin",
     "autoload": {
         "psr-4": {
-            "DV\\CloudDeploy\\": "src/"
+            "DVICloudDeploy\\": "src/"
          }
     },
     "require": {
