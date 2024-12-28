@@ -451,7 +451,14 @@ function gf_enable_certbot_nginx_site() {
 			echo "Specify an email for administrative notifications about your certificate"
 			read -p "Email address: " email
 		fi
-		certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain -d www.$nginxdomain || certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain
+
+		# Check if DNS record for www subdomain exists
+		if host "www.$nginxdomain" > /dev/null 2>&1; then
+			certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain -d www.$nginxdomain || certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain
+		else
+			certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain
+		fi
+
 		if ! grep -qs "listen 443" /etc/nginx/sites-enabled/$nginxconf
 		then
 			echo "SSL could not be enabled for $nginxdomain"
@@ -464,7 +471,7 @@ function gf_enable_certbot_nginx_site() {
 			echo
 			echo "SSL has been enabled for $nginxdomain"		
 		fi
-		systemctl restart nginx
+		systemctl reload nginx
 	fi
 }
 
