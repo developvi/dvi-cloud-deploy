@@ -490,7 +490,7 @@ function gf_disable_certbot_nginx_site() {
 		sed -i '$ d' /etc/nginx/sites-enabled/$nginxconf
 		sed -i '/server {/a listen 80;\nlisten [::]:80;' /etc/nginx/sites-enabled/$nginxconf
 		sed -i '/managed by Certbot/d' /etc/nginx/sites-enabled/$nginxconf
-		systemctl restart nginx
+		systemctl reload nginx
 	else
 		echo "SSL Not enabled for $nginxdomain";
 		exit
