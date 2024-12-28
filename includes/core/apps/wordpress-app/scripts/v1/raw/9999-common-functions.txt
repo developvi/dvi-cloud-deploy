@@ -1586,14 +1586,14 @@ function gf_remove_nginx_site() {
 	rm -f /etc/nginx/sites-*/$domain*
 	rm -f /etc/nginx/htpasswd/*$domain
 	echo "restarting web server..."
-	systemctl restart nginx
+	systemctl reload nginx
 	local php_version
 	php_version=$(ls /etc/php/*/fpm/pool.d/$domain.conf | cut -d '/' -f 4)
 	echo "removing php configuration and restarting php process..."
 	rm -f /etc/php/$php_version/fpm/pool.d/$domain.conf
 	if [[ ! -f /etc/wpcd/php-versions-disabled/$php_version ]]
 	then
-		systemctl restart php$php_version-fpm
+		systemctl reload php$php_version-fpm
 	fi
 }
 
