@@ -69,7 +69,7 @@ $plugins = FetchingRemotePluginsDate::getData();
                       
                     </div>
                     <div class="card-content">
-                        <h3 class="plugin-title">' . esc_html($plugin->name) . '</h3>
+                        <h3 class="plugin-title">' . esc_html($plugin->name). (isset($plugin->release_stage) ? " <span style='background: #ffc107;padding: 0 1rem;'>$plugin->release_stage</span>" : "" ). '</h3>
                         <p class="plugin-author">By ' . $plugin->author . '</p>
                        <p class="plugin-description">' . esc_html($plugin->sections['description']) . '</p>
                     </div>
