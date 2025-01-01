@@ -2075,29 +2075,39 @@ lf_mt_site_conversion_link_existing_files() {
 		fi
 	done
 
-	echo " 3. mu-plugins"
-	if [ -d "$mt_version_folder/wp-content/mu-plugins" ]; then	
-		echo "    ...mu-plugins exist in source version - linking it."
-		cd "$mt_version_folder/wp-content/mu-plugins/"
-		if [ $? -ne 0 ]
-		then
-			msg="Unable to navigate to $mt_version_folder/wp-content/mu-plugins/"
-			echo
-			echo $msg
-			exit
-		fi	
-		for dir in $(find . -maxdepth 1 -type d -not -name ".*"); do
-			# Create a symbolic link to the subdirectory in the target directory
-			if [ -d "$dir" ]; then
-				local no_slash_folder_name
-				no_slash_folder_name=$(basename "$dir")
-				echo "      ...found mu-plugin in source version: $no_slash_folder_name - linking it."
-				ln -s "$mt_version_folder/wp-content/mu-plugins/$no_slash_folder_name" "$mt_domain_files_folder/wp-content/mu-plugins/$no_slash_folder_name"
-			fi
-		done
-	else
-		echo  "   ...no mu-plugins folder exist in source version, moving on."
-	fi
+        echo " 3. mu-plugins"
+        if [ -d "$mt_version_folder/wp-content/mu-plugins" ]; then
+           echo "    ...mu-plugins exist in source version - linking it."
+            cd "$mt_version_folder/wp-content/mu-plugins/"
+            if [ $? -ne 0 ]; then
+               msg="Unable to navigate to $mt_version_folder/wp-content/mu-plugins/"
+               echo
+               echo $msg
+               exit
+            fi
+
+            # Handle directories
+            for dir in $(find . -maxdepth 1 -type d -not -name ".*"); do
+               if [ -d "$dir" ]; then
+                  local no_slash_folder_name
+                  no_slash_folder_name=$(basename "$dir")
+                  echo "      ...found mu-plugin directory: $no_slash_folder_name - linking it."
+                  ln -s "$mt_version_folder/wp-content/mu-plugins/$no_slash_folder_name" "$mt_domain_files_folder/wp-content/mu-plugins/$no_slash_folder_name"
+               fi
+            done
+
+            # Handle individual PHP files
+            for file in $(find . -maxdepth 1 -type f -name "*.php"); do
+               if [ -f "$file" ]; then
+                  local filename
+                  filename=$(basename "$file")
+                  echo "      ...found mu-plugin file: $filename - linking it."
+                  ln -s "$mt_version_folder/wp-content/mu-plugins/$filename" "$mt_domain_files_folder/wp-content/mu-plugins/$filename"
+               fi
+            done
+        else
+            echo  "   ...no mu-plugins folder exist in source version, moving on."
+        fi
 
 	###################################################################################################
 	# Core files should be COPIED to the site to make sure we're on the same version as the template.
