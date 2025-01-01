@@ -126,6 +126,40 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+
+6.0.0
+----
+
+* Update : Meta Box Group plugin version to 1.4.4
+* Update : MB Custom Table plugin version to 2.2.0
+* Tweak: Removed the license limit check for WordPress site installations in the install app popup template to allow unrestricted site setup.
+* Tweak: Removed the license notice for exceeding the WordPress site limit to simplify user experience in the admin interface.
+* Tweak: Removed the license notice for exceeding the server limit to provide unrestricted server management in the admin interface.
+* Tweak: Removed the server license limit check from the template to allow unrestricted server creation and management.
+* Tweak: Removed the get_server_limit and get_wpsite_limit functions to eliminate license-based restrictions on the number of servers and WordPress sites.
+* Tweak: Removed license-related fields 
+* Tweak: Removed license check hooks and related functions class-wpcd-settings.php
+* Tweak: Removed license validation and update check hooks to eliminate license dependency
+* Tweak: Removed the WPCD_License class from the class-wpcd-license.php file to completely eliminate license-related checks and functionality.
+* Tweak: Removed the get_license_fields_for_add_ons and check_for_updates methods to eliminate all references to license key handling and update checks for add-ons.
+* Tweak: Simplified and updated the admin_footer_text method to dynamically detect wpcd references in post types, taxonomies, and pages. Replaced static product name with "developvi" for branding consistency.
+* Tweak: Removed the WPCD_EDD_SL_Plugin_Updater.php file to eliminate the Easy Digital Downloads Software Licensing plugin updater functionality.
+* Tweak: Removed the class-wpcd-setup.php .
+* Tweak: Removed the usage of the WPCD_Setup class during the uninstall process and ensured all plugin options are cleared directly when uninstalling.
+
+* Tweak: Enhance certbot function to check for www subdomain DNS record before certificate installation
+* Tweak: Change nginx service restart to reload in gf_disable_certbot_nginx_site function
+* Tweak: Change nginx and PHP service restart to reload in gf_remove_nginx_site function
+* Tweak: Change nginx service restart to reload in http2 management functions
+* Tweak: Update admin menu name from WPCloudDeploy to DVICloudDeploy
+* New : Add a marketplace to the plugin.
+* New : Add Facade and TraitSingleton classes for improved instance management
+* Tweak: Rename plugin to DVICloudDeploy
+* Remove : Remove the plugin updater from the main class and rely on the marketplace
+* Tweak: Add conditional logging for DVICD error logs integration
+* Fix : namespace and plugin name references in error log handling
+* Enh : plugin title display by adding release stage information
+
 5.9.3
 ----
 * Update: update composer package 
