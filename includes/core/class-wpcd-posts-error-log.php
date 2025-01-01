@@ -5,7 +5,7 @@
  * @package wpcd
  */
 
-use DVICD\LogError\DVICDErrorLogsTable;
+use DVICD\ErrorLog\DVICDErrorLogsTable;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -30,7 +30,7 @@ class WPCD_ERROR_LOG extends WPCD_POSTS_LOG {
 	 * WPCD_ERROR_LOG constructor.
 	 */
 	public function __construct() {
-		if (is_plugin_active('dvicd-log-error/dvicd-log-error.php')) {
+		if (is_plugin_active('dvicd-error-log/dvicd-error-log.php')) {
 			return;
 		}
 		
@@ -325,7 +325,7 @@ class WPCD_ERROR_LOG extends WPCD_POSTS_LOG {
 		/* All checks done - maybe we add a log entry */
 		$post_id = false;
 		if ( $ok_to_log ) {
-			if (is_plugin_active('dvicd-log-error/dvicd-log-error.php')) {
+			if (is_plugin_active('dvicd-error-log/dvicd-error-log.php')) {
 				$db_data = [
 					'error_type' => sanitize_text_field( $type ),
 					'error_msg'  => sanitize_textarea_field( $msg ),
