@@ -25,19 +25,9 @@ if ( ! defined( 'wpcd_plugin' ) ) {
 $options = get_option( 'wpcd_options', array() );
 
 if ( ! empty( $options['uninstall_on_delete'] ) ) {
-	if ( ! class_exists( 'WPCD_Setup' ) ) {
-		require_once wpcd_path . 'includes/core/class-wpcd-setup.php';
-	}
 
-	$wpcd_setup = new WPCD_Setup();
 
-	/* Remove settings */
-	foreach ( $wpcd_setup->settings_defaults as $k => $v ) {
-		unset( $options[ $k ] );
-	}
-
-	unset( $options['wpcd_license_key'] );
-	update_option( 'wpcd_options', $options );
+	update_option( 'wpcd_options', [] );
 	/* End remove settings */
 
 	/* This option was used to control whether our SSH console was hidden globally */

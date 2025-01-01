@@ -119,7 +119,7 @@ class Admin {
 		<div class="mbct-submit">
 			<?php do_action( 'mbct_before_submit_box', $this->model ); ?>
 			<?php if ( $this->action() === 'edit' ) : ?>
-				<a href="<?= esc_url( $delete_url ) ?>" id="mbct-delete"><?php esc_html_e( 'Delete', 'mb-custom-table' ) ?></a>
+				<a href="<?= esc_url( $delete_url ); ?>" id="mbct-delete"><?php esc_html_e( 'Delete', 'mb-custom-table' ) ?></a>
 			<?php endif ?>
 			<?php submit_button( __( 'Save', 'mb-custom-table' ), 'primary', 'submit', false ); ?>
 			<?php do_action( 'mbct_after_submit_box', $this->model ); ?>
@@ -140,13 +140,13 @@ class Admin {
 
 		$this->handle_delete();
 
-		$args = [
+		$args             = [
 			'model' => $this->model,
 		];
-		$list_table = new ListTable( $args );
+		$list_table       = new ListTable( $args );
 		$this->list_table = apply_filters( 'mbct_list_table_object', $list_table, $args );
 
-		$args             = [
+		$args = [
 			'label'   => __( 'Number of lines per page', 'mb-custom-table' ),
 			'default' => 20,
 			'option'  => "{$this->model->name}_per_page",
@@ -202,14 +202,14 @@ class Admin {
 		wp_enqueue_script( 'mbct-list-table', MBCT_URL . 'assets/list-table.js', [ 'jquery' ], filemtime( MBCT_DIR . '/assets/list-table.js' ), true );
 		wp_localize_script( 'mbct-list-table', 'MbctListTable', [
 			'nonceBulkActions' => wp_create_nonce( 'bulk-actions' ),
-			'confirm'     => __( 'Are you sure you want to delete? This action cannot be undone.', 'mb-custom-table' ),
+			'confirm'          => __( 'Are you sure you want to delete? This action cannot be undone.', 'mb-custom-table' ),
 		] );
 	}
 
 	public function render() {
 		$action = $this->action();
 		$view   = in_array( $action, [ 'add', 'edit' ] ) ? $action : 'list-table';
-		include MBCT_DIR . "/views/$view.php";
+		include	apply_filters( "mbct_{$this->model->name}_admin_render",MBCT_DIR . "/views/$view.php", $view, $this->model );
 	}
 
 	private function is_screen_edit() {

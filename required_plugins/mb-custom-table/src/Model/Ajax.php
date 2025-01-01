@@ -16,7 +16,7 @@ class Ajax {
 		$action  = sanitize_text_field( $action );
 		$action  = str_replace( '-', '_', $action );
 
-		$resolver = new Resolver;
+		$resolver = new Resolver();
 
 		$ids        = array_map( 'absint', $request->post( 'ids' ) );
 		$model_name = sanitize_text_field( $request->post( 'model' ) );
@@ -28,7 +28,7 @@ class Ajax {
 
 		// We use Resolver to bind the variables to the callback function
 		// This allows us using any of the variables in the callback function regardless of the order
-		$resolver->bind( compact( [ 
+		$resolver->bind( compact( [
 			'request',
 			'ids',
 			'model',
@@ -55,8 +55,8 @@ class Ajax {
 			do_action( 'mbct_before_delete', $id, $model->table );
 		}
 
-		$rows_affected = $wpdb->query( 
-			$wpdb->prepare( "DELETE FROM %i WHERE id IN ($ids_string)", 
+		$rows_affected = $wpdb->query(
+			$wpdb->prepare( "DELETE FROM %i WHERE id IN ($ids_string)",
 				$model->table
 			)
 		);

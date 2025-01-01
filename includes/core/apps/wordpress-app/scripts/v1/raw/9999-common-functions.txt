@@ -451,7 +451,14 @@ function gf_enable_certbot_nginx_site() {
 			echo "Specify an email for administrative notifications about your certificate"
 			read -p "Email address: " email
 		fi
-		certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain -d www.$nginxdomain || certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain
+
+		# Check if DNS record for www subdomain exists
+		if host "www.$nginxdomain" > /dev/null 2>&1; then
+			certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain -d www.$nginxdomain || certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain
+		else
+			certbot --non-interactive --reinstall --expand --nginx --agree-tos -m $email --allow-subset-of-names --redirect -d $nginxdomain
+		fi
+
 		if ! grep -qs "listen 443" /etc/nginx/sites-enabled/$nginxconf
 		then
 			echo "SSL could not be enabled for $nginxdomain"
@@ -464,7 +471,7 @@ function gf_enable_certbot_nginx_site() {
 			echo
 			echo "SSL has been enabled for $nginxdomain"		
 		fi
-		systemctl restart nginx
+		systemctl reload nginx
 	fi
 }
 
@@ -483,7 +490,7 @@ function gf_disable_certbot_nginx_site() {
 		sed -i '$ d' /etc/nginx/sites-enabled/$nginxconf
 		sed -i '/server {/a listen 80;\nlisten [::]:80;' /etc/nginx/sites-enabled/$nginxconf
 		sed -i '/managed by Certbot/d' /etc/nginx/sites-enabled/$nginxconf
-		systemctl restart nginx
+		systemctl reload nginx
 	else
 		echo "SSL Not enabled for $nginxdomain";
 		exit
@@ -1579,14 +1586,14 @@ function gf_remove_nginx_site() {
 	rm -f /etc/nginx/sites-*/$domain*
 	rm -f /etc/nginx/htpasswd/*$domain
 	echo "restarting web server..."
-	systemctl restart nginx
+	systemctl reload nginx
 	local php_version
 	php_version=$(ls /etc/php/*/fpm/pool.d/$domain.conf | cut -d '/' -f 4)
 	echo "removing php configuration and restarting php process..."
 	rm -f /etc/php/$php_version/fpm/pool.d/$domain.conf
 	if [[ ! -f /etc/wpcd/php-versions-disabled/$php_version ]]
 	then
-		systemctl restart php$php_version-fpm
+		systemctl reload php$php_version-fpm
 	fi
 }
 

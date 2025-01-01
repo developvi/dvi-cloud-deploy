@@ -17,20 +17,7 @@
 
 
 	<?php
-	/* Do not show screen if wpsite licenses exceeded */
-	if ( WPCD_License::show_license_tab() ) {
-		if ( ! WPCD_License::check_wpsite_limit() ) {
-			?>
-			<div class="wpcd-install-app-container wpcd-popup">
-				<div class="wpcd-no-install-wp-permission">
-				<?php echo esc_html( __( 'Oops! Unfortunately you have either reached or exceeded the number of WordPress sites allowed by your license!', 'wpcd' ) ); ?></div>
-				</div>
-			</div>			
-			<?php
-			return;
-		}
-	}
-	/* End do not show screen if wpsite licenses exceeded */
+
 
 
 	/* Do not show screen if max sites allowed on server has been exceeded */

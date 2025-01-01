@@ -19,6 +19,10 @@ class ComposerStaticInit3870d45cca9833d43343478c2b4ce10b
         array (
             'ParagonIE\\ConstantTime\\' => 23,
         ),
+        'D' => 
+        array (
+            'DVICloudDeploy\\' => 15,
+        ),
     );
 
     public static $prefixDirsPsr4 = array (
@@ -29,6 +33,10 @@ class ComposerStaticInit3870d45cca9833d43343478c2b4ce10b
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+        'DVICloudDeploy\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src',
         ),
     );
 

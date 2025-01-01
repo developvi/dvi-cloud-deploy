@@ -5,6 +5,8 @@
  * @package wpcd
  */
 
+use DVICD\ErrorLog\DVICDErrorLogsTable;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -28,6 +30,10 @@ class WPCD_ERROR_LOG extends WPCD_POSTS_LOG {
 	 * WPCD_ERROR_LOG constructor.
 	 */
 	public function __construct() {
+		if (is_plugin_active('dvicd-error-log/dvicd-error-log.php')) {
+			return;
+		}
+		
 		parent::__construct();
 		$this->register();  // register the custom post type.
 		$this->hooks();     // register hooks to make the custom post type do things...
@@ -319,6 +325,18 @@ class WPCD_ERROR_LOG extends WPCD_POSTS_LOG {
 		/* All checks done - maybe we add a log entry */
 		$post_id = false;
 		if ( $ok_to_log ) {
+			if (is_plugin_active('dvicd-error-log/dvicd-error-log.php')) {
+				$db_data = [
+					'error_type' => sanitize_text_field( $type ),
+					'error_msg'  => sanitize_textarea_field( $msg ),
+					'error_file' => sanitize_text_field( $file ),
+					'error_line' => intval( $line ),
+					'error_data' => maybe_serialize( $data ),
+					'created_at' => current_time( 'mysql' ),
+				];
+				return	DVICDErrorLogsTable::addErrorLog($db_data);
+			}
+			
 			// Author is current user or system.
 			$author_id = get_current_user();
 

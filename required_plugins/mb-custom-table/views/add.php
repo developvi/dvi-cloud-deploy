@@ -6,7 +6,7 @@
  */
 ?>
 <div class="wrap">
-	<h1 class="wp-heading-inline"><?= esc_html( $this->model->labels['add_new_item'] ) ?></h1>
+	<h1 class="wp-heading-inline"><?= esc_html( $this->model->labels['add_new_item'] ); ?></h1>
 	<hr class="wp-header-end">
 
 	<form method="post" action="" enctype="multipart/form-data" id="post" class="rwmb-model-form">

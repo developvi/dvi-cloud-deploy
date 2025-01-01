@@ -1,6 +1,8 @@
 ( function( $, _, document, window, rwmb, i18n ) {
 	'use strict';
 
+	rwmb.hooks = rwmb.hooks || wp.hooks.createHooks();
+
 	var group = {
 		toggle: {}, // Toggle module for handling collapsible/expandable groups.
 		clone: {}   // Clone module for handling clone groups.
@@ -33,7 +35,7 @@
 	 */
 	group.toggle.updateState = function( $group, state ) {
 		let $input;
-		
+
 		// If meta box column is enabled, the group state is stored in > .rwmb-row > ... > .rwmb-group-state.
 		// Cloneable groups.
 		if ( $group.children( '.rwmb-row' ).length ) {
@@ -42,7 +44,7 @@
 						.children( '.rwmb-column' )
 						.children( '.rwmb-group-state' )
 						.find( 'input' );
-		} 
+		}
 		// Non-cloneable groups.
 		else if ( $group.children( '.rwmb-input' ).first().children( '.rwmb-row' ).length ) {
 			$input = $group.children( '.rwmb-input' )
@@ -82,7 +84,7 @@
 	 */
 	group.toggle.updateTitle = function ( index, element ) {
 		var $group = $( element ),
-			$title = $group.find( '> .rwmb-group-title-wrapper > .rwmb-group-title, > .rwmb-input > .rwmb-group-title-wrapper > .rwmb-group-title' ),
+			$title = getGroupTitleElement( $group ),
 			options = $title.data( 'options' );
 
 		if ( 'undefined' === typeof options ) {
@@ -140,6 +142,8 @@
 
 		content = content.replace( '{#}', index - 1 );
 		fields.forEach( processField );
+
+		content = rwmb.hooks.applyFilters( 'group.title', content );
 
 		$title.text( content );
 	};
@@ -269,7 +273,7 @@
 		if ( ! $input.closest( '.rwmb-group-clone' ).length ) {
 			return;
 		}
-		
+
 		if ( ! id || index === 0 ) {
 			return;
 		}
@@ -290,7 +294,7 @@
 		}
 
 		$input.attr( 'id', id );
-		$input.closest( '.rwmb-field' ).find( 'label' ).attr( 'for', id );
+		$input.closest( '.rwmb-field' ).find( '.rwmb-label label' ).attr( 'for', id );
 	};
 
 	/**
@@ -317,7 +321,8 @@
 			.data( 'clone-group-new', true )
 			// Remove clones, and keep only their first clone. Reset [data-next-index] to 1
 			.find( '.rwmb-input' ).each( function () {
-				$( this ).data( 'next-index', 1 ).children( '.rwmb-clone:gt(0)' ).remove();
+				const gt = $( this ).attr( 'data-clone-empty-start' ) == 0 ? 1 : 0;
+				$( this ).data( 'next-index', 1 ).children( `.rwmb-clone:gt(${gt})` ).remove();
 			} );
 
 		// Update [group index] for inputs
@@ -348,12 +353,19 @@
 	group.clone.remove = function( event ) {
 		event.preventDefault();
 		event.stopPropagation();
-		var ok = confirm( i18n.confirmRemove );
-		if ( ! ok ) {
-			return;
+
+		// Get group title to put into the confirm message.
+		const $group = $( this ).closest( '.rwmb-clone' ),
+			$title = getGroupTitleElement( $group ),
+			title = $title.length > 0 ? $title.text() : i18n.defaultTitle,
+			message = i18n.confirmRemove.replace( '%s', title );
+
+		if ( confirm( message ) ) {
+			$group.find( '.remove-clone' ).trigger( 'click' );
 		}
-		$( this ).parent().siblings( '.remove-clone' ).trigger( 'click' );
 	}
+
+	const getGroupTitleElement = $group => $group.find( '> .rwmb-group-title-wrapper > .rwmb-group-title, > .rwmb-input > .rwmb-group-title-wrapper > .rwmb-group-title' );
 
 	function init() {
 		group.toggle.initState();
@@ -364,7 +376,10 @@
 	}
 
 	rwmb.$document
-		.on( 'mb_ready', init )
+		.on( 'mb_ready', () => {
+			// Use timeout to make the group.title filter works on first run.
+			setTimeout( init, 0 );
+		} )
 		.on( 'click', '.rwmb-group-title-wrapper, .rwmb-group-toggle-handle', group.toggle.handle )
 		.on( 'clone_instance', '.rwmb-clone', group.clone.processGroup )
 		.on( 'update_index', rwmb.inputSelectors, group.clone.replaceId )

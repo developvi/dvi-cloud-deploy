@@ -31,7 +31,7 @@ class Model {
 			'parent'        => '',
 
 			// New.
-			'capability' => 'edit_posts',
+			'capability'    => 'edit_posts',
 		];
 		$args = array_merge( $defaults, $args );
 
@@ -59,8 +59,8 @@ class Model {
 			'item_updated'  => __( 'Item updated.', 'mb-custom-table' ),
 
 			// New.
-			'item_added'   => __( 'Item added.', 'mb-custom-table' ),
-			'item_deleted' => __( 'Item deleted.', 'mb-custom-table' ),
+			'item_added'    => __( 'Item added.', 'mb-custom-table' ),
+			'item_deleted'  => __( 'Item deleted.', 'mb-custom-table' ),
 		];
 
 		if ( ! isset( $labels['singular_name'] ) && isset( $labels['name'] ) ) {

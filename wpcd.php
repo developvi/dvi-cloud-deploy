@@ -1,27 +1,25 @@
 <?php
 /**
-Plugin Name: WPCloudDeploy
-Plugin URI: https://developvi.com
-Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
-Version: 5.9.2
-Requires at least: 5.8
-Requires PHP: 7.4
-Item Id: 1493
-Author: WPCloudDeploy
-Author URI: https://developvi.com
-Domain Path: /languages
-GitHub Plugin URI: developvi/wp-cloud-deploy
-Primary Branch: main
+* Plugin Name: DVICloudDeploy
+* Plugin URI: https://developvi.com
+* Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
+* Version: 6.0.0
+* Requires at least: 5.8
+* Requires PHP: 7.4
+* Item Id: 1493
+* Author: DVICloudDeploy
+* Author URI: https://developvi.com
+* Domain Path: /languages
  */
+
+use DVICloudDeploy\Marketplace\Init;
+
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
 /**
  * Class WPCD_Init.
  */
-class WPCD_Init {
-	protected $cache_key = 'wp-cloud-deploy_updater';
-	protected $plugin_slug = 'wp-cloud-deploy' ;
-	protected $version ;
+class DVICDInit {
 	
 	/**
 	 * Construct function.
@@ -30,7 +28,10 @@ class WPCD_Init {
 
 		$plugin_data       = get_plugin_data( __FILE__ );
 		$extra_plugin_data = get_file_data( __FILE__, array( 'ItemId' => 'Item Id' ) );
-		$this->version = $plugin_data['Version'];
+
+		define("DVICD_PATH",plugin_dir_path( __FILE__ ));
+		define("DVICD_VERSION",$plugin_data['Version']);
+		define("DVICD_URL",plugin_dir_url( __FILE__ ));
 		if ( ! defined( 'wpcd_url' ) ) {
 			// Deprecated constants - lowercased.
 			define( 'wpcd_url', plugin_dir_url( __FILE__ ) );
@@ -108,16 +109,15 @@ class WPCD_Init {
 				}
 			}
 		}
+		require_once wpcd_path . 'vendor/autoload.php';
 
 		/* Check for incompatible add-ons */
 		if ( is_admin() && ! $this->check_all_addons_compatible() ) {
 			// You will likely not get here because if the check shows add-ons are incompatible we will deactivate ourselves.
 			return false;
 		}
+		Init::init();
 
-        add_filter('plugins_api', [$this, 'updater_info'], 20, 3);
-        add_filter('site_transient_update_plugins', [$this, 'updater_update']);
-        add_action('upgrader_process_complete', [$this, 'updater_purge'], 10, 2);
 
 		/* Use init hook to load up required files */
 		add_action( 'init', array( $this, 'required_files' ), -20 );
@@ -141,8 +141,6 @@ class WPCD_Init {
 		/* Show documentation and quick-start links in the plugin list. */
 		add_filter( 'plugin_row_meta', array( $this, 'wpcd_append_support_and_faq_links' ), 10, 4 );
 
-		/* Attempt to get and show any upgrade notice for the next version of the plugin - @see https://wisdomplugin.com/add-inline-plugin-update-message/ */
-		// add_action( 'in_plugin_update_message-wp-cloud-deploy/wpcd.php', array( $this, 'wpcd_plugin_update_message' ), 10, 2 );
 
 		/* Load languages files */
 		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
@@ -154,110 +152,9 @@ class WPCD_Init {
 		add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 10, 1 );
 	}
 
-    public function updater_request()
-    {
-
-        $remote = get_transient($this->cache_key);
-
-        if (false === $remote) {
-
-            $remote = wp_remote_get(
-                'https://developvi.com/plugin-wpcd.json',
-                [
-                    'timeout' => 10,
-                    'headers' => [
-                        'Accept' => 'application/json'
-                    ]
-                ]
-            );
-
-            if (is_wp_error($remote) || 200 !== wp_remote_retrieve_response_code($remote) || empty(wp_remote_retrieve_body($remote))) {
-                return false;
-            }
-
-            set_transient($this->cache_key, $remote, DAY_IN_SECONDS);
-        }
-
-        $remote = json_decode(wp_remote_retrieve_body($remote));
-
-        return $remote;
-    }
-
-    function updater_info($response, $action, $args)
-    {
-         // do nothing if you're not getting plugin information right now
-        if ('plugin_information' !== $action) {
-            return $response;
-        }
-        // do nothing if it is not our plugin
-        if (empty($args->slug) || $this->plugin_slug !== $args->slug) {
-            return $response;
-        }
-
-        // get updates
-        $remote = $this->updater_request();
-
-        if (!$remote) {
-            return $response;
-        }
-
-        $response = new \stdClass();
-
-        $response->name           = $remote->name;
-        $response->slug           = $remote->slug;
-        $response->version        = $remote->version;
-        $response->tested         = $remote->tested;
-        $response->requires       = $remote->requires;
-        $response->author         = $remote->author;
-        $response->author_profile = $remote->author_profile;
-        $response->donate_link    = $remote->donate_link;
-        $response->homepage       = $remote->homepage;
-        $response->download_link  = $remote->download_url;
-        $response->trunk          = $remote->download_url;
-        $response->requires_php   = $remote->requires_php;
-        $response->last_updated   = $remote->last_updated;
-
-        $response->sections = [
-            'description'  => $remote->sections->description,
-            'installation' => $remote->sections->installation,
-            'changelog'    => $remote->sections->changelog
-        ];
+  
 
 
-        return $response;
-    }
-
-    public function updater_update($transient)
-    {
-
-        if (empty($transient->checked)) {
-            return $transient;
-        }
-
-        $remote = $this->updater_request();
-
-        if ($remote && version_compare($this->version, $remote->version, '<') && version_compare($remote->requires, get_bloginfo('version'), '<=') && version_compare($remote->requires_php, PHP_VERSION, '<')) {
-			$response              = new \stdClass();
-			$response->slug        = "wp-cloud-deploy";
-			$response->plugin      = "wp-cloud-deploy/wpcd.php";
-			$response->new_version = $remote->version;
-			$response->tested      = $remote->tested;
-			$response->package     = $remote->download_url;
-	
-            $transient->response[$response->plugin] = $response;
-        }
-
-        return $transient;
-    }
-
-    public function updater_purge($upgrader, $options)
-    {
-
-        if ($this->cache_allowed && 'update' === $options['action'] && 'plugin' === $options['type']) {
-            // just clean the cache when new plugin version is installed
-            delete_transient($this->cache_key);
-        }
-    }
 	/**
 	 * Create cron timers for use by other wpcd functions.
 	 * Three timers - 1 min, 2 min and 15 min.
@@ -500,12 +397,6 @@ class WPCD_Init {
 		/* Include custom metabox.io fields we created. */
 		require_once wpcd_path . 'includes/core/metabox-io-custom-fields/wpcd-card-container-field.php';
 
-		/* Load up some licensing files. */
-		if ( true === is_admin() ) {
-			require_once WPCD_PATH . '/includes/vendor/WPCD_EDD_SL_Plugin_Updater.php';
-			require_once WPCD_PATH . '/includes/core/class-wpcd-license.php';
-		}
-
 		/* Load up our files */
 		require_once wpcd_path . 'includes/core/functions.php';
 		require_once wpcd_path . 'includes/core/functions-kses.php';
@@ -539,7 +430,6 @@ class WPCD_Init {
 		if ( wpcd_data_sync_allowed() ) {
 			require_once wpcd_path . 'includes/core/class-wpcd-sync.php';
 		}
-		require_once wpcd_path . 'includes/core/class-wpcd-setup.php';
 
 		require_once wpcd_path . 'includes/core/class-wpcd-posts-team.php';
 		require_once wpcd_path . 'includes/core/class-wpcd-posts-permission-type.php';
@@ -947,52 +837,16 @@ class WPCD_Init {
 			// You can still use `array_unshift()` to add links at the beginning.
 			$links_array[] = '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/" target="_blank">Quick Start</a>';
 			$links_array[] = '<a href="https://wpclouddeploy.com/doc-landing/" target="_blank">Documentation</a>';
-			$links_array[] = '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/bootstrapping-a-wordpress-server-with-our-scripts/" target="_blank">Bootstrap Your Own Server</a>';
 
 			$settings_link = admin_url( 'edit.php?post_type=wpcd_app_server&page=wpcd_settings' );
 			$links_array[] = '<a href="' . $settings_link . '">Settings</a>';
 
-			$links_array[] = '<a href="https://wpclouddeploy.com/pricing/" target="_blank">Premium Options</a>';
-			$links_array[] = '<a href="https://wpclouddeploy.com/support/" target="_blank">Support</a>';
 
 		}
 
 		return $links_array;
 	}
 
-	/**
-	 * Attempt to get and show any upgrade notice for the next version of the plugin.
-	 *
-	 * @see https://wisdomplugin.com/add-inline-plugin-update-message/
-	 * @see https://developer.wordpress.org/reference/hooks/in_plugin_update_message-file/
-	 *
-	 * Action Hook: in_plugin_update_message-{$file} | in_plugin_update_message-wpcd/wpcd.php
-	 *
-	 * @since 4.15.1
-	 *
-	 * @param array  $data The array of plugin metadata.
-	 * @param object $response An object of metadata about the available plugin update.
-	 *
-	 * @return void
-	 */
-	public function wpcd_plugin_update_message( $data, $response ) {
-		if ( ! defined( 'WPCD_HIDE_CHANGELOG_IN_PLUGIN_LIST' ) || ( defined( 'WPCD_HIDE_CHANGELOG_IN_PLUGIN_LIST' ) && ! WPCD_HIDE_CHANGELOG_IN_PLUGIN_LIST ) ) {
-			if ( isset( $data['upgrade_notice'] ) ) {
-				printf(
-					'<div class="update-message">%s</div>',
-					wp_kses_post( wpautop( $data['upgrade_notice'] ) )
-				);
-			} else {
-				$release_notes      = wpcd_get_string_between( $data['sections']->changelog, '<p>', '<p>' );  // Grab data between two paragraph tags - this gives us the raw release notes for the most recent release.
-				$release_notes      = wpcd_get_string_between( $data['sections']->changelog, '<ul>', '</ul>' ); // Just grab the list and remove everthing above and below it.
-				$release_notes_link = '<br /><a href="https://wpclouddeploy.com/category/release-notes/" target="_blank">' . __( 'View friendly release notes to learn about any breaking changes that might affect you.', 'wpcd' ) . '</a>';
-				printf(
-					'<div class="update-message">%s</div>',
-					'<br />' . wp_kses_post( $release_notes ) . wp_kses_post( $release_notes_link )
-				);
-			}
-		}
-	}
 
 	/**
 	 * Add our version number and message to the admin footer area.
@@ -1016,18 +870,15 @@ class WPCD_Init {
 		$return = $msg;
 
 		$screen = get_current_screen();
+		$post_type_contains = isset( $screen->post_type ) &&  strpos( $screen->post_type, 'wpcd' ) !== false;
+		$taxonomy_contains = isset( $screen->taxonomy ) && strpos( $screen->taxonomy, 'wpcd' ) !== false ;
+		$page_contains = isset( $_GET['page'] ) && strpos( $_GET['page'], 'dvi' ) !== false ;
+ 		if ( ( is_object( $screen ) && ( $page_contains || $post_type_contains || $taxonomy_contains) ) ) {
 
-		/* @TODO: The list of post types and taxonomies used below should be a global function that is filtered and called by add-ons to add their own CPT to the arrays. */
-		if ( ( is_object( $screen ) && ( in_array( $screen->post_type, array( 'wpcd_app', 'wpcd_app_server', 'wpcd_cloud_provider', 'wpcd_ssh_log', 'wpcd_team', 'wpcd_command_log', 'wpcd_pending_log', 'wpcd_error_log', 'wpcd_schedules', 'wpcd_snapshots', 'wpcd_permission_type', 'wpcd_notify_log', 'wpcd_notify_user', 'wpcd_notify_sent' ), true ) || in_array( $screen->taxonomy, array( 'wpcd_app_group', 'wpcd_app_server_group', 'wpcd_reporting_group' ), true ) ) ) ) {
 
-			if ( defined( 'WPCD_LONG_NAME' ) && ! empty( WPCD_LONG_NAME ) ) {
-				$product_name = WPCD_LONG_NAME;
-			} else {
-				$product_name = 'WPCloudDeploy';
-			}
 
 			/* Translators: %1$s is the WPCD Product Name; %2$s is the WPCD product version. */
-			$return = sprintf( __( 'Powered by %1$s %2$s.', 'wpcd' ), $product_name, WPCD_VERSION ) . '<br />' . $return;
+			$return = sprintf( __( 'Powered by %1$s %2$s.', 'wpcd' ), 'developvi', WPCD_VERSION ) . '<br />' . $return;
 
 		}
 
@@ -1087,13 +938,6 @@ class WPCD_Init {
 			update_option( 'wpcd_version', wpcd_version );
 		}
 
-		// run setup.
-		if ( ! class_exists( 'WPCD_Setup' ) ) {
-			require_once wpcd_path . 'includes/core/class-wpcd-setup.php';
-		}
-
-		$wpcd_setup = new WPCD_Setup();
-		$wpcd_setup->run_setup();
 	}
 
 	/**
@@ -1258,35 +1102,14 @@ class WPCD_Init {
 	}
 
 
-	/**
-	 * Show admin notice when an incompatible plugin is present.
-	 * Should run just before we deactivate self.
-	 *
-	 * Action Hook: admin_notices
-	 *
-	 * *** This function not used because we deactivate the plugin before the admin_notices hook can be called.
-	 * *** Keeping it around in case we find a use for it later.
-	 */
-	public function wpcd_plugin_deactivate_admin_notice() {
-
-		$incompatible_addons = get_option( 'wpcd_incompatible_addons', $incompatible_add_ons );
-		if ( ! empty( $incompatible_addons ) ) {
-			// Incompatible add-ons are active.
-			$class    = 'notice notice-error wpcd-incompatible-addons';
-			$message  = __( '<strong>These addons are incompatible with WPCD.</strong>', 'wpcd' );
-			$message .= print_r( $incompatible_addons, true );
-			printf( '<div data-dismissible="notice-incompatible-addons-notice" class="%2$s"><p>%3$s</p></div>', wp_create_nonce( 'wpcd-admin-incompatible-addons-notice' ), $class, $message );
-		}
-
-	}
 
 }
-
+class_alias("DVICDInit", "WPCD_Init");
 
 /**
  * Get WPCD running.
  */
-$wpcd_throwaway = new WPCD_Init();
+new DVICDInit();
 
 /**
  * Statistics Collection
@@ -1301,7 +1124,7 @@ if ( ! function_exists( 'wpcd_start_plugin_tracking' ) ) {
 	function wpcd_start_plugin_tracking() {
 		$wisdom = new Plugin_Usage_Tracker(
 			__FILE__,
-			'https://statistics.wpclouddeploy.com',
+			'https://developvi.com/statistics',
 			array( 'wisdom_opt_out', 'wisdom_wpcd_server_count', 'wisdom_wpcd_app_count' ),
 			false,
 			false,

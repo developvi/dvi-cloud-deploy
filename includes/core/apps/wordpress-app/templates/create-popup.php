@@ -18,18 +18,7 @@
 
 	<div class="wpcd-pre-install wpcd-popup">
 
-		<?php
-		/* Do not show screen if server licenses exceeded */
-		if ( WPCD_License::show_license_tab() ) {
-			if ( ! WPCD_License::check_server_limit() ) {
-				?>
-				<div class="wpcd-no-providers"><?php echo esc_html( __( 'Oops! Unfortunately you have either reached or exceeded the number of servers allowed by your license!', 'wpcd' ) ); ?></div>
-				<?php
-				return;
-			}
-		}
-		/* End do not show screen if server licenses exceeded */
-		?>
+	
 
 		<?php
 		/* Show error message if there are no providers! */
