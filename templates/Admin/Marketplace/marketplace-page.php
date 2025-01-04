@@ -20,7 +20,6 @@ $plugins = FetchingRemotePluginsDate::getData();
      
     </div>
     <div class="marketplace-container">
-    >
 
 
         <?php
