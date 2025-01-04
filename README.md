@@ -127,6 +127,12 @@ Note: Even though the entire git development history isn't available on github, 
 
 ## Change Log ##
 
+6.0.1
+----
+* Tweak: Added a conditional check to prevent the accidental disabling of specific plugins (wp-cloud-deploy/wpcd.php and dvicd/dvicd.php) in the active-plugins UI to ensure uninterrupted functionality.
+
+* Fix: Removed an unintended ">" from the `<div class="marketplace-container">` opening tag to ensure proper HTML structure and prevent rendering issues.
+
 6.0.0
 ----
 
