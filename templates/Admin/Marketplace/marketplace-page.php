@@ -20,7 +20,6 @@ $plugins = FetchingRemotePluginsDate::getData();
      
     </div>
     <div class="marketplace-container">
-    >
 
 
         <?php
@@ -89,14 +88,16 @@ $plugins = FetchingRemotePluginsDate::getData();
                 <div class="plugin-info">
                      <div class="pluginupdate">  <span class=""><strong>Updated</strong>:' . $interval->days . ' days ago</span> </div>
                      <div class="pluginv">  <span class=""><strong>version</strong>' . esc_html($plugin->version) . '</span> </div>
+                </div>';
+            if(!in_array($plugin->plugin_info ,['wp-cloud-deploy/wpcd.php','dvicd/dvicd.php'])){
+
+                echo '<div class="active-plugin" '. disabled( file_exists($plugin_info_file), false, false ) .'">
+                <input type="checkbox" ' . checked($status == 'active', true, false). ' id="' . esc_html($key) . '"  class="toggle-item" value="1" data-plugin_info="' . esc_html($plugin->plugin_info) . '">
+                <label for="' . esc_html($key) . '" data-plugin_info="' . esc_html($plugin->plugin_info) . '" data-plugin_active="' . esc_html($status) . '" class="' . $status . '"></label>
                 </div>
-                <div class="active-plugin" '. disabled( file_exists($plugin_info_file), false, false ) .'">
-                    <input type="checkbox" ' . checked($status == 'active', true, false). ' id="' . esc_html($key) . '"  class="toggle-item" value="1" data-plugin_info="' . esc_html($plugin->plugin_info) . '">
-                    <label for="' . esc_html($key) . '" data-plugin_info="' . esc_html($plugin->plugin_info) . '" data-plugin_active="' . esc_html($status) . '" class="' . $status . '"></label>
-                  </div>
-              </div>
                 ';
-                echo '
+                }
+              echo '</div>
                 </div>
                 </div>';
             }
