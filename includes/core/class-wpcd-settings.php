@@ -1063,7 +1063,22 @@ class WPCD_Settings {
 					);
 				}
 
+				$meta_boxes[] = array(
+					'id'             => 'wordpress-dns-settings',
+					'title'          => __( 'high performance', 'wpcd' ),
+					'settings_pages' => 'wpcd_settings',
+					'tab'            => 'high-performance',
+					'fields'         => array(
 
+						array(
+							'name' => __( 'Do you want to enable high performance Logs?', 'wpcd' ),
+							'id'   => 'dvi_high_performance',
+							'type' => 'checkbox',
+							'desc' => __( 'Turn this on to mack your logs high performance (recommended).', 'wpcd' ),
+							'tab'  => 'high-performance',
+						),
+					),
+				);
 				// Enable saving filter on the a random field so we can clear the provider cache when settings are saved.
 				add_filter( 'rwmb_wpcd_show_server_list_short_desc_value', array( &$this, 'wpcd_clear_all_providers_cache' ), 10, 3 );
 
@@ -1112,6 +1127,7 @@ class WPCD_Settings {
 		$tabs['misc']    = __( 'Misc', 'wpcd' );
 		$tabs['logging'] = __( 'Logging and Tracing', 'wpcd' );
 		$tabs['tools']   = __( 'Tools', 'wpcd' );
+		$tabs['high-performance']   = __( 'High Performance', 'wpcd' );
 
 		if ( wpcd_data_sync_allowed() ) {
 			$tabs['data-sync'] = __( 'Data Sync', 'wpcd' );
