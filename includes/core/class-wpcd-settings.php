@@ -1062,8 +1062,6 @@ class WPCD_Settings {
 						),
 					);
 				}
-
-
 				// Enable saving filter on the a random field so we can clear the provider cache when settings are saved.
 				add_filter( 'rwmb_wpcd_show_server_list_short_desc_value', array( &$this, 'wpcd_clear_all_providers_cache' ), 10, 3 );
 
