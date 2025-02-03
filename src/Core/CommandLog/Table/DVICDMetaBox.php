@@ -180,7 +180,7 @@ class DVICDMetaBox
                     'type' => 'number',
                     'desc' => __('Line number of the Command', 'textdomain'),
                 ],
-                
+
                 [
                     'id'   => 'created_at',
                     'name' => __('Created At', 'textdomain'),
