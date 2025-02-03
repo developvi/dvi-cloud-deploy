@@ -3,7 +3,7 @@
 * Plugin Name: DVICloudDeploy
 * Plugin URI: https://developvi.com
 * Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
-* Version: 6.0.1
+* Version: 6.1.0
 * Requires at least: 5.8
 * Requires PHP: 7.4
 * Item Id: 1493
@@ -120,7 +120,7 @@ class DVICDInit {
 			return false;
 		}
 		Init::init();
-		DVICOMMANDLOG::init();
+		
 		(new InitDviSetting)->init();
 
 		// add_action( 'plugins_loaded', function() {
@@ -152,7 +152,7 @@ class DVICDInit {
 
 
 		/* Load languages files */
-		add_action( 'plugins_loaded', array( $this, 'load_plugin_textdomain' ) );
+        add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
 
 		/* Send email to admin if critical crons aren't running. */
 		add_action( 'shutdown', array( $this, 'send_email_for_absent_crons' ), 20 );
@@ -257,7 +257,7 @@ class DVICDInit {
 		require_once wpcd_path . 'includes/core/class-wpcd-posts-app.php';
 		WPCD_POSTS_APP_SERVER::activate( $network_wide );
 		WPCD_POSTS_APP::activate( $network_wide );
-		require_once wpcd_path . 'required_plugins\mb-custom-table\mb-custom-table.php';
+		require_once wpcd_path . 'required_plugins/mb-custom-table/mb-custom-table.php';
 
 		/* Custom tables for DNS and PROVIDERS */
 		if ( true === wpcd_is_custom_dns_provider_tables_enabled() ) {
@@ -268,7 +268,6 @@ class DVICDInit {
 			require_once wpcd_path . 'includes/core/custom-table/api/class-wpcd-ct-dns-zone-record-api.php';
 
 			require_once wpcd_path . 'includes/core/apps/wordpress-app/public/class-wordpress-app-public.php';
-			require_once wpcd_path . 'required_plugins/mb-custom-table/mb-custom-table.php';
 			require_once wpcd_path . 'includes/core/custom-table/class-wpcd-custom-table.php';
 			require_once wpcd_path . 'includes/core/custom-table/class-wpcd-provider.php';
 			require_once wpcd_path . 'includes/core/custom-table/class-wpcd-dns-provider.php';
@@ -533,7 +532,9 @@ class DVICDInit {
 		require_once wpcd_path . 'includes/core/wp-cloud-deploy.php';
 		require_once wpcd_path . 'includes/core/class-wpcd-server.php';
 		require_once wpcd_path . 'includes/core/functions-classes.php';
-
+		if(wpcd_get_early_option('dvi_high_performance_command_logs')){
+			DVICOMMANDLOG::init();
+		}
 		/**
 		 * Now fire up the main class
 		 * The constructor should place
