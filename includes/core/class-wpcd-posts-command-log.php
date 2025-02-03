@@ -1,4 +1,6 @@
 <?php
+
+use DVICloudDeploy\Core\CommandLog\DVICDCommandLogsTable;
 /**
  * This class is used for command log.
  *
@@ -287,6 +289,36 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 		// Get parent post.
 		$post = get_post( $parent_post_id );
 
+		// if $result is an error, convert to string...
+		if ( is_wp_error( $result ) ) {
+			$result = print_r( $result, true );
+		}
+		
+		// Remove some strings from the result that could be confusing to the reader.
+		$result = $this->remove_common_strings( $result );
+		
+		// Remove known password strings.
+		$pwarray = $this->wpcd_get_pw_terms_to_clean();
+		$result  = wpcd_replace_key_value_paired_strings( $pwarray, $result );
+		if(wpcd_get_early_option('dvi_high_performance_command_logs')){
+			// Log the command result.
+			$dvicd_command_logs = new DVICDCommandLogsTable;
+			if($post_id){
+				return $dvicd_command_logs->update($post_id,[
+					"command_type" => $cmd_type,
+					"command_result" => $result,
+					"command_reference" => $cmd_reference,
+					"parent_post_id" => $parent_post_id,
+				]);
+			}
+			return $dvicd_command_logs->create([
+				"command_type" => $cmd_type,
+				"command_result" => $result,
+				"command_reference" => $cmd_reference,
+				"parent_post_id" => $parent_post_id,
+				
+			]);
+		}
 		if ( empty( $post_id ) ) {
 			$post_id = wp_insert_post(
 				array(
@@ -298,17 +330,6 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 			);
 		}
 
-		// if $result is an error, convert to string...
-		if ( is_wp_error( $result ) ) {
-			$result = print_r( $result, true );
-		}
-
-		// Remove some strings from the result that could be confusing to the reader.
-		$result = $this->remove_common_strings( $result );
-
-		// Remove known password strings.
-		$pwarray = $this->wpcd_get_pw_terms_to_clean();
-		$result  = wpcd_replace_key_value_paired_strings( $pwarray, $result );
 
 		if ( ! is_wp_error( $post_id ) && ! empty( $post_id ) ) {
 			update_post_meta( $post_id, 'parent_post_id', $parent_post_id );    // using the parent post id to link back to the master record.  Sometimes that will be a server record.  Other types it will be an APP record.
@@ -327,6 +348,11 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 	 * @param int $id id.
 	 */
 	public static function get_command_log( $id ) {
+		if(wpcd_get_early_option('dvi_high_performance_command_logs')){
+			$dvicd_command_logs = new DVICDCommandLogsTable;
+			return $dvicd_command_logs->where('id',$id)->first()?->command_result;
+		}
+
 		return get_post_meta( $id, 'command_result', true );
 	}
 
@@ -337,6 +363,17 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 	 * @param string $name name.
 	 */
 	public static function get_command_log_id( $id, $name ) {
+		if (wpcd_get_early_option('dvi_high_performance_command_logs')) {
+			$dvicd_command_logs = new DVICDCommandLogsTable;
+			$command_logs = $dvicd_command_logs->where('id', $id)->where('command_type', $name);
+			$count = $command_logs->count();
+			if ($count !== 1) {
+				return new \WP_Error("Command $name for $id has " . $count . ' instances');
+			}
+			return $command_logs->first()?->id;
+		}
+
+
 		$posts = get_posts(
 			array(
 				'post_type'   => 'wpcd_command_log',

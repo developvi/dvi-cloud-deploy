@@ -126,7 +126,12 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
-
+6.1.0
+* Tweak: Always include the Imagick module in the PHP stack installation for all supported versions, removing Ubuntu version-specific conditions.
+* Implement high-performance command logging with DVICDCommandLogsTable integration
+* Refactor InitDviSetting to enhance high performance settings and improve code readability
+* Add DVICDCommandLogsTable class and update command logs table creation
+* Add wp-orm package and example models for post and postmeta
 6.0.1
 ----
 * Tweak: Added a conditional check to prevent the accidental disabling of specific plugins (wp-cloud-deploy/wpcd.php and dvicd/dvicd.php) in the active-plugins UI to ensure uninterrupted functionality.

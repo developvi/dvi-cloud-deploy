@@ -15,7 +15,8 @@
     },
     "require": {
         "php": "^7.4",
-        "phpseclib/phpseclib": "^3.0"
+        "phpseclib/phpseclib": "^3.0",
+        "developvi/wp-orm": "^1.0"
     },
 
     "extra": {

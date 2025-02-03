@@ -1,0 +1,15 @@
+{
+    "name": "developvi/wp-orm",
+    "autoload": {
+        "psr-4": {
+            "DVI\\WpOrm\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Eslam El Sherif",
+            "email": "dev@eslamelsherif.com"
+        }
+    ],
+    "require": {}
+}
