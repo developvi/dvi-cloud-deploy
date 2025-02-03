@@ -4,8 +4,41 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fa09e6842a7122e0d585a5f9c060d82b",
+    "content-hash": "cb1030a504b77e941850452fcd9a77a0",
     "packages": [
+        {
+            "name": "developvi/wp-orm",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/developvi/wp-orm.git",
+                "reference": "41248bf408ea98341873f27a3a64a775b634be10"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/developvi/wp-orm/zipball/41248bf408ea98341873f27a3a64a775b634be10",
+                "reference": "41248bf408ea98341873f27a3a64a775b634be10",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "DVI\\WpOrm\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Eslam El Sherif",
+                    "email": "dev@eslamelsherif.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/developvi/wp-orm/issues",
+                "source": "https://github.com/developvi/wp-orm/tree/1.0.0"
+            },
+            "time": "2025-02-01T12:24:13+00:00"
+        },
         {
             "name": "paragonie/constant_time_encoding",
             "version": "v3.0.0",
@@ -237,12 +270,12 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.3.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.6.0"
 }

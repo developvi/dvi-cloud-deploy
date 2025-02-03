@@ -21,6 +21,7 @@ class ComposerStaticInit3870d45cca9833d43343478c2b4ce10b
         ),
         'D' => 
         array (
+            'DVI\\WpOrm\\' => 10,
             'DVICloudDeploy\\' => 15,
         ),
     );
@@ -33,6 +34,10 @@ class ComposerStaticInit3870d45cca9833d43343478c2b4ce10b
         'ParagonIE\\ConstantTime\\' => 
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
+        ),
+        'DVI\\WpOrm\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/developvi/wp-orm/src',
         ),
         'DVICloudDeploy\\' => 
         array (
