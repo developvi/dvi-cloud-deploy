@@ -371,7 +371,8 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 			if ($count !== 1) {
 				return new \WP_Error("Command $name for $id has " . $count . ' instances');
 			}
-			return $command_logs->first()?->id;
+			$first_log = $command_logs->first();
+			return $first_log ? $first_log->id : null;
 		}
 
 
