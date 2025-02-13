@@ -350,7 +350,8 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 	public static function get_command_log( $id ) {
 		if(wpcd_get_early_option('dvi_high_performance_command_logs')){
 			$dvicd_command_logs = new DVICDCommandLogsTable;
-			return $dvicd_command_logs->where('id',$id)->first()?->command_result;
+			$log = $dvicd_command_logs->where('id', $id)->first();
+			return $log ? $log->command_result : null;
 		}
 
 		return get_post_meta( $id, 'command_result', true );
