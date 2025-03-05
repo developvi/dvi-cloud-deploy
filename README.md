@@ -126,7 +126,13 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+6.1.1
+----
+* Fix: Fix null return for command result in WPCD_COMMAND_LOG class
+* Fix: Add checks for order object validity in WooCommerce item processing methods
+* Fix: potential null return for command log ID in WPCD_COMMAND_LOG class
 6.1.0
+----
 * Tweak: Always include the Imagick module in the PHP stack installation for all supported versions, removing Ubuntu version-specific conditions.
 * Implement high-performance command logging with DVICDCommandLogsTable integration
 * Refactor InitDviSetting to enhance high performance settings and improve code readability
