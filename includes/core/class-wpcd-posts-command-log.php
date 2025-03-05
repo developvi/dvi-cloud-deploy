@@ -350,7 +350,8 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 	public static function get_command_log( $id ) {
 		if(wpcd_get_early_option('dvi_high_performance_command_logs')){
 			$dvicd_command_logs = new DVICDCommandLogsTable;
-			return $dvicd_command_logs->where('id',$id)->first()?->command_result;
+			$log = $dvicd_command_logs->where('id', $id)->first();
+			return $log ? $log->command_result : null;
 		}
 
 		return get_post_meta( $id, 'command_result', true );
@@ -370,7 +371,8 @@ class WPCD_COMMAND_LOG extends WPCD_POSTS_LOG {
 			if ($count !== 1) {
 				return new \WP_Error("Command $name for $id has " . $count . ' instances');
 			}
-			return $command_logs->first()?->id;
+			$first_log = $command_logs->first();
+			return $first_log ? $first_log->id : null;
 		}
 
 

@@ -42,14 +42,16 @@ class WPCD_WOOCOMMERCE {
 	 */
 	protected function does_order_contain_item_of_type( $order, $item_type ) {
 		$found = false;
-		$items = $order->get_items();
-		foreach ( $items as $item ) {
-			$product_id = $item->get_product_id();
-			$product_id = apply_filters( 'wpcd_does_order_contain_item_of_type_product_id', $product_id, $item );
-			$is_type    = get_post_meta( $product_id, "wpcd_app_{$item_type}_product", true );
-			if ( 'yes' === $is_type ) {
-				$found = true;
-				break;
+		if ( is_object( $order ) ) {
+			$items = $order->get_items();
+			foreach ( $items as $item ) {
+				$product_id = $item->get_product_id();
+				$product_id = apply_filters( 'wpcd_does_order_contain_item_of_type_product_id', $product_id, $item );
+				$is_type    = get_post_meta( $product_id, "wpcd_app_{$item_type}_product", true );
+				if ( 'yes' === $is_type ) {
+					$found = true;
+					break;
+				}
 			}
 		}
 
@@ -75,6 +77,8 @@ class WPCD_WOOCOMMERCE {
 	 */
 	protected function does_order_suppress_thank_you_notice( $order, $item_type ) {
 		$return = true;
+		if ( is_object( $order ) ) {
+
 		$items  = $order->get_items();
 		foreach ( $items as $item ) {
 			$product_id = $item->get_product_id();
@@ -88,6 +92,7 @@ class WPCD_WOOCOMMERCE {
 				}
 			}
 		}
+	}
 
 		return apply_filters( 'wpcd_does_order_suppress_thank_you_notice', $return );
 	}
@@ -129,6 +134,7 @@ class WPCD_WOOCOMMERCE {
 	protected function get_unique_products_on_order( $order ) {
 
 		$return = array();
+		if ( is_object( $order ) ) {
 
 		$items = $order->get_items();
 		foreach ( $items as $item ) {
@@ -138,6 +144,7 @@ class WPCD_WOOCOMMERCE {
 				array_push( $return, $product_id );
 			}
 		}
+	}
 
 		return apply_filters( 'get_unique_products_on_order', $return );
 
