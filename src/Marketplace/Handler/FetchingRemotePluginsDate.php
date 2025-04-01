@@ -36,7 +36,10 @@ class FetchingRemotePluginsDate
             // Cache the data for 1 day
             set_transient('dvi_marketplace_plugins', $plugins_data, DAY_IN_SECONDS);
         }
-
+        
+        if(!is_array($plugins_data)) {
+            return []; // Return an empty array if the data is not in the expected format
+        }
         return $plugins_data;
     }
 }
