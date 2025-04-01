@@ -1515,7 +1515,7 @@ class WPCD_APP extends WPCD_Base {
 	public function get_app_id_by_domain_name( $domain_name ) {
 
 		// return nothing if no domain name is provided.
-		if ( ! isset( $domain_name ) || empty( $domain_name ) ) {
+		if ( empty( $domain_name ) ) {
 			return false;
 		}
 
@@ -1536,14 +1536,7 @@ class WPCD_APP extends WPCD_Base {
 		);
 
 		// get app id from found result.
-		$app_id = '';
-		if ( ! empty( $app_posts ) ) {
-			foreach ( $app_posts as $app_post ) {
-				$app_id = $app_post->ID;
-			}
-		}
-
-		return $app_id;
+		return ! empty( $app_posts ) ? reset($app_posts)->ID : false;
 
 	}
 
