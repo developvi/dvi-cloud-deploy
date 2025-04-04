@@ -126,6 +126,21 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+6.1.2
+----
+* Refactor: Simplify wpcd_get_the_title() by directly using WordPress native get_the_title() function.
+* Refactor: Replace verbose conditionals in wpcd_data_sync_allowed() and wpcd_email_notifications_allowed() with compact boolean expressions.
+* Refactor: Clean up wpcd_is_woocommerce_activated() by removing unnecessary else block and returning result directly.
+* Refactor: Use direct class_exists() returns in wpcd_is_git_enabled(), wpcd_is_mt_enabled() and similar checks.
+* Fix: Remove unused $allow variables in data sync and email notification check functions.
+* Fix: Eliminate redundant else statements for cleaner and more efficient logic.
+* Fix: Correct mismatched curly brace in wpcd_is_woocommerce_activated() function.
+* Tweak: Improve overall readability and adherence to modern PHP best practices.
+* Tweak: Apply early return patterns across all helper functions to reduce nesting and enhance maintainability.
+* Refactor: Simplified get_app_id_by_domain_name() by removing redundant checks, using reset() for first result, and ensuring consistent return type (false instead of empty string).
+* Fix: Add check to ensure decoded marketplace data is an array before returning, preventing potential errors from invalid API responses in getData() method.
+
+
 6.1.1
 ----
 * Fix: Fix null return for command result in WPCD_COMMAND_LOG class

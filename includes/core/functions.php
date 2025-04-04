@@ -90,11 +90,7 @@ function wpcd_delete_child_posts( $post_type, $post_id ) {
  */
 function wpcd_get_the_title( $post = 0 ) {
 
-	$post = get_post( $post );
-
-	$post_title = isset( $post->post_title ) ? $post->post_title : '';
-
-	return $post_title;
+	return get_the_title( $post );
 
 }
 
@@ -1079,15 +1075,8 @@ function wpcd_post_ids_to_key_value_array( $post_ids ) {
  * to be enabled on a site.
  */
 function wpcd_data_sync_allowed() {
-	$allow = false;
-
-	// It's completely disabled in the wp-config.php file.
-	if ( defined( 'WPCD_DISABLE_DATA_SYNC' ) && WPCD_DISABLE_DATA_SYNC ) {
-		return false;
-	}
-
-	// If we get here then all good.
-	return true;
+	// Check if data sync is disabled in the wp-config.php file.
+	return !( defined( 'WPCD_DISABLE_DATA_SYNC' ) && WPCD_DISABLE_DATA_SYNC );
 }
 
 /**
@@ -1095,15 +1084,8 @@ function wpcd_data_sync_allowed() {
  * to be enabled on a site.
  */
 function wpcd_email_notifications_allowed() {
-	$allow = false;
-
-	// It's completely disabled in the wp-config.php file.
-	if ( defined( 'WPCD_DISABLE_EMAIL_NOTIFICATIONS' ) && WPCD_DISABLE_EMAIL_NOTIFICATIONS ) {
-		return false;
-	}
-
-	// If we get here then all good.
-	return true;
+// It's completely disabled in the wp-config.php file.
+	return ! ( defined( 'WPCD_DISABLE_EMAIL_NOTIFICATIONS' ) && WPCD_DISABLE_EMAIL_NOTIFICATIONS );
 }
 
 /**
@@ -1502,11 +1484,7 @@ if ( ! function_exists( 'wpcd_is_woocommerce_activated' ) ) {
 	 * Check if WooCommerce is activated
 	 */
 	function wpcd_is_woocommerce_activated() {
-		if ( class_exists( 'woocommerce' ) ) {
-			return true;
-		} else {
-			return false;
-		}
+		return class_exists( 'woocommerce' );
 	}
 }
 
@@ -1848,11 +1826,7 @@ function wpcd_generate_uuid() {
  * @return bool
  */
 function wpcd_is_wc_module_enabled() {
-	if ( class_exists( 'WPCD_WooCommerce_Init' ) ) {
-		return true;
-	} else {
-		return false;
-	}
+	return class_exists( 'WPCD_WooCommerce_Init' );
 
 }
 
@@ -1864,11 +1838,7 @@ function wpcd_is_wc_module_enabled() {
  * @return bool
  */
 function wpcd_is_git_enabled() {
-	if ( class_exists( 'WPCD_GitControl_Init' ) ) {
-		return true;
-	} else {
-		return false;
-	}
+	return class_exists( 'WPCD_GitControl_Init' );
 }
 
 /**
@@ -1879,11 +1849,7 @@ function wpcd_is_git_enabled() {
  * @return bool
  */
 function wpcd_is_mt_enabled() {
-	if ( class_exists( 'WPCD_Multitenant_Init' ) ) {
-		return true;
-	} else {
-		return false;
-	}
+	return class_exists( 'WPCD_Multitenant_Init' );
 }
 
 /**
