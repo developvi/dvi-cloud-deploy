@@ -3,7 +3,7 @@ class MB_Conditional_Logic {
 	private $has_conditions = false;
 	private $outside_conditions = null;
 
-	public function __construct() {
+	public function setup(): void {
 		add_action( 'rwmb_before', [ $this, 'insert_meta_box_conditions' ] );
 		add_action( 'rwmb_before', [ $this, 'insert_toggle_type' ] );
 		add_filter( 'rwmb_wrapper_html', [ $this, 'insert_field_conditions' ], 10, 2 );
@@ -31,7 +31,7 @@ class MB_Conditional_Logic {
 	 *
 	 * @param array $settings Meta box/field settings.
 	 */
-	private function get_conditions_html( $settings ) {
+	private function get_conditions_html( array $settings ): string {
 		if ( empty( $settings['visible'] ) && empty( $settings['hidden'] ) ) {
 			return '';
 		}
@@ -39,6 +39,7 @@ class MB_Conditional_Logic {
 		$this->has_conditions = true;
 
 		$conditions = $this->parse_conditions( $settings );
+
 		return '<template class="mbc-conditions" data-conditions="' . esc_attr( wp_json_encode( $conditions ) ) . '"></template>';
 	}
 
@@ -74,7 +75,7 @@ class MB_Conditional_Logic {
 	public function enqueue() {
 		list( , $url ) = RWMB_Loader::get_path( __DIR__ );
 		wp_enqueue_script( 'mb-conditional-logic', $url . 'conditional-logic.js', ['underscore', 'rwmb'], filemtime( __DIR__ . '/conditional-logic.js' ), true );
-		wp_localize_script( 'mb-conditional-logic', 'conditions', $this->get_outside_conditions() );
+		\RWMB_Helpers_Field::localize_script_once( 'mb-conditional-logic', 'conditions', $this->get_outside_conditions() );
 	}
 
 	private function get_outside_conditions() {
@@ -88,7 +89,7 @@ class MB_Conditional_Logic {
 		return $this->outside_conditions;
 	}
 
-	private function parse_conditions( $conditions ) {
+	public function parse_conditions( array $conditions ): array {
 		$output = [];
 		if ( ! empty( $conditions['visible'] ) ) {
 			$output['visible'] = $this->parse_condition( $conditions['visible'] );
@@ -96,17 +97,11 @@ class MB_Conditional_Logic {
 		if ( ! empty( $conditions['hidden'] ) ) {
 			$output['hidden'] = $this->parse_condition( $conditions['hidden'] );
 		}
+
 		return $output;
 	}
 
-	private function parse_condition( $condition ) {
-		if ( ! is_array( $condition ) ) {
-			return array(
-				'when'     => [],
-				'relation' => 'and',
-			);
-		}
-
+	private function parse_condition( array $condition ): array {
 		$relation = isset( $condition['relation'] ) && in_array( $condition['relation'], ['and', 'or'] ) ? $condition['relation'] : 'and';
 
 		$condition_to_normalize = $condition;
@@ -137,8 +132,12 @@ class MB_Conditional_Logic {
 	private function normalize_criteria( $criteria ) {
 		$criteria_length = count( $criteria );
 
+		if ( 1 === $criteria_length ) {
+			$criteria = [ $criteria[0], '=', true ];
+		}
+
 		if ( 2 === $criteria_length ) {
-			$criteria = array( $criteria[0], '=', $criteria[1] );
+			$criteria = [ $criteria[0], '=', $criteria[1] ];
 		}
 
 		// Convert slug to id if conditional logic defined using slug for terms.
@@ -156,7 +155,7 @@ class MB_Conditional_Logic {
 
 		$slugs    = (array) $slugs;
 		$sql      = "SELECT term_id FROM {$wpdb->terms} WHERE slug IN(" . implode( ', ', array_fill( 0, count( $slugs ), '%s' ) ) . ')';
-		$prepared = call_user_func_array( array( $wpdb, 'prepare' ), array_merge( array( $sql ), $slugs ) );
+		$prepared = call_user_func_array( [ $wpdb, 'prepare' ], array_merge( [ $sql ], $slugs ) );
 
 		return array_map( 'intval', $wpdb->get_col( $prepared ) );
 	}
