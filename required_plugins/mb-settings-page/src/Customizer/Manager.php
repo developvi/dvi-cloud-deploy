@@ -21,7 +21,7 @@ class Manager {
 			}
 
 			// Meta box that doesn't have a settings page.
-			if ( isset( $meta_box['panel'] ) && count( $meta_box['fields'] ) > 0 ) {
+			if ( isset( $meta_box['panel'] ) && ! empty( $meta_box['fields'] ) && is_array( $meta_box['fields'] ) ) {
 				array_walk( $meta_box['fields'], [ $this, 'change_input_file' ] );
 				$meta_boxes[ $k ] = $meta_box;
 			}
@@ -33,7 +33,7 @@ class Manager {
 	private function change_input_file( &$field ) {
 		$field['type'] = ( $field['type'] === 'file' || $field['type'] === 'image' ) ? $field['type'] . '_advanced' : $field['type'];
 
-		if ( 'group' === $field['type'] && count( $field['fields'] ) > 0 ) {
+		if ( 'group' === $field['type'] && ! empty( $field['fields'] ) && is_array( $field['fields'] ) ) {
 			array_walk( $field['fields'], [ $this, 'change_input_file' ] );
 		}
 	}

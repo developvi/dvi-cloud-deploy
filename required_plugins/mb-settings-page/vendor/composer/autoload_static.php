@@ -21,6 +21,21 @@ class ComposerStaticInit6d8949d71f8642fa71b1f18c16efe1b8
     );
 
     public static $classMap = array (
+        'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'MBSP\\Customizer\\Control' => __DIR__ . '/../..' . '/src/Customizer/Control.php',
+        'MBSP\\Customizer\\Manager' => __DIR__ . '/../..' . '/src/Customizer/Manager.php',
+        'MBSP\\Customizer\\NormalSection' => __DIR__ . '/../..' . '/src/Customizer/NormalSection.php',
+        'MBSP\\Customizer\\Panel' => __DIR__ . '/../..' . '/src/Customizer/Panel.php',
+        'MBSP\\Customizer\\Setting' => __DIR__ . '/../..' . '/src/Customizer/Setting.php',
+        'MBSP\\Customizer\\SettingsSection' => __DIR__ . '/../..' . '/src/Customizer/SettingsSection.php',
+        'MBSP\\Factory' => __DIR__ . '/../..' . '/src/Factory.php',
+        'MBSP\\Loader' => __DIR__ . '/../..' . '/src/Loader.php',
+        'MBSP\\MetaBox' => __DIR__ . '/../..' . '/src/MetaBox.php',
+        'MBSP\\Network\\MetaBox' => __DIR__ . '/../..' . '/src/Network/MetaBox.php',
+        'MBSP\\Network\\SettingsPage' => __DIR__ . '/../..' . '/src/Network/SettingsPage.php',
+        'MBSP\\Network\\Storage' => __DIR__ . '/../..' . '/src/Network/Storage.php',
+        'MBSP\\SettingsPage' => __DIR__ . '/../..' . '/src/SettingsPage.php',
+        'MBSP\\Storage' => __DIR__ . '/../..' . '/src/Storage.php',
         'RWMB_Backup_Field' => __DIR__ . '/../..' . '/src/BackupField.php',
     );
 
