@@ -62,6 +62,10 @@ class ListTable extends \WP_List_Table {
 					echo $output;
 					submit_button( __( 'Filter', 'mb-custom-table' ), '', 'filter_action', false, [ 'id' => 'post-query-submit' ] );
 				}
+
+				if ( isset( $_GET['post_type'] ) && $_GET['post_type'] ) {
+					echo '<input type="hidden" name="post_type" value="' . esc_attr( $_GET['post_type'] ) . '">';
+				}
 			}
 			?>
 		</div>

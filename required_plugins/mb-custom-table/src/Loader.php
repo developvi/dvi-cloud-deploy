@@ -51,7 +51,8 @@ class Loader {
 
 		$is_rest     = defined( 'REST_REQUEST' ) && REST_REQUEST;
 		$object_type = $this->get_saved_object_type( $is_rest );
-		$meta_boxes  = $this->get_meta_boxes_from_post_request();
+
+		$meta_boxes  = ( 'model' === $object_type ) ? $this->get_meta_boxes_from_post_request() : $this->get_meta_boxes_for( $object_type, $object_id );
 
 		// Remove un-validated meta box (like not included in the front end), which don't trigger `rwmb_after_save_post` hook.
 		if ( ! $is_rest ) {
@@ -277,8 +278,9 @@ class Loader {
 				$prop = 'taxonomies';
 				break;
 			case 'model':
+				// Interact with models via admin pages, there will be a query string like `page=model-{model_name}`.
 				$page = rwmb_request()->get( 'page' );
-				if ( strpos( $page, 'model-' ) === 0 ) {
+				if ( ! empty( $page ) && strpos( $page, 'model-' ) === 0 ) {
 					$type = substr( $page, 6 );
 				}
 				$prop = 'models';
