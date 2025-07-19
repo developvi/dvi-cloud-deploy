@@ -1,18 +1,4 @@
 <?php
-/**
- * Group field class.
- *
- * @package    Meta Box
- * @subpackage Meta Box Group
- */
-
-/**
- * Class for group field.
- *
- * @package    Meta Box
- * @subpackage Meta Box Group
- */
-
 use MetaBox\Support\Arr;
 
 class RWMB_Group_Field extends RWMB_Field {
@@ -405,7 +391,7 @@ class RWMB_Group_Field extends RWMB_Field {
 	 */
 	protected static function child_field_std( $parent, $child, $meta ) {
 		// Respect 'std' value set in child field.
-		if ( ! empty( $child['std'] ) ) {
+		if ( isset( $child['std'] ) ) {
 			return $child['std'];
 		}
 
