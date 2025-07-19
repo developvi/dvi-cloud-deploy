@@ -1,0 +1,26 @@
+name: Release
+on:
+  push:
+    tags:
+      - "*"
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Create zip and upload
+        run: |
+          name=$(basename -s .git $(git config --get remote.origin.url))
+          git archive -o $name.zip --prefix=$name/ HEAD
+          rsync -e "ssh -o StrictHostKeyChecking=no" $name.zip ${{ secrets.SSH_USERNAME }}@${{ secrets.SERVER_IP }}:${{ secrets.DOWNLOADS_DIR }}
+      - name: Notify Slack
+        run: |
+          tag=$(git describe --tags `git rev-list --tags --max-count=1`)
+          curl -X POST --data-urlencode "payload={\"channel\": \"#meta-box\", \"username\": \"Bot\", \"text\": \"New version $tag for Meta Box Tooltips has been just released!\", \"icon_emoji\": \":tada:\"}" ${{ secrets.SLACK_WEBHOOK }}
