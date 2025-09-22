@@ -631,18 +631,10 @@ function wpcd_get_form_submission_post_author() {
  *
  * @return int author_id.
  */
+
 function wpcd_get_post_author( $post_id ) {
 
-	$author_id = 0;
-
-	if ( $post_id ) {
-		$post = get_post( $post_id );
-		if ( $post ) {
-			$author_id = $post->post_author;
-		}
-	}
-
-	return $author_id;
+	return $post_id ? get_post_field( 'post_author', $post_id ) : 0;
 
 }
 
