@@ -1,12 +1,27 @@
 <?php
 /**
- * Plugin Name: Meta Box Tooltip
+ * Plugin Name: MB Tooltip
  * Plugin URI:  https://metabox.io/plugins/meta-box-tooltip/
  * Description: Add tooltip for meta fields
- * Version:     1.1.8
+ * Version:     1.1.9
  * Author:      MetaBox.io
  * Author URI:  https://metabox.io
  * License:     GPL2+
+ *
+ * Copyright (C) 2010-2025 Tran Ngoc Tuan Anh. All rights reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 // Prevent loading this file directly.
@@ -23,14 +38,14 @@ if ( ! class_exists( 'MB_Tooltip' ) ) {
 			add_filter( 'rwmb_outer_html', [ $this, 'add_input_tooltip' ], 10, 2 );
 		}
 
-		public function enqueue() {
+		public function enqueue(): void {
 			list( , $url ) = RWMB_Loader::get_path( dirname( __FILE__ ) );
-			wp_enqueue_style( 'mb-tooltip', $url . 'css/tooltip.css', '', '1.1.7' );
+			wp_enqueue_style( 'mb-tooltip', $url . 'css/tooltip.css', [], filemtime( __DIR__ . '/css/tooltip.css' ) );
 
 			wp_register_script( 'popper', $url . 'js/popper.js', [], '2.11.6', true );
 			wp_register_script( 'tippy', $url . 'js/tippy.js', [ 'popper' ], '6.3.7', true );
 
-			wp_enqueue_script( 'mb-tooltip', $url . 'js/tooltip.js', [ 'jquery', 'tippy' ], '1.1.7', true );
+			wp_enqueue_script( 'mb-tooltip', $url . 'js/tooltip.js', [ 'jquery', 'tippy' ], filemtime( __DIR__ . '/js/tooltip.js' ), true );
 		}
 
 		public function add_label_tooltip( string $html, array $field ) : string {

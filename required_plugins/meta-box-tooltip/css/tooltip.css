@@ -1,5 +1,7 @@
 .mb-tooltip {
-	margin: 0 0 0 .5em;
+	margin-left: 4px;
+	position: relative;
+	top: -2px;
 	opacity: .15;
 	background: none;
 	border: none;

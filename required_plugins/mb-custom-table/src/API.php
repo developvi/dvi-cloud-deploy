@@ -101,7 +101,7 @@ class API {
 		$row       = apply_filters( 'mbct_add_data', $row, $object_id, $table );
 		do_action( 'mbct_before_add', $object_id, $table, $row );
 		$output = $wpdb->insert( $table, $row );
-		do_action( 'mbct_after_add', $object_id, $table, $row );
+		do_action( 'mbct_after_add', $wpdb->insert_id, $table, $row );
 
 		Cache::delete( $object_id, $table );
 

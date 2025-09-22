@@ -377,7 +377,7 @@
 
 		// If Gutenberg is active.
 		if ( rwmb.isGutenberg ) {
-			return $( '#editor' );
+			return $( '#editor, #site-editor' );
 		}
 
 		// Global scope. Should be the closest 'form', since in the frontend, users can insert the same meta box in multiple forms.
@@ -468,8 +468,8 @@
 		$element.find( rwmb.inputSelectors ).each( function() {
 			let $this = $( this ),
 				$field = $this.closest( '.rwmb-field.required' ),
-				oldRequired = $this.data( 'old-required' );
-				
+				oldRequired = $this.attr( 'data-old-required' );
+
 			if ( $field.length && oldRequired ) {
 				$this.prop( 'required', oldRequired );
 			}
@@ -508,7 +508,7 @@
 			let $this = $( this ),
 				required = $this.attr( 'required' );
 
-			$this.data( 'old-required', required );
+			$this.attr( 'data-old-required', required );
 
 			if ( required ) {
 				$this.prop( 'required', false );
@@ -593,12 +593,24 @@
 
 	////////// MAIN CODE //////////
 
+	let timer;
+	function debounceRunConditionalLogic() {
+		clearTimeout( timer );
+		timer = setTimeout( runConditionalLogic, 200 );
+	}
+
+	let unsubscribe;
 	function watch() {
 		getWatchedElements();
 
 		// In Gutenberg, simply subscribe to all changes.
+		// Run the conditional logic only once after 200ms, using debounce technique, to avoid lagging when a lot of changes happened.
 		if ( rwmb.isGutenberg ) {
-			wp.data.subscribe( runConditionalLogic );
+			// Unsubscribe from previous subscriber, because watch() can be called multiple times.
+			if ( typeof unsubscribe === 'function' ) {
+				unsubscribe();
+			}
+			unsubscribe = wp.data.subscribe( debounceRunConditionalLogic );
 		}
 
 		// Listening eventSource apply conditional logic when eventSource is change.
@@ -617,7 +629,12 @@
 		}
 	}
 
+	let run = false;
 	function init() {
+		if ( run ) {
+			return;
+		}
+
 		runConditionalLogic();
 		watch();
 
@@ -629,16 +646,38 @@
 
 		// For groups.
 		rwmb.$document.on( 'clone_completed', ( event, $group ) => runConditionalLogic( $group ) );
+
+		run = true;
 	}
 
 	// Export the runConditionalLogic to global scope to use in other scripts.
 	rwmb.runConditionalLogic = runConditionalLogic;
 
-	$( window ).on( 'load', function() {
-		init();
-	} );
+	if ( rwmb.isGutenberg ) {
+		// For Gutenberg, we need to subscribe to all changes, to detect when meta boxes are fully rendered (by JS!).
+		// So we can get watched elements (which are custom fields inside meta boxes) and run conditional logic.
+		const unsubscribe = wp.data.subscribe( () => {
+			const editPostStore = wp.data.select( 'core/edit-post' );
+			const editorStore = wp.data.select( 'core/editor' );
 
-	// Run when page finishes loading to improve performance.
-	// https://github.com/wpmetabox/meta-box/issues/1195.
-	setTimeout( init, 100 );
+			let isReady = false;
+			if ( editPostStore ) {
+				// For post editor, prefer to check if meta boxes are initialized.
+				isReady = editPostStore?.areMetaBoxesInitialized();
+			} else if ( editorStore ) {
+				// For site editor, check if editor is ready.
+				isReady = editorStore?.__unstableIsEditorReady();
+			}
+
+			if ( isReady ) {
+				setTimeout( init, 200 ); // Wait for 200ms to make sure all meta boxes are rendered.
+				unsubscribe(); // Unsubscribe from the editor changes, so it won't be called again.
+			}
+		} );
+	} else {
+		// Run when page finishes loading to improve performance.
+		// https://github.com/wpmetabox/meta-box/issues/1195.
+		$( window ).on( 'load', init );
+		setTimeout( init, 200 );
+	}
 } )( jQuery, rwmb );

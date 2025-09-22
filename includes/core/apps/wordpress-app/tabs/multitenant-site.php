@@ -2671,8 +2671,8 @@ class WPCD_WORDPRESS_TABS_MULTITENANT_SITE extends WPCD_WORDPRESS_TABS {
 				return $batch_arr;
 			} else {
 				// Get data from the pending tasks table to see how many are complete.
-				$succeeded                            = count( WPCD_POSTS_PENDING_TASKS_LOG()->get_tasks_by_state_reference( 'complete', $batch_key ) );
-				$failed                               = count( WPCD_POSTS_PENDING_TASKS_LOG()->get_tasks_by_state_reference( 'failed', $batch_key ) );
+				$succeeded                            =  WPCD_POSTS_PENDING_TASKS_LOG()->get_tasks_by_state_reference( 'complete', $batch_key ) ;
+				$failed                               =  WPCD_POSTS_PENDING_TASKS_LOG()->get_tasks_by_state_reference( 'failed', $batch_key ) ;
 				$batch_arr[ $batch_key ]['succeeded'] = $succeeded;
 				$batch_arr[ $batch_key ]['failed']    = $failed;
 				update_post_meta( $id, 'wpcd_app_mt_last_upgrade_tenant_batch_id', $batch_arr );

@@ -3,12 +3,27 @@
  * Plugin Name: MB Custom Table
  * Plugin URI:  https://metabox.io/plugins/mb-custom-table/
  * Description: Save custom fields data to custom table instead of the default meta tables.
- * Version:     2.2.0
+ * Version:     2.2.4
  * Author:      MetaBox.io
  * Author URI:  https://metabox.io
  * License:     GPL2+
  * Text Domain: mb-custom-table
  * Domain Path: /languages/
+ *
+ * Copyright (C) 2010-2025 Tran Ngoc Tuan Anh. All rights reserved.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
 // Prevent loading this file directly.
@@ -29,7 +44,7 @@ if ( ! function_exists( 'mb_custom_table_load' ) ) {
 	/**
 	 * Load plugin files after Meta Box is loaded
 	 */
-	function mb_custom_table_load() {
+	function mb_custom_table_load(): void {
 		if ( ! defined( 'RWMB_VER' ) ) {
 			return;
 		}
@@ -40,5 +55,7 @@ if ( ! function_exists( 'mb_custom_table_load' ) ) {
 
 		new MetaBox\CustomTable\Loader();
 		new MetaBox\CustomTable\Model\Ajax();
+
+		load_plugin_textdomain( 'mb-custom-table', false, plugin_basename( MBCT_DIR ) . '/languages/' );
 	}
 }

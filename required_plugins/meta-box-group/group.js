@@ -206,8 +206,8 @@
 			$clones = $( this ).parents( '.rwmb-group-clone' ),
 			totalLevel = $clones.length;
 		$clones.each( function ( i, clone ) {
-			var index = parseInt( $( clone ).parent().data( 'next-index' ) ) - 1,
-				level = totalLevel - i;
+			const index = parseInt( $( clone ).parent().data( 'next-index' ) ) - 1;
+			const level = totalLevel - i;
 
 			group.clone.replaceName.call( that, level, index );
 
@@ -232,8 +232,8 @@
 			return;
 		}
 
-		var index = parseInt( $this.closest( '.rwmb-input' ).data( 'next-index' ) ) - 1,
-			level = $this.parents( '.rwmb-clone' ).length;
+		const index = parseInt( $this.closest( '.rwmb-input' ).data( 'next-index' ) ) - 1;
+		const level = $this.parents( '.rwmb-clone' ).length;
 
 		group.clone.replaceName.call( this, level, index );
 
@@ -322,7 +322,8 @@
 			// Remove clones, and keep only their first clone. Reset [data-next-index] to 1
 			.find( '.rwmb-input' ).each( function () {
 				const gt = $( this ).attr( 'data-clone-empty-start' ) == 0 ? 1 : 0;
-				$( this ).data( 'next-index', 1 ).children( `.rwmb-clone:gt(${gt})` ).remove();
+				const nextIndex = gt === 0 ? 1 : 2;
+				$( this ).data( 'next-index', nextIndex ).children( `.rwmb-clone:gt(${gt})` ).remove();
 			} );
 
 		// Update [group index] for inputs

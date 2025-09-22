@@ -158,7 +158,7 @@ class SettingsPage {
 	}
 
 	public function enqueue() {
-		wp_enqueue_style( 'mb-settings-page', MBSP_URL . 'assets/settings.css', '', '2.1.5' );
+		wp_enqueue_style( 'mb-settings-page', MBSP_URL . 'assets/settings.css', [], '2.1.5' );
 
 		// For meta boxes.
 		wp_enqueue_script( 'common' );
@@ -173,8 +173,12 @@ class SettingsPage {
 		] );
 	}
 
-	public function has_font_awesome( $icon_url = '' ) {
+	public function has_font_awesome( $icon_url = '' ): bool {
 		$icon_url = $icon_url ?: $this->icon_url;
+		if ( ! $icon_url ) {
+			return false;
+		}
+
 		$strpos   = [ 'fa', 'fas', 'fa-solid', 'fab', 'fa-brand', 'far', 'fa-regular' ];
 		foreach ( $strpos as $value ) {
 			if ( strpos( $icon_url, $value ) !== false ) {
@@ -185,7 +189,7 @@ class SettingsPage {
 	}
 
 	public function enqueue_font_awesome() {
-		wp_enqueue_style( 'font-awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css', '', ' 6.2.1' );
+		wp_enqueue_style( 'font-awesome', 'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.1/css/all.min.css', [], ' 6.2.1' );
 		wp_add_inline_style(
 			'font-awesome',
 			'.fa:before, fas, .fa-solid:before, .fab:before, .fa-brand:before, .far:before, .fa-regular:before {
@@ -260,6 +264,6 @@ class SettingsPage {
 	}
 
 	public function __get( $name ) {
-		return isset( $this->args[ $name ] ) ? $this->args[ $name ] : null;
+		return $this->args[ $name ] ?? null;
 	}
 }

@@ -211,12 +211,7 @@ function wpcd_get_short_product_name() {
  * The WPCD_LONG_NAME constant for the product name can be defined in wp-config.php.
  */
 function wpcd_get_long_product_name() {
-	$product_name = 'WPCloudDeploy';
-	if ( defined( 'WPCD_LONG_NAME' ) ) {
-		$product_name = WPCD_LONG_NAME;
-	}
-
-	return $product_name;
+	return defined( 'WPCD_LONG_NAME' ) ? WPCD_LONG_NAME : 'WPCloudDeploy';
 }
 
 /**
@@ -228,12 +223,9 @@ function wpcd_get_long_product_name() {
  */
 function wpcd_is_doing_cron() {
 
-	if ( defined( 'WPCD_DOING_CORE_CRON' ) && WPCD_DOING_CORE_CRON ) {
-		return true;
-	}
-
-	return false;
+	return defined( 'WPCD_DOING_CORE_CRON' ) && WPCD_DOING_CORE_CRON;
 }
+
 
 /**
  * Returns the timeout for long running commands.
@@ -639,18 +631,10 @@ function wpcd_get_form_submission_post_author() {
  *
  * @return int author_id.
  */
+
 function wpcd_get_post_author( $post_id ) {
 
-	$author_id = 0;
-
-	if ( $post_id ) {
-		$post = get_post( $post_id );
-		if ( $post ) {
-			$author_id = $post->post_author;
-		}
-	}
-
-	return $author_id;
+	return $post_id ? get_post_field( 'post_author', $post_id ) : 0;
 
 }
 

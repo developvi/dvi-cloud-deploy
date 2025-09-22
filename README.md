@@ -126,6 +126,25 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+6.2.1
+----
+* Refactor: Change get_tasks_by_state_reference() to return count of tasks instead of full post objects for improved efficiency.
+* Refactor: Update foreach batch loop to store full task lists (succeeded/failed) instead of just counts.
+* Refactor: Limit get_posts to 1 record for efficiency since only existence of an "in-process" task matters.
+* factor: Simplify wpcd_get_long_product_name() using ternary operator for cleaner, shorter code.
+* Refactor: Simplify wpcd_is_doing_cron() by returning the boolean expression directly.
+* Refactor: Simplify wpcd_get_post_author() by using get_post_field() with a ternary operator instead of nested checks.
+
+6.2.0
+----
+* Update : MB Custom Table to version 2.2.4
+* Update : MB Settings Page to version 2.1.15
+* Update : MB Conditional Logic to version 1.6.28
+* Update : MB Group to version 1.4.6
+* Update : MB Tooltip to version 1.1.9
+* Update : MB Tabs to version 1.2.0
+* Update : composer phpseclib
+
 6.1.2
 ----
 * Refactor: Simplify wpcd_get_the_title() by directly using WordPress native get_the_title() function.

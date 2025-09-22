@@ -1,0 +1,2 @@
+<?php
+return ['domain'=>'meta-box-group','plural-forms'=>'nplurals=2; plural=n != 1;','language'=>'de_DE','project-id-version'=>'Meta Box Group','pot-creation-date'=>'2025-04-13 13:46+0000','po-revision-date'=>'2025-04-13 13:47+0000','x-generator'=>'Loco https://localise.biz/','messages'=>['Are you sure you want to remove %s?'=>'Bist du sicher, dass du %s entfernen willst?','Entry'=>'Eintrag','Entry {#}'=>'Eintrag {#}','No'=>'Nein','Off'=>'Aus','On'=>'An','Remove'=>'Entfernen','this group'=>'diese Gruppe','Yes'=>'Ja']];
