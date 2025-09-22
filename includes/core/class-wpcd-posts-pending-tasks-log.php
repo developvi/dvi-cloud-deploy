@@ -777,7 +777,7 @@ class WPCD_PENDING_TASKS_LOG extends WPCD_POSTS_LOG {
 		$args = array(
 			'post_type'      => 'wpcd_pending_log',
 			'post_status'    => 'private',
-			'posts_per_page' => -1,
+			'posts_per_page' => 1, // Only need to check if at least one record exists.
 			'meta_query'     => array(
 				array(
 					'key'   => 'pending_task_associated_server_id',
@@ -792,8 +792,8 @@ class WPCD_PENDING_TASKS_LOG extends WPCD_POSTS_LOG {
 
 		$app_posts = get_posts( $args );
 
-		// @TODO: We really need to check each record to make sure that the pending_task_start_date is less than an hour before we return false.
-		if ( $app_posts ) {
+		// Check if any record exists.
+		if ( ! empty( $app_posts ) ) {
 			return false;
 		}
 
