@@ -3,13 +3,15 @@
 * Plugin Name: DVICloudDeploy
 * Plugin URI: https://developvi.com
 * Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
-* Version: 6.1.2
+* Version: 6.2.0
 * Requires at least: 5.8
 * Requires PHP: 7.4
 * Item Id: 1493
 * Author: DVICloudDeploy
 * Author URI: https://developvi.com
 * Domain Path: /languages
+* Text Domain: wpcd
+* Requires Plugins: meta-box
  */
 
 use DVICloudDeploy\Core\CommandLog\Table\DVICDCreateTable;
