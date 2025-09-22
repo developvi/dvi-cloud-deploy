@@ -223,12 +223,9 @@ function wpcd_get_long_product_name() {
  */
 function wpcd_is_doing_cron() {
 
-	if ( defined( 'WPCD_DOING_CORE_CRON' ) && WPCD_DOING_CORE_CRON ) {
-		return true;
-	}
-
-	return false;
+	return defined( 'WPCD_DOING_CORE_CRON' ) && WPCD_DOING_CORE_CRON;
 }
+
 
 /**
  * Returns the timeout for long running commands.
