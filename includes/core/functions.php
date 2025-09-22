@@ -211,12 +211,7 @@ function wpcd_get_short_product_name() {
  * The WPCD_LONG_NAME constant for the product name can be defined in wp-config.php.
  */
 function wpcd_get_long_product_name() {
-	$product_name = 'WPCloudDeploy';
-	if ( defined( 'WPCD_LONG_NAME' ) ) {
-		$product_name = WPCD_LONG_NAME;
-	}
-
-	return $product_name;
+	return defined( 'WPCD_LONG_NAME' ) ? WPCD_LONG_NAME : 'WPCloudDeploy';
 }
 
 /**
