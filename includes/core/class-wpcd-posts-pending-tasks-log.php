@@ -578,11 +578,11 @@ class WPCD_PENDING_TASKS_LOG extends WPCD_POSTS_LOG {
 	 * @param string $reference   Match the 'pending_task_reference' meta.
 	 */
 	public function get_tasks_by_state_reference( $state, $reference ) {
-
 		$args = array(
 			'post_type'      => 'wpcd_pending_log',
 			'post_status'    => 'private',
-			'posts_per_page' => -1,
+			'posts_per_page' => 1,
+			'fields'         => 'ids', // Only retrieve post IDs for efficiency.
 			'meta_query'     => array(
 				array(
 					'key'   => 'pending_task_state',
@@ -595,9 +595,8 @@ class WPCD_PENDING_TASKS_LOG extends WPCD_POSTS_LOG {
 			),
 		);
 
-		$task_posts = get_posts( $args );
-
-		return $task_posts;
+		$query = new WP_Query( $args );
+		return $query->found_posts; // Return the number of posts found.
 
 	}
 
