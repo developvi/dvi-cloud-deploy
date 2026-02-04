@@ -14,6 +14,7 @@
 * Requires Plugins: meta-box
  */
 
+use DVICloudDeploy\Core\AdminPanel\Init as AdminPanelInit;
 use DVICloudDeploy\Core\CommandLog\Table\DVICDCreateTable;
 use DVICloudDeploy\Core\DviSetting\InitDviSetting;
 use DVICloudDeploy\Marketplace\Init;
@@ -122,7 +123,8 @@ class DVICDInit {
 			return false;
 		}
 		Init::init();
-		
+		AdminPanelInit::init();
+
 		(new InitDviSetting)->init();
 
 		// add_action( 'plugins_loaded', function() {
