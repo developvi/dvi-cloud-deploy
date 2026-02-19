@@ -68,7 +68,8 @@ trait wpcd_wpapp_metaboxes_server {
 		}
 
 		/* Where should the server tabs go? */
-		$tab_style = $this->get_tab_style_server();
+		$tab_style      = $this->get_tab_style_server();
+		$is_admin_panel = ( 'adminpanel' === $tab_style );
 
 		/* Initial array that will hold field list */
 		$fields = array();
@@ -76,15 +77,17 @@ trait wpcd_wpapp_metaboxes_server {
 		/* Paint fields at the top of the screen */
 		switch ( $tab_style ) {
 			case 'left':
+			case 'adminpanel':
 				/* If we are painting the tabs vertically, we need to add a new metabox at the top of the screen to show the core details of the site. */
 				$meta_boxes[] = array(
 					'id'         => "wpcd_server_{$this->get_app_name()}_tab_top_of_server_details",
-					'title'      => __( 'WordPress Server', 'wpcd' ),
-					'class'      => 'wpcd-wpapp-actions',
+					'title'      => $is_admin_panel ? __( 'Server Overview', 'wpcd' ) : __( 'WordPress Server', 'wpcd' ),
+					'class'      => "wpcd_server_{$this->get_app_name()}_tab_top_of_server_details" . ( $is_admin_panel ? ' dvicd-ap-overview' : '' ),
 					'post_types' => 'wpcd_app_server',
 					'fields'     => $this->get_general_fields_server( $fields, $id ),
-					'class'      => "wpcd_server_{$this->get_app_name()}_tab_top_of_server_details",
-					'style'      => 'seamless',
+					'style'      => $is_admin_panel ? '' : 'seamless',
+					'context'    => $is_admin_panel ? 'side' : 'normal',
+					'priority'   => $is_admin_panel ? 'high' : 'default',
 				);
 				break;
 			default:
@@ -93,9 +96,9 @@ trait wpcd_wpapp_metaboxes_server {
 				break;
 		}
 
-		/* Get tabs and fields - these filters are implemented throughout the wpapp code */
-		$tabs   = apply_filters( "wpcd_server_{$this->get_app_name()}_get_tabnames", array(), $id );
-		$fields = apply_filters( "wpcd_server_{$this->get_app_name()}_get_tabs", $fields, $id );
+		/* Get tabs and fields - dvicd_* primary; legacy wpcd_* via Deprecated */
+		$tabs   = apply_filters( "dvicd_server_{$this->get_app_name()}_get_tabnames", array(), $id );
+		$fields = apply_filters( "dvicd_server_{$this->get_app_name()}_get_tabs", $fields, $id );
 
 		/* Give each tab a default icon */
 		foreach ( $tabs as $key => $tab ) {
@@ -107,11 +110,11 @@ trait wpcd_wpapp_metaboxes_server {
 		$meta_boxes[] = array(
 			'id'          => "wpcd_server_{$this->get_app_name()}_tab3",
 			'title'       => __( 'WordPress Server', 'wpcd' ),
-			'class'       => 'wpcd-wpapp-actions',
+			'class'       => 'wpcd-wpapp-actions' . ( $is_admin_panel ? ' dvicd-ap-metabox' : '' ),
 			'tabs'        => $tabs,
-			'tab_style'   => $tab_style,
+			'tab_style'   => $is_admin_panel ? 'left' : $tab_style,
 			'tab_wrapper' => true,
-			'style'       => $tab_style === 'left' ? 'seamless' : '',
+			'style'       => ( $tab_style === 'left' || $is_admin_panel ) ? 'seamless' : '',
 			'post_types'  => 'wpcd_app_server',
 			'fields'      => $fields,
 		);

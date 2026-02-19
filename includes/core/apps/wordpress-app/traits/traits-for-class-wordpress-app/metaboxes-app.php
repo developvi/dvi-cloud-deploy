@@ -44,17 +44,22 @@ trait wpcd_wpapp_metaboxes_app {
 
 		/* Paint fields at the top of the screen */
 		$tab_style = $this->get_tab_style();
+		$is_admin_panel = ( 'adminpanel' === $tab_style );
 		switch ( $tab_style ) {
 			case 'left':
+			case 'adminpanel':
 				/* If we are painting the tabs vertically, we need to add a new metabox at the top of the screen to show the core details of the site. */
 				$meta_boxes[] = array(
 					'id'         => "wpcd_{$this->get_app_name()}_tab_top_of_site_details",
-					'title'      => sprintf( __( 'Server: %1$s, Region: %2$s, Provider: %3$s', 'wpcd' ), $this->get_server_name( $id ), $this->get_server_region( $id ), WPCD()->wpcd_get_cloud_provider_desc( $this->get_server_provider( $id ) ) ),
-					'class'      => 'wpcd-wpapp-actions',
+					'title'      => $is_admin_panel
+						? __( 'Site Overview', 'wpcd' )
+						: sprintf( __( 'Server: %1$s, Region: %2$s, Provider: %3$s', 'wpcd' ), $this->get_server_name( $id ), $this->get_server_region( $id ), WPCD()->wpcd_get_cloud_provider_desc( $this->get_server_provider( $id ) ) ),
+					'class'      => "wpcd_{$this->get_app_name()}_tab_top_of_site_details" . ( $is_admin_panel ? ' dvicd-ap-overview' : '' ),
 					'post_types' => 'wpcd_app',
 					'fields'     => $this->get_general_fields( $fields, $id ),
-					'class'      => "wpcd_{$this->get_app_name()}_tab_top_of_site_details",
-					'style'      => 'seamless',
+					'style'      => $is_admin_panel ? '' : 'seamless',
+					'context'    => $is_admin_panel ? 'side' : 'normal',
+					'priority'   => $is_admin_panel ? 'high' : 'default',
 				);
 				break;
 			default:
@@ -63,9 +68,9 @@ trait wpcd_wpapp_metaboxes_app {
 				break;
 		}
 
-		/* Get tabs and fields - these filters are implemented throughout the wpapp code */
-		$tabs   = apply_filters( "wpcd_app_{$this->get_app_name()}_get_tabnames", array(), $id );
-		$fields = apply_filters( "wpcd_app_{$this->get_app_name()}_get_tabs", $fields, $id );
+		/* Get tabs and fields - dvicd_* primary; legacy wpcd_* via Deprecated */
+		$tabs   = apply_filters( "dvicd_app_{$this->get_app_name()}_get_tabnames", array(), $id );
+		$fields = apply_filters( "dvicd_app_{$this->get_app_name()}_get_tabs", $fields, $id );
 
 		/* Give each tab a default icon */
 		$cnt = 0;
@@ -112,10 +117,11 @@ trait wpcd_wpapp_metaboxes_app {
 		$meta_boxes[] = array(
 			'id'          => "wpcd_{$this->get_app_name()}_tab2",
 			'title'       => sprintf( __( 'Server: %1$s Region: %2$s Provider: %3$s', 'wpcd' ), $server_name, $server_region, $server_provider ),
-			'class'       => 'wpcd-wpapp-actions',
+			'class'       => 'wpcd-wpapp-actions' . ( $is_admin_panel ? ' dvicd-ap-metabox' : '' ),
 			'tabs'        => $tabs,
-			'tab_style'   => $tab_style,
+			'tab_style'   => $is_admin_panel ? 'left' : $tab_style,
 			'tab_wrapper' => true,
+			'style'       => ( $tab_style === 'left' || $is_admin_panel ) ? 'seamless' : '',
 			'post_types'  => 'wpcd_app',
 			'fields'      => $fields,
 		);

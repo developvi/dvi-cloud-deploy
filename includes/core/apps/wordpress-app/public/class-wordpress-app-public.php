@@ -584,7 +584,7 @@ class WPCD_WORDPRESS_APP_PUBLIC {
 				ob_start();
 
 				$metaboxes = array();
-				if ( WPCD_WORDPRESS_APP()->get_tab_style_server() == 'left' ) {
+				if ( in_array( WPCD_WORDPRESS_APP()->get_tab_style_server(), array( 'left', 'adminpanel' ), true ) ) {
 					$metaboxes[] = 'wpcd_server_wordpress-app_tab_top_of_server_details';
 				}
 
@@ -625,7 +625,7 @@ class WPCD_WORDPRESS_APP_PUBLIC {
 
 				ob_start();
 				$metaboxes = array();
-				if ( WPCD_WORDPRESS_APP()->get_tab_style() == 'left' ) {
+				if ( in_array( WPCD_WORDPRESS_APP()->get_tab_style(), array( 'left', 'adminpanel' ), true ) ) {
 					$metaboxes[] = 'wpcd_wordpress-app_tab_top_of_site_details';
 				}
 
