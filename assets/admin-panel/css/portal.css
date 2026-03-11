@@ -1,0 +1,108 @@
+.dvicd-ap-portal-shell {
+	min-height: 100vh;
+	background: linear-gradient(180deg, var(--dvicd-ap-medium, #f3f3f5) 0%, var(--dvicd-ap-light, #fdfdfd) 240px);
+	color: var(--dvicd-ap-text, #1f2937);
+}
+
+.dvicd-ap-portal-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 14px 20px;
+	background: var(--dvicd-ap-card-bg, #fff);
+	border-bottom: 1px solid var(--dvicd-ap-border, #e5e7eb);
+	box-shadow: var(--dvicd-ap-shadow, 0 1px 3px rgba(0, 0, 0, 0.08));
+}
+
+.dvicd-ap-portal-brand {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 18px;
+	font-weight: 700;
+	color: var(--dvicd-ap-fe-primary, var(--dvicd-ap-primary, #e91e63));
+	text-decoration: none;
+}
+
+.dvicd-ap-portal-user {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	font-size: 13px;
+	color: var(--dvicd-ap-muted, #6b7280);
+}
+
+.dvicd-ap-portal-user a {
+	color: var(--dvicd-ap-fe-primary, var(--dvicd-ap-primary, #e91e63));
+	text-decoration: none;
+}
+
+.dvicd-ap-portal-body {
+	display: grid;
+	grid-template-columns: 220px minmax(0, 1fr);
+	gap: 0;
+	min-height: calc(100vh - 58px);
+}
+
+.dvicd-ap-portal-sidebar {
+	padding: 20px 14px;
+	background: var(--dvicd-ap-card-bg, #fff);
+	border-inline-end: 1px solid var(--dvicd-ap-border, #e5e7eb);
+}
+
+.dvicd-ap-portal-nav {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.dvicd-ap-portal-nav li {
+	margin: 0 0 6px;
+}
+
+.dvicd-ap-portal-nav a {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	color: var(--dvicd-ap-text, #1f2937);
+	text-decoration: none;
+	font-size: 14px;
+}
+
+.dvicd-ap-portal-nav a:hover,
+.dvicd-ap-portal-nav a.is-active {
+	background: var(--dvicd-ap-medium, #f3f3f5);
+	color: var(--dvicd-ap-fe-primary, var(--dvicd-ap-primary, #e91e63));
+}
+
+.dvicd-ap-portal-content {
+	padding: 20px;
+}
+
+.dvicd-ap-portal-content #wpcd_public_wrapper {
+	max-width: 100%;
+}
+
+@media (max-width: 860px) {
+	.dvicd-ap-portal-body {
+		grid-template-columns: 1fr;
+	}
+
+	.dvicd-ap-portal-sidebar {
+		border-inline-end: 0;
+		border-bottom: 1px solid var(--dvicd-ap-border, #e5e7eb);
+	}
+
+	.dvicd-ap-portal-nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+
+	.dvicd-ap-portal-nav li {
+		margin: 0;
+	}
+}
