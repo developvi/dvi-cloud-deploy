@@ -4,8 +4,8 @@
 * Plugin URI: https://developvi.com
 * Description: Deploy and manage cloud servers and apps from inside the WordPress Admin dashboard.
 * Version: 6.2.2
-* Requires at least: 6.8.2
-* Requires PHP: 7.4
+* Requires at least: 7.0
+* Requires PHP: 8.2
 * Item Id: 1493
 * Author: DVICloudDeploy
 * Author URI: https://developvi.com
@@ -132,6 +132,9 @@ class DVICDInit {
 		
 		
 
+		/* Load language files early (before required_files at -20; required for WP 6.7+). */
+		add_action( 'init', array( $this, 'load_plugin_textdomain' ), -30 );
+
 		/* Use init hook to load up required files */
 		add_action( 'init', array( $this, 'required_files' ), -20 );
 
@@ -154,10 +157,6 @@ class DVICDInit {
 		/* Show documentation and quick-start links in the plugin list. */
 		add_filter( 'plugin_row_meta', array( $this, 'wpcd_append_support_and_faq_links' ), 10, 4 );
 
-
-		/* Load languages files */
-        add_action( 'init', array( $this, 'load_plugin_textdomain' ) );
-
 		/* Send email to admin if critical crons aren't running. */
 		add_action( 'shutdown', array( $this, 'send_email_for_absent_crons' ), 20 );
 
@@ -178,22 +177,23 @@ class DVICDInit {
 	 */
 	public function custom_cron_schedule( $schedules ) {
 		// if this schedule is not already defined by someone else...
+		// Plain strings: cron_schedules can run before the textdomain is loaded (WP 6.7+).
 		if ( ! isset( $schedules['every_minute'] ) ) {
 			$schedules['every_minute'] = array(
 				'interval' => MINUTE_IN_SECONDS,
-				'display'  => __( 'Every minute', 'wpcd' ),
+				'display'  => 'Every minute',
 			);
 		}
 		if ( ! isset( $schedules['every_two_minute'] ) ) {
 			$schedules['every_two_minute'] = array(
 				'interval' => 120,
-				'display'  => __( 'Every 2 minutes', 'wpcd' ),
+				'display'  => 'Every 2 minutes',
 			);
 		}
 		if ( ! isset( $schedules['every_fifteen_minute'] ) ) {
 			$schedules['every_fifteen_minute'] = array(
 				'interval' => 900,
-				'display'  => __( 'Every 15 minutes', 'wpcd' ),
+				'display'  => 'Every 15 minutes',
 			);
 		}
 		return $schedules;
@@ -609,16 +609,14 @@ class DVICDInit {
 		$screen     = get_current_screen();
 		$post_types = array( 'wpcd_app_server', 'wpcd_app', 'wpcd_team', 'wpcd_permission_type', 'wpcd_command_log', 'wpcd_ssh_log', 'wpcd_error_log', 'wpcd_pending_log' );
 
-		$php_version    = phpversion();
-		$php_version_id = str_replace( '.', '0', $php_version );
+		$php_version = PHP_VERSION;
 
 		// Checks to see if "php version check" transient is set or not. If not set then show an admin notice.
 		if ( ! get_transient( 'wpcd_php_version_check' ) && is_object( $screen ) && in_array( $screen->post_type, $post_types, true ) ) {
-			// Here 70400 is a php version 7.4.0.
-			if ( (int) $php_version_id < 70400 ) {
+			if ( ! version_compare( $php_version, '8.2', '>=' ) ) {
 				$class = 'notice notice-error is-dismissible wpcd-php-version-check';
 				/* translators: %s php version */
-				$message = sprintf( __( '<strong>WPCloudDeploy plugin requires a PHP version greater or equal to "7.4.0". You are running %s.</strong>', 'wpcd' ), $php_version );
+				$message = sprintf( __( '<strong>WPCloudDeploy plugin requires a PHP version greater or equal to "8.2". You are running %s.</strong>', 'wpcd' ), $php_version );
 				/* Translators: %2$s is a set of CSS classes; %2$s is a text message about the PHP version being incompatible. */
 				printf( '<div data-dismissible="notice-php-warning" class="%2$s"><p>%3$s</p></div>', wp_create_nonce( 'wpcd-admin-dismissible-notice' ), $class, $message );
 			}
@@ -847,7 +845,7 @@ class DVICDInit {
 	 * @return  array  $links_array New links to be added to the plugin list.
 	 */
 	public function wpcd_append_support_and_faq_links( $links_array, $plugin_file_name, $plugin_data, $status ) {
-		if ( strpos( $plugin_file_name, basename( __FILE__ ) ) ) {
+		if ( str_contains( $plugin_file_name, basename( __FILE__ ) ) ) {
 
 			$links_array[] = '<a href="https://www.paypal.com/paypalme/elsherifsoft" style="color: #39b54a;font-weight: bold;" target="_blank"><span class="dashicons dashicons-star-filled" aria-hidden="true" style="font-size:14px;line-height:1.3"></span> Sponsor</a>';
 			$links_array[] = '<a href="https://discord.com/invite/kjhta4xQc2" target="_blank"><span class="dashicons dashicons-megaphone" aria-hidden="true" style="font-size:14px;line-height:1.3;margin-right:5px;"></span> Join Our Discord Community</a>';
@@ -887,9 +885,9 @@ class DVICDInit {
 		$return = $msg;
 
 		$screen = get_current_screen();
-		$post_type_contains = isset( $screen->post_type ) &&  strpos( $screen->post_type, 'wpcd' ) !== false;
-		$taxonomy_contains = isset( $screen->taxonomy ) && strpos( $screen->taxonomy, 'wpcd' ) !== false ;
-		$page_contains = isset( $_GET['page'] ) && strpos( $_GET['page'], 'dvi' ) !== false ;
+		$post_type_contains = isset( $screen->post_type ) &&  str_contains( $screen->post_type, 'wpcd' );
+		$taxonomy_contains = isset( $screen->taxonomy ) && str_contains( $screen->taxonomy, 'wpcd' ) ;
+		$page_contains = isset( $_GET['page'] ) && str_contains( $_GET['page'], 'dvi' ) ;
  		if ( ( is_object( $screen ) && ( $page_contains || $post_type_contains || $taxonomy_contains) ) ) {
 
 
@@ -1044,7 +1042,8 @@ class DVICDInit {
 			$return = false;
 
 			// Write an error out to the error log so the admin can see why things aren't being activated.
-			error_log( __( 'WPCD Cannot remain activated because the following add-ons are not compatible with this version.', 'wpcd' ) );
+			// Plain strings: may run before the textdomain is loaded (WP 6.7+).
+			error_log( 'WPCD Cannot remain activated because the following add-ons are not compatible with this version.' );
 			error_log( print_r( $incompatible_add_ons, true ) );
 
 			// Deactivate the plugin.
@@ -1054,7 +1053,7 @@ class DVICDInit {
 
 				// Show Message and Die.
 				$incompatible_addons = get_option( 'wpcd_incompatible_addons', $incompatible_add_ons );
-				$message             = __( 'These addons are incompatible with WPCloudDeploy. WPCloudDeploy has been deactivated.', 'wpcd' );
+				$message             = 'These addons are incompatible with WPCloudDeploy. WPCloudDeploy has been deactivated.';
 				foreach ( $incompatible_addons as $incompatible_addon ) {
 					$message .= '<br />' . $incompatible_addon;
 				}
