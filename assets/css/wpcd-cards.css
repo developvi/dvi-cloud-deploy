@@ -102,6 +102,19 @@
 	display: none;
 }
 
+/* Hide empty card-container marker rows everywhere (not only first-of-type). */
+.rwmb-wpcd_card_container-wrapper,
+.rwmb-row:has(.rwmb-wpcd_card_container-wrapper),
+.rwmb-column:has(> .rwmb-wpcd_card_container-wrapper) {
+	display: none !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	height: 0 !important;
+	min-height: 0 !important;
+	overflow: hidden !important;
+	border: 0 !important;
+}
+
 /* With certain tabs, we want the cards in them to flex - apps. */
 #wpcd_wordpress-app_tab2 .rwmb-tab-panel-backup,
 #wpcd_wordpress-app_tab2 .rwmb-tab-panel-change-domain,
