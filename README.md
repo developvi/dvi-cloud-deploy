@@ -1,22 +1,22 @@
-# About WPCloudDeploy #
+# About DVICloudDeploy #
 
-**WPCloudDeploy is a WordPress plugin that allows you to easily deploy servers at major cloud-server providers and then install apps (such as WordPress) on those servers.  And it does it from inside the familiar WordPress wp-admin dashboard.**
+**DVICloudDeploy is a WordPress plugin that allows you to easily deploy servers at major cloud-server providers and then install apps (such as WordPress) on those servers.  And it does it from inside the familiar WordPress wp-admin dashboard.**
 
-![WPCloudDeploy Dashboard](https://wpclouddeploy.com/wp-content/uploads/2021/10/server-list-without-slate-theme-01.png)
+![DVICloudDeploy Dashboard](https://wpclouddeploy.com/wp-content/uploads/2021/10/server-list-without-slate-theme-01.png)
 
 The plugin makes it easy to deploy servers at well-known providers such as DigitalOcean, Linode, Vultr, AWS, Google Cloud and more.
 
 **It is primarily used to install and manage WordPress servers and sites.** 
 
-![WPCloudDeploy Dashboard](https://wpclouddeploy.com/wp-content/uploads/2022/04/wpcd-v4-095.png)
+![DVICloudDeploy Dashboard](https://wpclouddeploy.com/wp-content/uploads/2022/04/wpcd-v4-095.png)
 
 Its extensible model allow developers to add new apps in the future.
 
 All management features are available inside of wp-admin on your WordPress site.  Apart from your cloud server provider(s), you do not need a 3rd party SaaS service to manage your servers and sites.
 
-[View a full list of WordPress-focused features](https://wpclouddeploy.com/features/)
+[View a full list of WordPress-focused features](https://docs.dvicd.com/02-User-guide/a-quick-tour/)
 
-![WPCloudDeploy Dashboard on The Front End For Clients](https://wpclouddeploy.com/wp-content/uploads/2022/06/wpcd-front-end-04.png)
+![DVICloudDeploy Dashboard on The Front End For Clients](https://wpclouddeploy.com/wp-content/uploads/2022/06/wpcd-front-end-04.png)
 
 ## Getting Started: The Easier Way ##
 
@@ -24,15 +24,15 @@ The easiest way to get started is to use the [pre-configured droplet at digital 
 
 Just deploy the droplet, login with your ssh credentials and follow the instructions to setup your domain and other info.
 
-Then follow the [getting started documentation on the WPCloudDeploy site](https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/).
+Then follow the [getting started documentation](https://docs.dvicd.com/01-cloud-deploy-core/introduction-installation-and-quick-start-guide/).
 
 These instructions will help you create ssh keys, api keys and connect to your account at DigitalOcean.
 
 ## Getting Started: The Less Easier Way ##
 
-Alternatively, you can download the zip file from here and install it like you would any other WordPress plugin. You will need to tweak your webserver so check out [the pre-requisites](https://wpclouddeploy.com/documentation/wpcloud-deploy/requirements/) before going down this road.
+Alternatively, you can download the zip file from here and install it like you would any other WordPress plugin. You will need to tweak your webserver so check out [the pre-requisites](https://docs.dvicd.com/01-cloud-deploy-core/requirements/) before going down this road.
 
-Then, to install WordPress servers and sites, follow the [getting started documentation on the WPCloudDeploy site](https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/)
+Then, to install WordPress servers and sites, follow the [getting started documentation](https://docs.dvicd.com/01-cloud-deploy-core/introduction-installation-and-quick-start-guide/)
 
 ## Notifications and Updates ##
 
@@ -40,11 +40,11 @@ Please consider [signing up for our notifications](https://wpclouddeploy.com/mai
 
 ## Documentation ##
 
-Full documentation is located on the WPCloudDeploy website.
+Full documentation is located on the [DVICloudDeploy docs site](https://docs.dvicd.com/).
 
-[Commonly used documentation](https://wpclouddeploy.com/doc-landing/)
+[Commonly used documentation](https://docs.dvicd.com/)
 
-[All documentation](https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/)
+[All documentation](https://docs.dvicd.com/01-cloud-deploy-core/introduction-installation-and-quick-start-guide/)
 
 ## Plugin Features ##
 
@@ -53,7 +53,7 @@ Features of the plugin include:
 * APP: WordPress - **EXTENSIVE** support for deploying and managing WordPress servers and sites from inside the WordPress admin dashboard. This is the primary app type that this plugin supports.  
 * Integrated DigitalOcean Cloud Provider.
 * Extensible server provider model supports EC2, LIGHTSAIL, LINODE, VULTR, UPCLOUD, HETZNER, EXOSCALE, AZURE, GOOGLE CLOUD and other public and private cloud providers via additional plugins.
-* Extra App: OpenVPN - includes front-end purchase and management. This helps developers to see how multiple apps can potentially co-exist inside the framework.
+* Extra App: OpenVPN - includes front-end management. This helps developers to see how multiple apps can potentially co-exist inside the framework.
 * Extra App: Basic Server - deploy simple servers with no additional apps pre-installed. This helps developers to see how multiple apps can potentially co-exist inside the framework.
 
 ## Roadmap ##
@@ -62,11 +62,11 @@ Features of the plugin include:
 
 ## Requirements ##
 * WordPress 5.8 or later
-* PHP 7.4, [8.0, 8.1 or 8.2](https://wpclouddeploy.com/documentation/more/php-8-0-8-1-notes/)
+* PHP 7.4, [8.0, 8.1 or 8.2](https://docs.dvicd.com/01-cloud-deploy-core/php-8.0-8.1-8.2-and-8.3-notes/)
 
-Once the plugin is installed please view additional changes required to PHP and web server execution timeout values under the WPCLOUDDEPLOY → SETTINGS → GENERAL SETTINGS tab. 
+Once the plugin is installed please view additional changes required to PHP and web server execution timeout values under the DVICLOUDDEPLOY → SETTINGS → GENERAL SETTINGS tab. 
 
-You can also view all requirements at the bottom of our [getting started documentation](https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/) or in the [requirements documentation](https://wpclouddeploy.com/documentation/wpcloud-deploy/requirements/)
+You can also view all requirements at the bottom of our [getting started documentation](https://docs.dvicd.com/01-cloud-deploy-core/introduction-installation-and-quick-start-guide/) or in the [requirements documentation](https://docs.dvicd.com/01-cloud-deploy-core/requirements/)
 
 ## How To Contribute ##
 
@@ -76,29 +76,11 @@ Have some time to help test new versions?  Download a zip of the **dev** branch 
 
 If you'd like to contribute to translations, you can do so in our public [POEDITOR project](https://poeditor.com/join/project?hash=A5I1lpqRes).
 
-You can also assist by working on items in the [issues list](https://github.com/WPCloudDeploy/wp-cloud-deploy/issues).
-
-## Premium Versions ##
-
-A premium version of this plugin is available on the [WPCloudDeploy website](https://wpclouddeploy.com).  You can view the additional features offered on the [pricing page.](https://wpclouddeploy.com/pricing/)
-
-Premium features include:
-
-* Support for additional cloud providers: EC2, LIGHTSAIL, LINODE, VULTR, UPCLOUD, HETZNER, EXOSCALE, GOOGLE, AZURE and ALIBABA
-* WP Multisite support
-* REDIS support for WP
-* Bring your own server
-* Sell server subscriptions with WOOCOMMERCE
-* Sell WP Site subscriptions with WOOCOMMERCE
-* Virtual Providers (support multiple accounts on each cloud server provider)
-* Server Sync
-* Powertools which include features such as summary statistics dashboards and charts, periodic server snapshots, automatic homepage images and much more.
-
-[Purchase a premium subscription](https://wpclouddeploy.com/pricing/). 
+You can also assist by working on items in the [issues list](https://github.com/developvi/dvi-cloud-deploy/issues).
 
 ## Creating Extensions ##
 
-[Articles on creating WPCD extensions](https://wpclouddeploy.com/category/tutorials/)
+[Developer tips and extension guidance](https://docs.dvicd.com/12-Developer-Tips/using-visual-studio-code-with-developvideploy/)
 
 ## About Branches ##
 
@@ -123,7 +105,7 @@ Note: Even though the entire git development history isn't available on github, 
 
 ## Release Notes ##
 
-[Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
+[Release Notes](https://docs.dvicd.com/01-cloud-deploy-core/release-notes/) · [Changelog](https://docs.dvicd.com/changelog/)
 
 ## Change Log ##
 7.0.0
@@ -141,8 +123,20 @@ Note: Even though the entire git development history isn't available on github, 
 * New: Admin Panel theme CSS, UI script, and portal styles; Font Awesome Free icons for the dashboard.
 * New: Settings Admin Panel — card home → detail flow with hash routing (`#ap/{slug}`) and Back to Home.
 * New: Composer packages `symfony/polyfill-php83`, `symfony/polyfill-php84`, and `symfony/polyfill-php85`.
+* New: `dvicd_str_starts_with()`, `dvicd_str_ends_with()`, and `dvicd_str_contains()` helpers; legacy `wpcd_str_*` wrappers are deprecated.
 * Update: Raise Composer PHP requirement from `^7.4` to `^8.2`.
+* Update: Plugin header and runtime PHP check now require PHP `8.2+`; WordPress `Requires at least` set to `7.0`.
+* Update: Replace `strpos` containment/prefix checks with native `str_contains()` / `str_starts_with()` across core apps and Admin Panel.
+* Update: Validate external JSON with `json_validate()` before `json_decode()` (DNS, sync, DigitalOcean, Git webhooks, marketplace, Logtivity).
+* Update: Use PHP 8.4/8.5 array helpers (`array_find`, `array_any`, `array_first`, `array_last`, `array_key_first`) where lookups previously used `array_filter`/`reset`/`end`.
+* Update: Replace raw `json_encode()` calls with `wp_json_encode()`.
 * Update: `phpseclib/phpseclib` to 3.0.55 and `paragonie/constant_time_encoding` to 3.1.3.
+* Tweak: Load plugin textdomain earlier on `init` (before `required_files`) for WordPress 6.7+ compatibility; avoid early `__()` in cron schedules and addon compatibility checks.
+* Tweak: Setup wizard redirects use `sanitize_url()` instead of `esc_url_raw()`.
+* Tweak: Remove invalid `data_format` args from Cloudflare DNS `wp_remote_*` requests.
+* Tweak: Replace deprecated jQuery `.delegate()` with `.on()` and `$.trim()` with native `.trim()` in admin scripts.
+* Fix: Truthy `strpos()` checks that missed matches at position `0` (Cloudflare DNS domain matching and plugin row meta links).
+* Fix: Incorrect text domains (`dvicd` / `textdomain`) in Command Log metabox strings now use `wpcd`.
 * Tweak: Site and server settings expose the Admin Panel tab style option.
 * Tweak: Metabox registration supports Admin Panel placement (side overview, seamless main actions).
 * Tweak: Hide empty Meta Box card-container rows so they no longer consume vertical space.
@@ -512,7 +506,7 @@ Note: Even though the entire git development history isn't available on github, 
 * Fix: A PHP 8.2 deprecation warning about dynamic class instance var.
 * Fix: WPAPP - Make sure that SSHD shows up as a default protocol when fail2ban is installed on OLS servers.
 * Fix: WPAPP - The WPCD_APP_MENU_NAME constant was not being respected.
-* Fix: WPAPP - If a user's role has the wpcd_manage_apps capability but not the wpcd_manage_servers capability the top level menu label in wp-admin should respect the WPCD_MENU_NAME constant instead of hard-coding a "WPCloudDeploy" label.
+* Fix: WPAPP - If a user's role has the wpcd_manage_apps capability but not the wpcd_manage_servers capability the top level menu label in wp-admin should respect the WPCD_MENU_NAME constant instead of hard-coding a "DVICloudDeploy" label.
 * Fix: WPAPP - Changing a PHP version for a tenant (MT) did not update the openbasedir to allow the site access to the linked plugins and themes.
 
 5.3.2
@@ -932,7 +926,7 @@ Note: Even though the entire git development history isn't available on github, 
 4.7.2
 ------
 * Fix: An issue with SITE SYNC scripts that prevented sites from working when pushed to a server (#233)
-* Fix: Spelling of the WPCloudDeploy product name in certain source code files
+* Fix: Spelling of the DVICloudDeploy product name in certain source code files
 * Tweak: Add special validation rules for the server name when using the HiVelocity Servers
 
 4.7.1
