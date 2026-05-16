@@ -78,13 +78,24 @@ trait wpcd_wpapp_metaboxes_server {
 		switch ( $tab_style ) {
 			case 'left':
 			case 'adminpanel':
+				$overview_fields = $this->get_general_fields_server( $fields, $id );
+				if ( $is_admin_panel ) {
+					/**
+					 * Append Admin Panel summary rows into Server Overview.
+					 *
+					 * @param array  $overview_fields
+					 * @param int    $id Server post ID.
+					 * @param string $context 'server'
+					 */
+					$overview_fields = apply_filters( 'dvicd_admin_panel_overview_fields', $overview_fields, $id, 'server' );
+				}
 				/* If we are painting the tabs vertically, we need to add a new metabox at the top of the screen to show the core details of the site. */
 				$meta_boxes[] = array(
 					'id'         => "wpcd_server_{$this->get_app_name()}_tab_top_of_server_details",
 					'title'      => $is_admin_panel ? __( 'Server Overview', 'wpcd' ) : __( 'WordPress Server', 'wpcd' ),
 					'class'      => "wpcd_server_{$this->get_app_name()}_tab_top_of_server_details" . ( $is_admin_panel ? ' dvicd-ap-overview' : '' ),
 					'post_types' => 'wpcd_app_server',
-					'fields'     => $this->get_general_fields_server( $fields, $id ),
+					'fields'     => $overview_fields,
 					'style'      => $is_admin_panel ? '' : 'seamless',
 					'context'    => $is_admin_panel ? 'side' : 'normal',
 					'priority'   => $is_admin_panel ? 'high' : 'default',

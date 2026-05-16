@@ -48,6 +48,17 @@ trait wpcd_wpapp_metaboxes_app {
 		switch ( $tab_style ) {
 			case 'left':
 			case 'adminpanel':
+				$overview_fields = $this->get_general_fields( $fields, $id );
+				if ( $is_admin_panel ) {
+					/**
+					 * Append Admin Panel summary rows into Site Overview.
+					 *
+					 * @param array $overview_fields
+					 * @param int   $id App post ID.
+					 * @param string $context 'site'
+					 */
+					$overview_fields = apply_filters( 'dvicd_admin_panel_overview_fields', $overview_fields, $id, 'site' );
+				}
 				/* If we are painting the tabs vertically, we need to add a new metabox at the top of the screen to show the core details of the site. */
 				$meta_boxes[] = array(
 					'id'         => "wpcd_{$this->get_app_name()}_tab_top_of_site_details",
@@ -56,7 +67,7 @@ trait wpcd_wpapp_metaboxes_app {
 						: sprintf( __( 'Server: %1$s, Region: %2$s, Provider: %3$s', 'wpcd' ), $this->get_server_name( $id ), $this->get_server_region( $id ), WPCD()->wpcd_get_cloud_provider_desc( $this->get_server_provider( $id ) ) ),
 					'class'      => "wpcd_{$this->get_app_name()}_tab_top_of_site_details" . ( $is_admin_panel ? ' dvicd-ap-overview' : '' ),
 					'post_types' => 'wpcd_app',
-					'fields'     => $this->get_general_fields( $fields, $id ),
+					'fields'     => $overview_fields,
 					'style'      => $is_admin_panel ? '' : 'seamless',
 					'context'    => $is_admin_panel ? 'side' : 'normal',
 					'priority'   => $is_admin_panel ? 'high' : 'default',
