@@ -337,7 +337,7 @@ trait wpcd_wpapp_commands_and_logs {
 				continue;  // this key, if present, should not be added to the array since it shouldn't even be in the server cpt in the first place. But it might get there accidentally on certain operations.
 			}
 
-			if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+			if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 				$value = wpcd_maybe_unserialize( $value );
 				$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 			}
@@ -541,7 +541,7 @@ trait wpcd_wpapp_commands_and_logs {
 			$all_meta = get_post_meta( $server_post->ID );
 
 			foreach ( $all_meta as $key => $value ) {
-				if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+				if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 					$value = wpcd_maybe_unserialize( $value );
 					$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 				}
@@ -635,7 +635,7 @@ trait wpcd_wpapp_commands_and_logs {
 			}
 
 			// Any field that starts with "wpcd_server_" goes into the array.
-			if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+			if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 				$value = wpcd_maybe_unserialize( $value );
 				$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 			}

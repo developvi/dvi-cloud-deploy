@@ -30,391 +30,391 @@ trait wpcd_wpapp_script_handlers {
 		switch ( $command ) {
 			case 'disable_remove_site.txt':
 				$return =
-				( strpos( $result, ' has been ' ) !== false )
+				( str_contains( $result, ' has been ' ) )
 				||
-				( strpos( $result, ' local backups have been ' ) !== false );
+				( str_contains( $result, ' local backups have been ' ) );
 				break;
 			case 'manage_https.txt':
 				$return =
-				( strpos( $result, 'SSL has been ' ) !== false )
+				( str_contains( $result, 'SSL has been ' ) )
 				||
-				( strpos( $result, 'SSL Already Enabled' ) !== false )
+				( str_contains( $result, 'SSL Already Enabled' ) )
 				||
-				( strpos( $result, 'SSL is already disabled for' ) !== false )
+				( str_contains( $result, 'SSL is already disabled for' ) )
 				||
-				( strpos( $result, 'http2 is already enabled for domain' ) !== false )
+				( str_contains( $result, 'http2 is already enabled for domain' ) )
 				||
-				( strpos( $result, 'http2 enabled for domain' ) !== false )
+				( str_contains( $result, 'http2 enabled for domain' ) )
 				||
-				( strpos( $result, 'http2 disabled for domain' ) !== false )
+				( str_contains( $result, 'http2 disabled for domain' ) )
 				||
-				( strpos( $result, 'http2 is already disabled for domain' ) !== false )
+				( str_contains( $result, 'http2 is already disabled for domain' ) )
 				||
-				( strpos( $result, 'Successfully received certificate' ) !== false )
+				( str_contains( $result, 'Successfully received certificate' ) )
 				||
-				( strpos( $result, 'certificate has been successfully installed' ) !== false );
+				( str_contains( $result, 'certificate has been successfully installed' ) );
 
 				break;
 			case 'add_remove_sftp.txt':
 				$return =
-				( 'sftp-add-user' === $action && strpos( $result, 'Added SFTP user ' ) !== false )
+				( 'sftp-add-user' === $action && str_contains( $result, 'Added SFTP user ' ) )
 				||
-				( 'sftp-remove-user' === $action && strpos( $result, 'Removed SFTP user ' ) !== false )
+				( 'sftp-remove-user' === $action && str_contains( $result, 'Removed SFTP user ' ) )
 				||
-				( 'sftp-change-password' === $action && strpos( $result, 'Password changed for ' ) !== false )
+				( 'sftp-change-password' === $action && str_contains( $result, 'Password changed for ' ) )
 				||
-				( 'sftp-remove-key' === $action && strpos( $result, 'Public key removed for ' ) !== false )
+				( 'sftp-remove-key' === $action && str_contains( $result, 'Public key removed for ' ) )
 				||
-				( 'sftp-remove-password' === $action && strpos( $result, 'Password removed for ' ) !== false )
+				( 'sftp-remove-password' === $action && str_contains( $result, 'Password removed for ' ) )
 				||
-				( 'sftp-set-key' === $action && strpos( $result, 'Public key set for ' ) !== false );
+				( 'sftp-set-key' === $action && str_contains( $result, 'Public key set for ' ) );
 				break;
 			case 'manage_site_users.txt':
 				$return =
-				( 'site-user-change-password' === $action && strpos( $result, 'Password changed for ' ) !== false )
+				( 'site-user-change-password' === $action && str_contains( $result, 'Password changed for ' ) )
 				||
-				( 'site-user-remove-key' === $action && strpos( $result, 'Public key removed for ' ) !== false )
+				( 'site-user-remove-key' === $action && str_contains( $result, 'Public key removed for ' ) )
 				||
-				( 'site-user-remove-password' === $action && strpos( $result, 'Password removed for ' ) !== false )
+				( 'site-user-remove-password' === $action && str_contains( $result, 'Password removed for ' ) )
 				||
-				( 'site-user-set-key' === $action && strpos( $result, 'Public key set for ' ) !== false );
+				( 'site-user-set-key' === $action && str_contains( $result, 'Public key set for ' ) );
 				break;
 			case 'basic_auth_misc.txt':
 				$return =
-				( strpos( $result, 'Basic authentication disabled for' ) !== false )
+				( str_contains( $result, 'Basic authentication disabled for' ) )
 				||
-				( strpos( $result, 'Basic authentication enabled for' ) !== false )
+				( str_contains( $result, 'Basic authentication enabled for' ) )
 				||
-				( strpos( $result, 'Basic auth is already enabled' ) !== false );
+				( str_contains( $result, 'Basic auth is already enabled' ) );
 				break;
 			case 'basic_auth_wplogin_misc.txt':
 				$return =
-				( strpos( $result, 'Basic authentication disabled for' ) !== false )
+				( str_contains( $result, 'Basic authentication disabled for' ) )
 				||
-				( strpos( $result, 'Basic authentication enabled for' ) !== false )
+				( str_contains( $result, 'Basic authentication enabled for' ) )
 				||
-				( strpos( $result, 'Wp Admin auth is already enabled' ) !== false );
+				( str_contains( $result, 'Wp Admin auth is already enabled' ) );
 				break;
 			case 'toggle_https_misc.txt':
 				$return =
-				( strpos( $result, 'HTTPS redirect disabled for' ) !== false )
+				( str_contains( $result, 'HTTPS redirect disabled for' ) )
 				||
-				( strpos( $result, 'HTTPS redirect enabled for' ) !== false )
+				( str_contains( $result, 'HTTPS redirect enabled for' ) )
 				||
-				( strpos( $result, 'SSL redirection is already disabled for' ) !== false );
+				( str_contains( $result, 'SSL redirection is already disabled for' ) );
 				break;
 			case 'toggle_wp_linux_cron_misc.txt':
 				$return =
-				( strpos( $result, 'System cron enabled for' ) !== false )
+				( str_contains( $result, 'System cron enabled for' ) )
 				||
-				( strpos( $result, 'System cron disabled for' ) !== false );
+				( str_contains( $result, 'System cron disabled for' ) );
 				break;
 			case 'toggle_password_auth_misc.txt':
 				$return =
-				( strpos( $result, 'SSH password auth has been enabled for user' ) !== false )
+				( str_contains( $result, 'SSH password auth has been enabled for user' ) )
 				||
-				( strpos( $result, 'SSH password auth has been disabled for user' ) !== false );
+				( str_contains( $result, 'SSH password auth has been disabled for user' ) );
 				break;
 			case 'change_php_version_misc.txt':
 				$return =
-				( strpos( $result, 'PHP version changed to' ) !== false )
+				( str_contains( $result, 'PHP version changed to' ) )
 				||
-				( strpos( $result, 'PHP version remains at' ) !== false );
+				( str_contains( $result, 'PHP version remains at' ) );
 				break;
 			case 'change_php_option_misc.txt':
-				$return = strpos( $result, 'Successfully changed PHP value' ) !== false;
+				$return = str_contains( $result, 'Successfully changed PHP value' );
 				break;
 			case 'toggle_php_active_misc.txt':
 				$return =
-				( strpos( $result, 'has been disabled' ) !== false )
+				( str_contains( $result, 'has been disabled' ) )
 				||
-				( strpos( $result, 'already disabled' ) !== false )
+				( str_contains( $result, 'already disabled' ) )
 				||
-				( strpos( $result, 'has been enabled' ) !== false )
+				( str_contains( $result, 'has been enabled' ) )
 				||
-				( strpos( $result, 'already enabled' ) !== false );
+				( str_contains( $result, 'already enabled' ) );
 				break;
 			case 'backup_restore.txt':
 				$return =
-				( strpos( $result, 'Backup has been completed!' ) !== false )
+				( str_contains( $result, 'Backup has been completed!' ) )
 				||
-				( strpos( $result, 'has been restored' ) !== false );
+				( str_contains( $result, 'has been restored' ) );
 				break;
 			case 'backup_restore_schedule.txt':
 				$return =
-				( strpos( $result, 'Backup job configured!' ) !== false )
+				( str_contains( $result, 'Backup job configured!' ) )
 				||
-				( strpos( $result, 'Backup job removed!' ) !== false )
+				( str_contains( $result, 'Backup job removed!' ) )
 				||
-				( strpos( $result, 'Full backup job configured!' ) !== false )
+				( str_contains( $result, 'Full backup job configured!' ) )
 				||
-				( strpos( $result, 'Full backup job removed!' ) !== false );
+				( str_contains( $result, 'Full backup job removed!' ) );
 				break;
 			case 'backup_restore_save_credentials.txt':
-				$return = ( strpos( $result, 'AWS credentials have been saved' ) !== false );
+				$return = ( str_contains( $result, 'AWS credentials have been saved' ) );
 				break;
 			case 'change_domain_quick.txt':
-				$return = ( strpos( $result, 'changed to' ) !== false );
+				$return = ( str_contains( $result, 'changed to' ) );
 				break;
 			case 'change_domain_full.txt':
 				$return =
-				( strpos( $result, 'changed to' ) !== false )
+				( str_contains( $result, 'changed to' ) )
 				||
-				( strpos( $result, 'Dry run completed' ) !== false );
+				( str_contains( $result, 'Dry run completed' ) );
 				break;
 			case 'clone_site.txt':
-				$return = ( strpos( $result, 'has been cloned' ) !== false );
+				$return = ( str_contains( $result, 'has been cloned' ) );
 				break;
 			case 'manage_phpmyadmin.txt':
 				$return =
-				( strpos( $result, 'phpMyAdmin installed for' ) !== false )
+				( str_contains( $result, 'phpMyAdmin installed for' ) )
 				||
-				( strpos( $result, 'phpMyAdmin updated for' ) !== false )
+				( str_contains( $result, 'phpMyAdmin updated for' ) )
 				||
-				( strpos( $result, 'Access credentials have been updated' ) !== false )
+				( str_contains( $result, 'Access credentials have been updated' ) )
 				||
-				( strpos( $result, 'phpMyAdmin has been removed for' ) !== false );
+				( str_contains( $result, 'phpMyAdmin has been removed for' ) );
 				break;
 			case 'manage_database_operation.txt':
 				$return =
-				( strpos( $result, 'Mysql host is already set to localhost' ) !== false )
+				( str_contains( $result, 'Mysql host is already set to localhost' ) )
 				||
-				( strpos( $result, 'Database has been switched to' ) !== false )
+				( str_contains( $result, 'Database has been switched to' ) )
 				||
-				( strpos( $result, 'Database has been copied' ) !== false );
+				( str_contains( $result, 'Database has been copied' ) );
 				break;
 			case 'manage_tinyfilemanager.txt':
 				$return =
-				( strpos( $result, 'Filemanager installed for' ) !== false )
+				( str_contains( $result, 'Filemanager installed for' ) )
 				||
-				( strpos( $result, 'FileManager updated for' ) !== false )
+				( str_contains( $result, 'FileManager updated for' ) )
 				||
-				( strpos( $result, 'Access credentials have been updated' ) !== false )
+				( str_contains( $result, 'Access credentials have been updated' ) )
 				||
-				( strpos( $result, 'FileManager has been removed for' ) !== false );
+				( str_contains( $result, 'FileManager has been removed for' ) );
 				break;
 			case '6g_firewall.txt':
 				$return =
-				( strpos( $result, 'Enabled 6G Firewall' ) !== false )
+				( str_contains( $result, 'Enabled 6G Firewall' ) )
 				||
-				( strpos( $result, 'Disabled 6G Firewall' ) !== false );
+				( str_contains( $result, 'Disabled 6G Firewall' ) );
 				break;
 			case '7g_firewall.txt':
 				$return =
-				( strpos( $result, 'Enabled 7G Firewall' ) !== false )
+				( str_contains( $result, 'Enabled 7G Firewall' ) )
 				||
-				( strpos( $result, 'Disabled 7G Firewall' ) !== false );
+				( str_contains( $result, 'Disabled 7G Firewall' ) );
 				break;
 			case 'manage_nginx_pagecache.txt':
 				$return =
-				( strpos( $result, 'WordPress Cache has been enabled' ) !== false )
+				( str_contains( $result, 'WordPress Cache has been enabled' ) )
 				||
-				( strpos( $result, 'WordPress Cache has been disabled' ) !== false )
+				( str_contains( $result, 'WordPress Cache has been disabled' ) )
 				||
-				( strpos( $result, 'WordPress Cache has been cleared' ) !== false );
+				( str_contains( $result, 'WordPress Cache has been cleared' ) );
 				break;
 			case 'toggle_wp_debug.txt':
 				$return =
-				( strpos( $result, 'WordPress debug flags enabled' ) !== false )
+				( str_contains( $result, 'WordPress debug flags enabled' ) )
 				||
-				( strpos( $result, 'WordPress debug flags disabled' ) !== false );
+				( str_contains( $result, 'WordPress debug flags disabled' ) );
 				break;
 			case 'multisite.txt':
 				$return =
-				( strpos( $result, 'WordPress Multisite has been enabled for' ) !== false )
+				( str_contains( $result, 'WordPress Multisite has been enabled for' ) )
 				||
-				( strpos( $result, 'configuration has been set up' ) !== false )
+				( str_contains( $result, 'configuration has been set up' ) )
 				||
-				( strpos( $result, 'has been deregistered' ) !== false )
+				( str_contains( $result, 'has been deregistered' ) )
 				||
-				( strpos( $result, 'SSL enabled for' ) !== false )
+				( str_contains( $result, 'SSL enabled for' ) )
 				||
-				( strpos( $result, 'SSL is already disabled for' ) !== false )
+				( str_contains( $result, 'SSL is already disabled for' ) )
 				||
-				( strpos( $result, 'HTTPS disabled for' ) !== false );
+				( str_contains( $result, 'HTTPS disabled for' ) );
 				break;
 			case 'multisite_wildcard_ssl.txt':
 				$return =
-				( strpos( $result, 'Wildcard HTTPS has been configured for' ) !== false )
+				( str_contains( $result, 'Wildcard HTTPS has been configured for' ) )
 				||
-				( strpos( $result, 'HTTPS disabled for' ) !== false )
+				( str_contains( $result, 'HTTPS disabled for' ) )
 				||
-				( strpos( $result, 'SSL is already disabled for' ) !== false );
+				( str_contains( $result, 'SSL is already disabled for' ) );
 				break;
 			case 'site_sync_origin_setup.txt':
 				$return =
-				( strpos( $result, 'Authentication is already set up' ) !== false )
+				( str_contains( $result, 'Authentication is already set up' ) )
 				||
-				( strpos( $result, 'Authentication has been set up' ) !== false );
+				( str_contains( $result, 'Authentication has been set up' ) );
 				break;
 			case 'site_sync_destination_setup.txt':
 				$return =
-				( strpos( $result, 'Setup has been completed' ) !== false );
+				( str_contains( $result, 'Setup has been completed' ) );
 				break;
 			case 'site_sync.txt':
 				$return =
-				( strpos( $result, 'Site Sync Completed Successfully' ) !== false )
+				( str_contains( $result, 'Site Sync Completed Successfully' ) )
 				||
-				( strpos( $result, 'MT Site Sync Completed Successfully' ) !== false )
+				( str_contains( $result, 'MT Site Sync Completed Successfully' ) )
 				||
-				( strpos( $result, 'Site sync has been scheduled' ) !== false );
+				( str_contains( $result, 'Site sync has been scheduled' ) );
 				break;
 			case 'site_sync_unschedule.txt':
 				$return =
-				( strpos( $result, 'Site sync job removed' ) !== false )
+				( str_contains( $result, 'Site sync job removed' ) )
 				||
-				( strpos( $result, 'Schedule Site Sync For This Site Disabled' ) !== false )
+				( str_contains( $result, 'Schedule Site Sync For This Site Disabled' ) )
 				||
-				( strpos( $result, 'No such job configured with given domain and destination ip' ) !== false )
+				( str_contains( $result, 'No such job configured with given domain and destination ip' ) )
 				||
-				( strpos( $result, 'No syncing job is configured as cron' ) !== false );
+				( str_contains( $result, 'No syncing job is configured as cron' ) );
 				break;
 			case 'enable_disable_php_functions.txt':
 				$return =
-				( strpos( $result, 'has been enabled' ) !== false )
+				( str_contains( $result, 'has been enabled' ) )
 				||
-				( strpos( $result, 'has been disabled' ) !== false );
+				( str_contains( $result, 'has been disabled' ) );
 				break;
 			case 'reset_site_permissions.txt':
 				$return =
-				( strpos( $result, 'Permissions have been reset for' ) !== false );
+				( str_contains( $result, 'Permissions have been reset for' ) );
 				break;
 			case 'server_redirect.txt':
 				// Even though this name has "server" in it, it's mostly a site-level item.
 				$return =
-				( strpos( $result, 'Redirect rule added' ) !== false )
+				( str_contains( $result, 'Redirect rule added' ) )
 				||
-				( strpos( $result, 'Redirect rule has been removed' ) !== false )
+				( str_contains( $result, 'Redirect rule has been removed' ) )
 				||
-				( strpos( $result, 'All Rewrite rules have been removed' ) !== false );
+				( str_contains( $result, 'All Rewrite rules have been removed' ) );
 				break;
 			case 'nginx_options.txt':
 			case 'ols_options.txt':
 				// This one is a mix of server and site level items - mostly site level items.
 				$return =
-				( strpos( $result, 'already enabled' ) !== false )
+				( str_contains( $result, 'already enabled' ) )
 				||
-				( strpos( $result, 'already disabled' ) !== false )
+				( str_contains( $result, 'already disabled' ) )
 				||
-				( strpos( $result, 'Success!' ) !== false );
+				( str_contains( $result, 'Success!' ) );
 				break;
 			case 'ols_manage_admin_console.txt':
 				$return =
-				( strpos( $result, 'Set OpenLiteSpeed Web Admin access' ) !== false )
+				( str_contains( $result, 'Set OpenLiteSpeed Web Admin access' ) )
 				||
-				( strpos( $result, 'OpenLiteSpeed WebAdmin password not changed' ) !== false )
+				( str_contains( $result, 'OpenLiteSpeed WebAdmin password not changed' ) )
 				||
-				( strpos( $result, 'Enabled OLS/LSWS admin port on firewall!' ) !== false )
+				( str_contains( $result, 'Enabled OLS/LSWS admin port on firewall!' ) )
 				||
-				( strpos( $result, 'Disabled OLS/LSWS admin port on firewall!' ) !== false );
+				( str_contains( $result, 'Disabled OLS/LSWS admin port on firewall!' ) );
 				break;
 			case 'php_workers.txt':
 				$return =
-				( strpos( $result, 'PHP Workers Updated' ) !== false );
+				( str_contains( $result, 'PHP Workers Updated' ) );
 				break;
 			case 'fail2ban_site.txt':
 				// There is also a fail2ban section in the servers section below!
 				$return =
-				( strpos( $result, 'Fail2ban plugin has been installed for' ) !== false )
+				( str_contains( $result, 'Fail2ban plugin has been installed for' ) )
 				||
-				( strpos( $result, 'Fail2ban Plugin has been removed from' ) !== false );
+				( str_contains( $result, 'Fail2ban Plugin has been removed from' ) );
 				break;
 			case 'reliable_updates.txt':
 				$return =
-				( strpos( $result, 'Updates are complete' ) !== false );
+				( str_contains( $result, 'Updates are complete' ) );
 				break;
 			case 'copy_site_to_existing_site.txt':
 				$return =
-				( strpos( $result, 'Copy to existing site is complete' ) !== false );
+				( str_contains( $result, 'Copy to existing site is complete' ) );
 				break;
 			case 'change_file_upload_size.txt':
 				$return =
-				( strpos( $result, 'File upload limits have been changed for' ) !== false );
+				( str_contains( $result, 'File upload limits have been changed for' ) );
 				break;
 			case 'update_wp_site_option.txt':
 				$return =
-				( strpos( $result, 'Updated Option Value' ) !== false );
+				( str_contains( $result, 'Updated Option Value' ) );
 				break;
 			case 'change_wp_credentials.txt':
 				$return =
-				( strpos( $result, 'Updated credentials for user' ) !== false );
+				( str_contains( $result, 'Updated credentials for user' ) );
 				break;
 			case 'add_wp_user.txt':
 				$return =
-				( strpos( $result, 'Added user' ) !== false );
+				( str_contains( $result, 'Added user' ) );
 				break;
 			case 'update_wp_config_option.txt':
 				$return =
-				( strpos( $result, 'Updated WPConfig Option Value' ) !== false );
+				( str_contains( $result, 'Updated WPConfig Option Value' ) );
 				break;
 			case 'passwordless_login.txt':
 				// for this one we just want to make sure that the last line has a string that starts with http:
 				list($url_array[]) = array_slice( explode( PHP_EOL, trim( $result ) ), -1, 1 );
 				$return            =
-				( strpos( $url_array[0], 'http://' ) !== false )
+				( str_contains( $url_array[0], 'http://' ) )
 				||
-				( strpos( $url_array[0], 'https://' ) !== false );
+				( str_contains( $url_array[0], 'https://' ) );
 				break;
 			case 'git_control_site_command.txt':
 			case 'git_control_site.txt':
 				$return =
-				( strpos( $result, 'Git Init Complete For Domain' ) !== false )
+				( str_contains( $result, 'Git Init Complete For Domain' ) )
 				||
-				( strpos( $result, 'Git has been removed from' ) !== false )
+				( str_contains( $result, 'Git has been removed from' ) )
 				||
-				( strpos( $result, 'Git sync succeeded' ) !== false )
+				( str_contains( $result, 'Git sync succeeded' ) )
 				||
-				( strpos( $result, 'Git branch switch and checkout succeeded' ) !== false )
+				( str_contains( $result, 'Git branch switch and checkout succeeded' ) )
 				||
-				( strpos( $result, 'Git create new branch and checkout succeeded' ) !== false )
+				( str_contains( $result, 'Git create new branch and checkout succeeded' ) )
 				||
-				( strpos( $result, 'Git commit and push succeeded' ) !== false )
+				( str_contains( $result, 'Git commit and push succeeded' ) )
 				||
-				( strpos( $result, 'Git tag and push succeeded' ) !== false )
+				( str_contains( $result, 'Git tag and push succeeded' ) )
 				||
-				( strpos( $result, 'Git pull tag succeeded' ) !== false )
+				( str_contains( $result, 'Git pull tag succeeded' ) )
 				||
-				( strpos( $result, 'Git fetch tag succeeded' ) !== false )
+				( str_contains( $result, 'Git fetch tag succeeded' ) )
 				||
-				( strpos( $result, 'Version folder has been removed for' ) !== false )
+				( str_contains( $result, 'Version folder has been removed for' ) )
 				||
-				( strpos( $result, 'All version folders have been removed for' ) !== false )
+				( str_contains( $result, 'All version folders have been removed for' ) )
 				||
-				( strpos( $result, 'Git switch version succeeded' ) !== false )
+				( str_contains( $result, 'Git switch version succeeded' ) )
 				||
-				( strpos( $result, 'Git credentials successfully set up for domain' ) !== false )
+				( str_contains( $result, 'Git credentials successfully set up for domain' ) )
 				||
-				( strpos( $result, 'Git clone successful' ) !== false )
+				( str_contains( $result, 'Git clone successful' ) )
 				||
-				( strpos( $result, 'Multi-tenant: Fetch version succeeded' ) !== false )
+				( str_contains( $result, 'Multi-tenant: Fetch version succeeded' ) )
 				||
-				( strpos( $result, 'Multi-tenant: Site conversion succeeded' ) !== false );
+				( str_contains( $result, 'Multi-tenant: Site conversion succeeded' ) );
 				break;
 			case 'mt_clone_site.txt':
-				$return = ( strpos( $result, 'has been cloned' ) !== false && strpos( $result, 'Git tag and push succeeded' ) !== false && strpos( $result, 'Multi-tenant: Fetch version succeeded' ) !== false );
+				$return = ( str_contains( $result, 'has been cloned' ) && str_contains( $result, 'Git tag and push succeeded' ) && str_contains( $result, 'Multi-tenant: Fetch version succeeded' ) );
 				break;
 			case 'mt_convert_site.txt':
-				$return = ( strpos( $result, 'Multi-tenant: Site conversion succeeded for' ) !== false );
+				$return = ( str_contains( $result, 'Multi-tenant: Site conversion succeeded for' ) );
 				break;
 			case 'renew_all_certificates.txt':
-				$return = ( strpos( $result, 'Certificate renewal attempt completed' ) !== false );
+				$return = ( str_contains( $result, 'Certificate renewal attempt completed' ) );
 				break;
 			case 'manage_logtivity.txt':
 				$return =
-				( strpos( $result, 'Logtivity installed and license activated' ) !== false )
+				( str_contains( $result, 'Logtivity installed and license activated' ) )
 				||
-				( strpos( $result, 'Logtivity license activated' ) !== false )
+				( str_contains( $result, 'Logtivity license activated' ) )
 				||
-				( strpos( $result, 'Logtivity has been removed' ) !== false );
-				$return = $return && ( strpos( $result, 'Please provide a valid API key' ) == false ); // If the string 'Please provide a valid API key' is in the output, the thing has failed.
+				( str_contains( $result, 'Logtivity has been removed' ) );
+				$return = $return && ( ! str_contains( $result, 'Please provide a valid API key' ) ); // If the string 'Please provide a valid API key' is in the output, the thing has failed.
 				break;
 			case 'manage_solidwp_security.txt':
 				$return =
-				( strpos( $result, 'Solidwp installed and license activated' ) !== false )
+				( str_contains( $result, 'Solidwp installed and license activated' ) )
 				||
-				( strpos( $result, 'Solidwp license activated' ) !== false )
+				( str_contains( $result, 'Solidwp license activated' ) )
 				||
-				( strpos( $result, 'Solidwp has been removed' ) !== false );
+				( str_contains( $result, 'Solidwp has been removed' ) );
 				break;
 
 			/**************************************************************
@@ -422,67 +422,67 @@ trait wpcd_wpapp_script_handlers {
 			*/
 			case 'backup_restore_delete_and_prune_server.txt':
 				$return =
-				( strpos( $result, 'All backups have been deleted' ) !== false )
+				( str_contains( $result, 'All backups have been deleted' ) )
 				||
-				( strpos( $result, 'All backups older than' ) !== false );
+				( str_contains( $result, 'All backups older than' ) );
 				break;
 			case 'install_memcached.txt':
 				$return =
-				( strpos( $result, 'Memcached has been installed' ) !== false )
+				( str_contains( $result, 'Memcached has been installed' ) )
 				||
-				( strpos( $result, 'Memcached is already installed' ) !== false );
+				( str_contains( $result, 'Memcached is already installed' ) );
 				break;
 			case 'manage_memcached.txt':
 				$return =
-				( strpos( $result, 'Memcached server has been restarted' ) !== false )
+				( str_contains( $result, 'Memcached server has been restarted' ) )
 				||
-				( strpos( $result, 'Memcached cache has been cleared' ) !== false )
+				( str_contains( $result, 'Memcached cache has been cleared' ) )
 				||
-				( strpos( $result, 'Memcached has been enabled' ) !== false )
+				( str_contains( $result, 'Memcached has been enabled' ) )
 				||
-				( strpos( $result, 'Memcached has been disabled' ) !== false )
+				( str_contains( $result, 'Memcached has been disabled' ) )
 				||
-				( strpos( $result, 'Memcached has been removed from the system' ) !== false );
+				( str_contains( $result, 'Memcached has been removed from the system' ) );
 				break;
 			case 'install_redis.txt':
 				$return =
-				( strpos( $result, 'Redis has been installed' ) !== false )
+				( str_contains( $result, 'Redis has been installed' ) )
 				||
-				( strpos( $result, 'Redis is already installed' ) !== false );
+				( str_contains( $result, 'Redis is already installed' ) );
 				break;
 			case 'manage_redis.txt':
 				$return =
-				( strpos( $result, 'Redis server has been restarted' ) !== false )
+				( str_contains( $result, 'Redis server has been restarted' ) )
 				||
-				( strpos( $result, 'Redis cache has been cleared' ) !== false )
+				( str_contains( $result, 'Redis cache has been cleared' ) )
 				||
-				( strpos( $result, 'Redis has been enabled' ) !== false )
+				( str_contains( $result, 'Redis has been enabled' ) )
 				||
-				( strpos( $result, 'Redis has been disabled' ) !== false )
+				( str_contains( $result, 'Redis has been disabled' ) )
 				||
-				( strpos( $result, 'Redis has been removed from the system' ) !== false );
+				( str_contains( $result, 'Redis has been removed from the system' ) );
 				break;
 			case 'add_wp_admin.txt':
 				$return =
-				( strpos( $result, 'added as an administrator to' ) !== false );
+				( str_contains( $result, 'added as an administrator to' ) );
 				break;
 			case 'restart_php_service.txt':
 				$return =
-				( strpos( $result, 'PHP service has restarted for version' ) !== false );
+				( str_contains( $result, 'PHP service has restarted for version' ) );
 				break;
 			case 'toggle_edd_nginx_rules.txt':
 				$return =
-				( strpos( $result, 'Easy Digital Downloads NGINX directives enabled for' ) !== false )
+				( str_contains( $result, 'Easy Digital Downloads NGINX directives enabled for' ) )
 				||
-				( strpos( $result, 'Easy Digital Downloads NGINX directives disabled for' ) !== false );
+				( str_contains( $result, 'Easy Digital Downloads NGINX directives disabled for' ) );
 				break;
 			case 'email_gateway.txt':
 				$return =
-				( strpos( $result, 'The email gateway has now been configured' ) !== false )
+				( str_contains( $result, 'The email gateway has now been configured' ) )
 				||
-				( strpos( $result, 'Test email has been sent' ) !== false )
+				( str_contains( $result, 'Test email has been sent' ) )
 				||
-				( strpos( $result, 'Email gateway successfully removed' ) !== false );
+				( str_contains( $result, 'Email gateway successfully removed' ) );
 				break;
 			case 'run_upgrades_290.txt':
 			case 'run_upgrades_460.txt':
@@ -490,266 +490,266 @@ trait wpcd_wpapp_script_handlers {
 			case 'run_upgrades_462.txt':
 			case 'run_upgrades_530.txt':
 				$return =
-				( strpos( $result, 'upgrade completed' ) !== false )
+				( str_contains( $result, 'upgrade completed' ) )
 				||
-				( strpos( $result, 'Upgrade Completed' ) !== false )
+				( str_contains( $result, 'Upgrade Completed' ) )
 				||
-				( strpos( $result, '7G Firewall is already installed' ) !== false );
+				( str_contains( $result, '7G Firewall is already installed' ) );
 				break;
 			case 'run_upgrade_install_php_81.txt':
-				$return = ( strpos( $result, 'PHP 8.1 has been installed' ) !== false );
+				$return = ( str_contains( $result, 'PHP 8.1 has been installed' ) );
 				break;
 			case 'run_upgrade_install_php_82.txt':
-				$return = ( strpos( $result, 'PHP 8.2 has been installed' ) !== false );
+				$return = ( str_contains( $result, 'PHP 8.2 has been installed' ) );
 				break;
 			case 'run_upgrade_install_php_83.txt':
-				$return = ( strpos( $result, 'PHP 8.3 has been installed' ) !== false );
+				$return = ( str_contains( $result, 'PHP 8.3 has been installed' ) );
 				break;
 			case 'run_upgrade_install_php_84.txt':
-				$return = ( strpos( $result, 'PHP 8.4 has been installed' ) !== false );
+				$return = ( str_contains( $result, 'PHP 8.4 has been installed' ) );
 				break;
 	
 			case 'run_upgrade_install_old_php_version.txt':
-				$return = ( strpos( $result, 'has been installed' ) !== false );
+				$return = ( str_contains( $result, 'has been installed' ) );
 				break;
 			case 'run_upgrade_7g.txt':
-				$return = ( strpos( $result, 'The 7G Firewall has been upgraded' ) !== false );
+				$return = ( str_contains( $result, 'The 7G Firewall has been upgraded' ) );
 				break;
 			case 'run_remove_6g.txt':
-				$return = ( strpos( $result, 'The 6G Firewall has been removed' ) !== false );
+				$return = ( str_contains( $result, 'The 6G Firewall has been removed' ) );
 				break;
 			case 'run_upgrade_wpcli.txt':
-				$return = ( strpos( $result, 'WPCLI has been upgraded' ) !== false );
+				$return = ( str_contains( $result, 'WPCLI has been upgraded' ) );
 				break;
 			case 'run_upgrade_install_php_intl.txt':
-				$return = ( strpos( $result, 'PHP intl module has been installed' ) !== false );
+				$return = ( str_contains( $result, 'PHP intl module has been installed' ) );
 				break;
 			case 'run_upgrade_cache_enabler_nginx_config.txt':
-				$return = ( strpos( $result, 'Cache Enabler NGINX Config Has Been Upgraded' ) !== false );
+				$return = ( str_contains( $result, 'Cache Enabler NGINX Config Has Been Upgraded' ) );
 				break;
 			case 'server_status_callback.txt':
 				$return =
-				( strpos( $result, 'Server status job configured' ) !== false )
+				( str_contains( $result, 'Server status job configured' ) )
 				||
-				( strpos( $result, 'Server status job removed' ) !== false )
+				( str_contains( $result, 'Server status job removed' ) )
 				||
-				( strpos( $result, 'Server status job scheduled successfully' ) !== false )
+				( str_contains( $result, 'Server status job scheduled successfully' ) )
 				||
-				( strpos( $result, 'Server status job executed successfully' ) !== false );
+				( str_contains( $result, 'Server status job executed successfully' ) );
 				break;
 			case 'maldet.txt':
 				$return =
-				( strpos( $result, 'Maldet has been installed' ) !== false )
+				( str_contains( $result, 'Maldet has been installed' ) )
 				||
-				( strpos( $result, 'LMD is already installed!' ) !== false )
+				( str_contains( $result, 'LMD is already installed!' ) )
 				||
-				( strpos( $result, 'clamscan and LMD uninstalled' ) !== false )
+				( str_contains( $result, 'clamscan and LMD uninstalled' ) )
 				||
-				( strpos( $result, 'Clamscan database has been updated' ) !== false )
+				( str_contains( $result, 'Clamscan database has been updated' ) )
 				||
-				( strpos( $result, 'Malware Detection has been updated' ) !== false )
+				( str_contains( $result, 'Malware Detection has been updated' ) )
 				||
-				( strpos( $result, 'Scanning has been completed' ) !== false )
+				( str_contains( $result, 'Scanning has been completed' ) )
 				||
-				( strpos( $result, 'Cron has been disabled' ) !== false )
+				( str_contains( $result, 'Cron has been disabled' ) )
 				||
-				( strpos( $result, 'Cron has been enabled' ) !== false )
+				( str_contains( $result, 'Cron has been enabled' ) )
 				||
-				( strpos( $result, 'Malware data has been purged' ) !== false )
+				( str_contains( $result, 'Malware data has been purged' ) )
 				||
-				( strpos( $result, 'Malware services have been restarted' ) !== false );
+				( str_contains( $result, 'Malware services have been restarted' ) );
 				break;
 			case 'server_restart_callback.txt':
 				$return =
-				( strpos( $result, 'Server restart callback job configured' ) !== false )
+				( str_contains( $result, 'Server restart callback job configured' ) )
 				||
-				( strpos( $result, 'Server restart callback job removed' ) !== false )
+				( str_contains( $result, 'Server restart callback job removed' ) )
 				||
-				( strpos( $result, 'Server restart callback job executed successfully' ) !== false );
+				( str_contains( $result, 'Server restart callback job executed successfully' ) );
 				break;
 			case 'monitorix.txt':
 				$return =
-				( strpos( $result, 'Monitorix has been installed' ) !== false )
+				( str_contains( $result, 'Monitorix has been installed' ) )
 				||
-				( strpos( $result, 'Monitorix has been removed' ) !== false )
+				( str_contains( $result, 'Monitorix has been removed' ) )
 				||
-				( strpos( $result, 'Monitorix has been updated' ) !== false )
+				( str_contains( $result, 'Monitorix has been updated' ) )
 				||
-				( strpos( $result, 'has been enabled for' ) !== false )
+				( str_contains( $result, 'has been enabled for' ) )
 				||
-				( strpos( $result, 'has been disabled for' ) !== false )
+				( str_contains( $result, 'has been disabled for' ) )
 				||
-				( strpos( $result, 'SSL has been enabled for' ) !== false )
+				( str_contains( $result, 'SSL has been enabled for' ) )
 				||
-				( strpos( $result, 'SSL is already disabled for' ) !== false )
+				( str_contains( $result, 'SSL is already disabled for' ) )
 				||
-				( strpos( $result, 'SSL has been disabled for' ) !== false );
+				( str_contains( $result, 'SSL has been disabled for' ) );
 				break;
 			case 'netdata_install.txt':
 				$return =
-				( strpos( $result, 'Netdata has been installed' ) !== false )
+				( str_contains( $result, 'Netdata has been installed' ) )
 				||
-				( strpos( $result, 'Netdata is already installed' ) !== false );
+				( str_contains( $result, 'Netdata is already installed' ) );
 				break;
 			case 'netdata.txt':
 				$return =
-				( strpos( $result, 'Netdata has been installed' ) !== false )
+				( str_contains( $result, 'Netdata has been installed' ) )
 				||
-				( strpos( $result, 'Netdata has been removed' ) !== false )
+				( str_contains( $result, 'Netdata has been removed' ) )
 				||
-				( strpos( $result, 'Netdata has been updated' ) !== false )
+				( str_contains( $result, 'Netdata has been updated' ) )
 				||
-				( strpos( $result, 'Basic Auth has been enabled for' ) !== false )
+				( str_contains( $result, 'Basic Auth has been enabled for' ) )
 				||
-				( strpos( $result, 'Basic Auth already enabled' ) !== false )
+				( str_contains( $result, 'Basic Auth already enabled' ) )
 				||
-				( strpos( $result, 'Basic Auth has been disabled' ) !== false )
+				( str_contains( $result, 'Basic Auth has been disabled' ) )
 				||
-				( strpos( $result, 'Basic Auth has been updated' ) !== false )
+				( str_contains( $result, 'Basic Auth has been updated' ) )
 				||
-				( strpos( $result, 'SSL has been enabled for' ) !== false )
+				( str_contains( $result, 'SSL has been enabled for' ) )
 				||
-				( strpos( $result, 'SSL was not enabled for netdata so nothing to disable' ) !== false )
+				( str_contains( $result, 'SSL was not enabled for netdata so nothing to disable' ) )
 				||
-				( strpos( $result, 'SSL has been disabled for' ) !== false )
+				( str_contains( $result, 'SSL has been disabled for' ) )
 				||
-				( strpos( $result, 'Registry already enabled ' ) !== false )
+				( str_contains( $result, 'Registry already enabled ' ) )
 				||
-				( strpos( $result, 'Registry enabled to' ) !== false )
+				( str_contains( $result, 'Registry enabled to' ) )
 				||
-				( strpos( $result, 'Registry already pointed to ' ) !== false )
+				( str_contains( $result, 'Registry already pointed to ' ) )
 				||
-				( strpos( $result, 'Registry pointed to' ) !== false );
+				( str_contains( $result, 'Registry pointed to' ) );
 				break;
 			case 'monit.txt':
 				$return =
-				( strpos( $result, 'Monit has been installed' ) !== false )
+				( str_contains( $result, 'Monit has been installed' ) )
 				||
-				( strpos( $result, 'Monit has been removed' ) !== false )
+				( str_contains( $result, 'Monit has been removed' ) )
 				||
-				( strpos( $result, 'Monit has been updated' ) !== false )
+				( str_contains( $result, 'Monit has been updated' ) )
 				||
-				( strpos( $result, 'has been enabled' ) !== false )
+				( str_contains( $result, 'has been enabled' ) )
 				||
-				( strpos( $result, 'has been disabled' ) !== false )
+				( str_contains( $result, 'has been disabled' ) )
 				||
-				( strpos( $result, 'SSL has been enabled for' ) !== false )
+				( str_contains( $result, 'SSL has been enabled for' ) )
 				||
-				( strpos( $result, 'SSL has been disabled for' ) !== false )
+				( str_contains( $result, 'SSL has been disabled for' ) )
 				||
-				( strpos( $result, 'SSL is already disabled for' ) !== false )
+				( str_contains( $result, 'SSL is already disabled for' ) )
 				||
-				( strpos( $result, 'Monit email settings updated' ) !== false )
+				( str_contains( $result, 'Monit email settings updated' ) )
 				||
-				( strpos( $result, 'All monitors enabled' ) !== false )
+				( str_contains( $result, 'All monitors enabled' ) )
 				||
-				( strpos( $result, 'All monitors disabled' ) !== false )
+				( str_contains( $result, 'All monitors disabled' ) )
 				||
-				( strpos( $result, 'Callbacks have been enabled' ) !== false )
+				( str_contains( $result, 'Callbacks have been enabled' ) )
 				||
-				( strpos( $result, 'Callbacks have been disabled' ) !== false )
+				( str_contains( $result, 'Callbacks have been disabled' ) )
 				||
-				( strpos( $result, 'Monit has been activated' ) !== false )
+				( str_contains( $result, 'Monit has been activated' ) )
 				||
-				( strpos( $result, 'Monit has been temporarily deactivated' ) !== false );
+				( str_contains( $result, 'Monit has been temporarily deactivated' ) );
 				break;
 			case 'schedule_server_reboot.txt':
 				$return =
-				( strpos( $result, 'The server reboot has been scheduled' ) !== false );
+				( str_contains( $result, 'The server reboot has been scheduled' ) );
 				break;
 			case 'backup_config_files.txt':
 				$return =
-				( strpos( $result, 'Backup cron job has been configured' ) !== false )
+				( str_contains( $result, 'Backup cron job has been configured' ) )
 				||
-				( strpos( $result, 'Cron for conf backup has been removed' ) !== false )
+				( str_contains( $result, 'Cron for conf backup has been removed' ) )
 				||
-				( strpos( $result, 'Backup files have been removed' ) !== false );
+				( str_contains( $result, 'Backup files have been removed' ) );
 				break;
 			case 'goaccess.txt':
 				$return =
-				( strpos( $result, 'goaccess is already installed' ) !== false )
+				( str_contains( $result, 'goaccess is already installed' ) )
 				||
-				( strpos( $result, 'Goaccess has been installed' ) !== false )
+				( str_contains( $result, 'Goaccess has been installed' ) )
 				||
-				( strpos( $result, 'goaccess has been removed' ) !== false )
+				( str_contains( $result, 'goaccess has been removed' ) )
 				||
-				( strpos( $result, 'Goaccess has been disabled' ) !== false )
+				( str_contains( $result, 'Goaccess has been disabled' ) )
 				||
-				( strpos( $result, 'goaccess has been enabled' ) !== false )
+				( str_contains( $result, 'goaccess has been enabled' ) )
 				||
-				( strpos( $result, 'SSL Already Enabled' ) !== false )
+				( str_contains( $result, 'SSL Already Enabled' ) )
 				||
-				( strpos( $result, 'SSL has been enabled for' ) !== false )
+				( str_contains( $result, 'SSL has been enabled for' ) )
 				||
-				( strpos( $result, 'SSL has been disabled' ) !== false )
+				( str_contains( $result, 'SSL has been disabled' ) )
 				||
-				( strpos( $result, 'SSL Not enabled for' ) !== false )
+				( str_contains( $result, 'SSL Not enabled for' ) )
 				||
-				( strpos( $result, 'Basic Auth already enabled' ) !== false )
+				( str_contains( $result, 'Basic Auth already enabled' ) )
 				||
-				( strpos( $result, 'Basic auth has been enabled' ) !== false )
+				( str_contains( $result, 'Basic auth has been enabled' ) )
 				||
-				( strpos( $result, 'Basic Auth already disabled' ) !== false )
+				( str_contains( $result, 'Basic Auth already disabled' ) )
 				||
-				( strpos( $result, 'Auth has been updated' ) !== false )
+				( str_contains( $result, 'Auth has been updated' ) )
 				||
-				( strpos( $result, 'whitelisted' ) !== false )
+				( str_contains( $result, 'whitelisted' ) )
 				||
-				( strpos( $result, 'removed from whitelist' ) !== false )
+				( str_contains( $result, 'removed from whitelist' ) )
 				||
-				( strpos( $result, 'is not whitelisted' ) !== false )
+				( str_contains( $result, 'is not whitelisted' ) )
 				||
-				( strpos( $result, 'All whiteslited ips has been removed' ) !== false );
+				( str_contains( $result, 'All whiteslited ips has been removed' ) );
 				break;
 			case 'fail2ban.txt':
 				$return =
-				( strpos( $result, 'Fail2ban installation complete' ) !== false )
+				( str_contains( $result, 'Fail2ban installation complete' ) )
 				||
-				( strpos( $result, 'fail2ban has been removed' ) !== false )
+				( str_contains( $result, 'fail2ban has been removed' ) )
 				||
-				( strpos( $result, 'fail2ban has been purged' ) !== false )
+				( str_contains( $result, 'fail2ban has been purged' ) )
 				||
-				( strpos( $result, 'Fail2ban parameters have been successfully updated' ) !== false )
+				( str_contains( $result, 'Fail2ban parameters have been successfully updated' ) )
 				||
-				( strpos( $result, 'Protocol has been added' ) !== false )
+				( str_contains( $result, 'Protocol has been added' ) )
 				||
-				( strpos( $result, 'The specified protocol has been removed' ) !== false )
+				( str_contains( $result, 'The specified protocol has been removed' ) )
 				||
-				( strpos( $result, 'The protocol was not enabled and therefore could not be removed' ) !== false )
+				( str_contains( $result, 'The protocol was not enabled and therefore could not be removed' ) )
 				||
-				( strpos( $result, 'Fail2ban parameters have been successfully updated' ) !== false )
+				( str_contains( $result, 'Fail2ban parameters have been successfully updated' ) )
 				||
-				( strpos( $result, 'Fail2ban software has been successfully updated' ) !== false )
+				( str_contains( $result, 'Fail2ban software has been successfully updated' ) )
 				||
-				( strpos( $result, 'has been unbanned' ) !== false )
+				( str_contains( $result, 'has been unbanned' ) )
 				||
-				( strpos( $result, 'has been banned' ) !== false );
+				( str_contains( $result, 'has been banned' ) );
 				break;
 			case 'server_update.txt':
 				$return =
-				( strpos( $result, 'Updates have been scheduled to run via cron' ) !== false )
+				( str_contains( $result, 'Updates have been scheduled to run via cron' ) )
 				||
-				( strpos( $result, 'Security Updates have been scheduled to run via cron' ) !== false );
+				( str_contains( $result, 'Security Updates have been scheduled to run via cron' ) );
 				break;
 			case 'server_php_version.txt':
 				$return =
-				( strpos( $result, 'Server level PHP version has been updated to' ) !== false );
+				( str_contains( $result, 'Server level PHP version has been updated to' ) );
 				break;
 			case 'git_control_server.txt':
 				$return =
-				( strpos( $result, 'Git has been installed' ) !== false )
+				( str_contains( $result, 'Git has been installed' ) )
 				||
-				( strpos( $result, 'Git has been updated' ) !== false );
+				( str_contains( $result, 'Git has been updated' ) );
 				break;
 			case 'ubuntu_pro_activate.txt':
 				$return =
-				( strpos( $result, 'Ubuntu Pro token has been applied to this server' ) !== false );
+				( str_contains( $result, 'Ubuntu Pro token has been applied to this server' ) );
 				break;
 			case 'ubuntu_pro_actions.txt':
 				$return =
-				( strpos( $result, 'This machine is not attached to an Ubuntu Pro subscription' ) !== false )
+				( str_contains( $result, 'This machine is not attached to an Ubuntu Pro subscription' ) )
 				||
-				( strpos( $result, 'Ubuntu Pro token has been removed from this server' ) !== false );
+				( str_contains( $result, 'Ubuntu Pro token has been removed from this server' ) );
 				break;
 
 			/**
@@ -759,21 +759,21 @@ trait wpcd_wpapp_script_handlers {
 			 */
 			case 'server_sync_origin_setup.txt':
 				$return =
-				( strpos( $result, 'Setup has been finished for this server. But you are not done yet' ) !== false );
+				( str_contains( $result, 'Setup has been finished for this server. But you are not done yet' ) );
 				break;
 			case 'server_sync_destination_setup.txt':
 				$return =
-				( strpos( $result, 'Setup has been completed!' ) !== false );
+				( str_contains( $result, 'Setup has been completed!' ) );
 				break;
 			case 'server_sync_manage.txt':
 				$return =
-				( strpos( $result, 'The syncronization job has been started' ) !== false )
+				( str_contains( $result, 'The syncronization job has been started' ) )
 				||
-				( strpos( $result, 'The scheduled sync job has been disabled' ) !== false )
+				( str_contains( $result, 'The scheduled sync job has been disabled' ) )
 				||
-				( strpos( $result, 'The scheduled sync job has been re-enabled' ) !== false )
+				( str_contains( $result, 'The scheduled sync job has been re-enabled' ) )
 				||
-				( strpos( $result, 'The sync service has been permanently removed' ) !== false );
+				( str_contains( $result, 'The sync service has been permanently removed' ) );
 				break;
 
 		}
@@ -782,14 +782,14 @@ trait wpcd_wpapp_script_handlers {
 		if ( $return ) {
 			$return = $return
 				&&
-				( strpos( $result, 'dpkg was interrupted, you must manually run' ) === false )
+				( ! str_contains( $result, 'dpkg was interrupted, you must manually run' ) )
 				&&
-				( strpos( $result, 'Installation of required packages failed' ) === false );
+				( ! str_contains( $result, 'Installation of required packages failed' ) );
 		}
 		if ( $return && ( false === boolval( wpcd_get_option( 'wordpress_app_ignore_journalctl_xe' ) ) ) ) {
 			$return = $return
 				&&
-				( strpos( $result, 'journalctl -xe' ) === false );
+				( ! str_contains( $result, 'journalctl -xe' ) );
 		}
 
 		return apply_filters( 'wpcd_is_ssh_successful', $return, $result, $command, $action, $this->get_app_name() );

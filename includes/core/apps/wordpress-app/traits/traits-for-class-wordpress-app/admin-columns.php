@@ -353,7 +353,7 @@ trait wpcd_wpapp_admin_column_data {
 		}
 
 		/* Add data if it's not already in the column */
-		if ( strpos( $column_data, $new_column_data ) !== false ) {
+		if ( str_contains( $column_data, $new_column_data ) ) {
 			// do nothing.
 		} else {
 			// add the new data to the column.
@@ -390,7 +390,7 @@ trait wpcd_wpapp_admin_column_data {
 		}
 
 		/* Add data if it's not already in the column */
-		if ( strpos( $column_data, $new_column_data ) !== false ) {
+		if ( str_contains( $column_data, $new_column_data ) ) {
 			// do nothing.
 		} else {
 			// add the new data to the column.
@@ -559,7 +559,7 @@ trait wpcd_wpapp_admin_column_data {
 			} else {
 				// Append the data to the existing column data after first checking to see if the data is already in there.
 				$local_status = 'wpapp: ' . $local_status;
-				if ( strpos( $column_data, $local_status ) !== false ) {
+				if ( str_contains( $column_data, $local_status ) ) {
 					// do nothing.
 				} else {
 					// add the new data to the column.
@@ -630,7 +630,7 @@ trait wpcd_wpapp_admin_column_data {
 						} else {
 							// Make sure this string isn't already in the button column...
 							if ( ! empty( $thebutton ) ) {
-								if ( strpos( $value, $thebutton ) !== false ) {
+								if ( str_contains( $value, $thebutton ) ) {
 									// do nothing.
 								} else {
 									// add it to the column.
