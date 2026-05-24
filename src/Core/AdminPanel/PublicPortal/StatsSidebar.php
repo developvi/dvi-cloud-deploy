@@ -10,9 +10,9 @@ class StatsSidebar
     public static function register()
     {
         add_filter('the_content', [self::class, 'inject'], 40);
+        add_filter('dvicd_admin_panel_overview_fields', [self::class, 'embedInOverview'], 10, 3);
         add_action('edit_form_after_title', [self::class, 'renderAdminOpen'], 5);
         add_action('edit_form_after_editor', [self::class, 'renderAdminClose'], 99);
-        add_action('admin_footer-post.php', [self::class, 'renderAdminFooterFallback']);
     }
 
     public static function inject($content)
@@ -41,7 +41,7 @@ class StatsSidebar
             return $content;
         }
 
-        $sidebar = self::renderHtml((int) $postId, $context);
+        $sidebar = self::renderHtml((int) $postId, $context, false);
         if ('' === $sidebar) {
             return $content;
         }
@@ -49,67 +49,57 @@ class StatsSidebar
         return '<div class="dvicd-ap-layout"><div class="dvicd-ap-main">' . $content . '</div>' . $sidebar . '</div>';
     }
 
+    /**
+     * Merge summary rows into Site/Server Overview metabox (admin).
+     *
+     * @param array  $fields
+     * @param int    $postId
+     * @param string $context site|server
+     */
+    public static function embedInOverview(array $fields, $postId, string $context): array
+    {
+        if (!is_admin() || !StyleDetector::isActive()) {
+            return $fields;
+        }
+
+        if ('site' === $context && !StyleDetector::isSiteStyle()) {
+            return $fields;
+        }
+        if ('server' === $context && !StyleDetector::isServerStyle()) {
+            return $fields;
+        }
+
+        // Drop the first IP row — summary already shows IP.
+        $fields = array_values(array_filter($fields, static function ($field) {
+            $class = isset($field['class']) ? (string) $field['class'] : '';
+            return false === strpos($class, '_top_row_ip');
+        }));
+
+        $html = self::renderHtml((int) $postId, $context, true);
+        if ('' === $html) {
+            return $fields;
+        }
+
+        $fields[] = [
+            'type'  => 'custom_html',
+            'std'   => $html,
+            'class' => 'dvicd-ap-overview-summary',
+        ];
+
+        return $fields;
+    }
+
     public static function renderAdminOpen($post)
     {
-        // No-op: unclosed wrappers broke admin DOM. Footer JS wraps once.
+        // No-op: unclosed wrappers broke admin DOM.
     }
 
     public static function renderAdminClose($post)
     {
-        // Kept for compatibility; footer fallback prints the sidebar.
+        // Kept for compatibility.
     }
 
-    public static function renderAdminFooterFallback()
-    {
-        $screen = function_exists('get_current_screen') ? get_current_screen() : null;
-        if (!$screen || !in_array($screen->post_type, ['wpcd_app', 'wpcd_app_server'], true)) {
-            return;
-        }
-
-        if (!StyleDetector::isActive()) {
-            return;
-        }
-
-        global $post;
-        if (!$post) {
-            return;
-        }
-
-        $context = 'wpcd_app_server' === $post->post_type ? 'server' : 'site';
-        if ('site' === $context && !StyleDetector::isSiteStyle()) {
-            return;
-        }
-        if ('server' === $context && !StyleDetector::isServerStyle()) {
-            return;
-        }
-
-        $html = self::renderHtml((int) $post->ID, $context);
-        if ('' === $html) {
-            return;
-        }
-
-        // Mount only — ui.js merges this into Site/Server Overview on the right.
-        echo '<div id="dvicd-ap-stats-mount" style="display:none">' . $html . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-    }
-
-    private static function shouldRenderAdmin($post): bool
-    {
-        if (!is_admin() || !StyleDetector::isActive() || !$post) {
-            return false;
-        }
-
-        if ('wpcd_app' === $post->post_type) {
-            return StyleDetector::isSiteStyle();
-        }
-
-        if ('wpcd_app_server' === $post->post_type) {
-            return StyleDetector::isServerStyle();
-        }
-
-        return false;
-    }
-
-    private static function renderHtml(int $postId, string $context): string
+    private static function renderHtml(int $postId, string $context, bool $embedded = false): string
     {
         $collector = new StatsCollector();
         $items     = $collector->collect($postId, $context);
