@@ -41,7 +41,7 @@ class MetaboxStyleAdapter
             $metaBoxes[$index]['style']     = 'seamless';
 
             $class = isset($box['class']) ? (string) $box['class'] : '';
-            if (false === strpos($class, 'dvicd-ap-metabox')) {
+            if (! str_contains( $class, 'dvicd-ap-metabox' )) {
                 $metaBoxes[$index]['class'] = trim($class . ' dvicd-ap-metabox');
             }
 

@@ -1466,7 +1466,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta and return message.
 			update_post_meta( $id, 'wpcd_last_upgrade_done', 460 );
 			/* translators: %s is replaced with the text of the result of the operation. */
@@ -1529,7 +1529,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta and return message.
 			update_post_meta( $id, 'wpcd_last_upgrade_done', 461 );
 			/* translators: %s is replaced with the text of the result of the operation. */
@@ -1592,7 +1592,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta and return message.
 			update_post_meta( $id, 'wpcd_last_upgrade_done', 462 );
 			/* translators: %s is replaced with the text of the result of the operation. */
@@ -1655,7 +1655,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta and return message.
 			update_post_meta( $id, 'wpcd_last_upgrade_done', 530 );
 			/* translators: %s is replaced with the text of the result of the operation. */
@@ -1727,7 +1727,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
 			update_post_meta( $id, 'wpcd_server_php81_installed', 1 );
 			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
@@ -1803,7 +1803,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
 			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
 			update_post_meta( $id, 'wpcd_server_php82_installed', 1 );
@@ -1879,7 +1879,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
 			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
 			update_post_meta( $id, 'wpcd_server_php83_installed', 1 );
@@ -1955,7 +1955,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
 			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
 			update_post_meta( $id, 'wpcd_server_php84_installed', 1 );
@@ -2076,7 +2076,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
 			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
 
@@ -2170,7 +2170,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the webserver - So update completion meta, add to history and return message.
 			update_post_meta( $id, 'wpcd_6g_removed', true );
 			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
@@ -2255,7 +2255,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the webserver - So update completion meta and return message.
 			update_post_meta( $id, 'wpcd_server_7g_upgrade', 1.6 );
 			/* translators: %s is replaced with the text of the result of the operation. */
@@ -2397,7 +2397,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta and return message.
 			update_post_meta( $id, 'wpcd_server_phpintl_upgrade', 1 );
 			/* translators: %s is replaced with the text of the result of the operation. */
@@ -2472,7 +2472,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// evaluate results.
-		if ( strpos( $result, 'journalctl -xe' ) !== false ) {
+		if ( str_contains( $result, 'journalctl -xe' ) ) {
 			// Looks like there was a problem with restarting the NGINX - So update completion meta and return message.
 			update_post_meta( $id, 'wpcd_cache_enabler_nginx_upgrade', 5.11 );
 			/* translators: %s is replaced with the text of the result of the operation. */

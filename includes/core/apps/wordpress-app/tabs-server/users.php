@@ -379,7 +379,7 @@ class WPCD_WORDPRESS_TABS_SERVER_USERS extends WPCD_WORDPRESS_TABS {
 		// If not error, then add or update the password in our database.
 		if ( ( ! is_wp_error( $result ) ) && $result ) {
 
-			if ( strpos( $result, 'Password Successfully Updated' ) !== false ) {
+			if ( str_contains( $result, 'Password Successfully Updated' ) ) {
 				update_post_meta( $id, 'wpcd_server_root_user_pw', WPCD()->encrypt( $new_pw ) );
 				$msg    = __( 'Password Successfully Updated.', 'wpcd' );
 				$result = array(

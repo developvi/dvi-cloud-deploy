@@ -163,7 +163,7 @@ class BASIC_SERVER_WooCommerce extends WPCD_WOOCOMMERCE {
 	 */
 	public function wc_save_misc_attributes( $cart_item_data, $product_id, $variation_id ) {
 		foreach ( $_POST as $param => $value ) {
-			if ( strpos( $param, 'wpcd_app_basic_server' ) !== false ) {
+			if ( str_contains( $param, 'wpcd_app_basic_server' ) ) {
 				$cart_item_data[ $param ] = sanitize_text_field( $value );
 			}
 		}

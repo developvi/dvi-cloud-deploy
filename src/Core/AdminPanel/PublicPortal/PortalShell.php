@@ -21,7 +21,7 @@ class PortalShell
             return $content;
         }
 
-        if (false !== strpos((string) $content, 'dvicd-ap-portal-shell')) {
+        if (str_contains( (string) $content, 'dvicd-ap-portal-shell' )) {
             return $content;
         }
 

@@ -1177,7 +1177,7 @@ class WPCD_Settings {
 			return $classes;
 		}
 		$screen = get_current_screen();
-		if ( $screen && false !== strpos( (string) $screen->id, 'wpcd_settings' ) ) {
+		if ( $screen && str_contains( (string) $screen->id, 'wpcd_settings' ) ) {
 			$classes .= ' dvicd-ap-active dvicd-ap-settings-page';
 		}
 		return $classes;
@@ -1303,7 +1303,7 @@ class WPCD_Settings {
 			return 'fas fa-sliders';
 		}
 
-		if ( false !== strpos( $icon, 'fa-' ) ) {
+		if ( str_contains( $icon, 'fa-' ) ) {
 			return preg_replace( '/\bfad\b|\bfa-duotone\b/', 'fas', $icon );
 		}
 
@@ -1354,7 +1354,7 @@ class WPCD_Settings {
 		);
 
 		foreach ( $map as $dash => $fa ) {
-			if ( false !== strpos( $icon, $dash ) ) {
+			if ( str_contains( $icon, $dash ) ) {
 				return $fa;
 			}
 		}

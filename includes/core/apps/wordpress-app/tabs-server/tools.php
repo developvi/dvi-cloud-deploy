@@ -302,7 +302,7 @@ class WPCD_WORDPRESS_TABS_SERVER_TOOLS extends WPCD_WORDPRESS_TABS {
 				'confirmation_prompt' => $confirmation_prompt,
 				'desc'                => '',
 				// fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_reset-server-default-php-version-select' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_reset-server-default-php-version-select' ) ),
 			),
 			'type'           => 'button',
 		);
@@ -455,7 +455,7 @@ class WPCD_WORDPRESS_TABS_SERVER_TOOLS extends WPCD_WORDPRESS_TABS {
 		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => 'sudo php --version' ) );
 
 		// Are we already at our desired PHP version?
-		if ( strpos( $result, $new_php_version ) !== false ) {
+		if ( str_contains( $result, $new_php_version ) ) {
 			return new \WP_Error( __( 'It looks like your current default PHP version is already at your desired version. No changes were made.', 'wpcd' ) );
 		} else {
 			/**
@@ -499,7 +499,7 @@ class WPCD_WORDPRESS_TABS_SERVER_TOOLS extends WPCD_WORDPRESS_TABS {
 			$preamble3 .= '========================' . PHP_EOL;
 
 			// Set postmeta.  But only update it if the new version matches the requested version.
-			if ( strpos( $result3, $new_php_version ) !== false ) {
+			if ( str_contains( $result3, $new_php_version ) ) {
 				update_post_meta( $id, 'wpcd_default_php_version', $new_php_version );
 			}
 

@@ -116,7 +116,7 @@ class WPCD_SSH {
 		/* Evaluate potential errors for certain action types */
 		if ( in_array( $action, array( 'remove-user', 'download-file', 'connected', 'disconnect' ) ) ) {
 
-			if ( strpos( $result, 'No such file or directory' ) !== false ) {
+			if ( str_contains( $result, 'No such file or directory' ) ) {
 
 				do_action( 'wpcd_log_error', "Error in executing command: $result", 'error', __FILE__, __LINE__ );
 
@@ -134,7 +134,7 @@ class WPCD_SSH {
 
 		/* Check for certain errors in generic commands related to this app */
 		if ( in_array( $action, array( 'generic' ) ) ) {
-			if ( strpos( $result, 'Could not get lock' ) !== false ) {
+			if ( str_contains( $result, 'Could not get lock' ) ) {
 				do_action( 'wpcd_log_error', "Error in executing command: $result", 'error', __FILE__, __LINE__ );
 				return new \WP_Error( $this->construct_error( $result ) );
 			}

@@ -76,7 +76,7 @@ class WPCD_SERVER_STATISTICS {
 
 		// Store each line values in to a separate array.
 		foreach ( $line_parts as $line_key => $line_part ) {
-			if ( strpos( $line_part[5], '/snap' ) !== false ) {
+			if ( str_contains( $line_part[5], '/snap' ) ) {
 				$count++;
 
 				$combine_1kblocks  = $combine_1kblocks + $line_part[1];

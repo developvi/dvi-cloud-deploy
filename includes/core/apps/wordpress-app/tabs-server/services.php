@@ -1810,7 +1810,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 		if ( is_wp_error( $raw_status ) ) {
 			$services_status['webserver'] = __( 'still unknown - last status request errored', 'wpcd' );
 		} else {
-			if ( ( strpos( $raw_status, 'Started A high performance web server' ) !== false ) || ( strpos( $raw_status, 'active (running) since' ) !== false ) ) {
+			if ( ( str_contains( $raw_status, 'Started A high performance web server' ) ) || ( str_contains( $raw_status, 'active (running) since' ) ) ) {
 				$services_status['webserver'] = 'running';
 			} else {
 				$services_status['webserver'] = 'errored';
@@ -1823,7 +1823,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 		if ( is_wp_error( $raw_status ) ) {
 			$services_status['mariadb'] = __( 'still unknown - last status request errored', 'wpcd' );
 		} else {
-			if ( strpos( $raw_status, 'Active: active (running)' ) !== false ) {
+			if ( str_contains( $raw_status, 'Active: active (running)' ) ) {
 				$services_status['mariadb'] = 'running';
 			} else {
 				$services_status['mariadb'] = 'errored';
@@ -1836,9 +1836,9 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 		if ( is_wp_error( $raw_status ) ) {
 			$services_status['ufw'] = __( 'still unknown - last status request errored', 'wpcd' );
 		} else {
-			if ( strpos( $raw_status, 'Active: active' ) !== false ) {
+			if ( str_contains( $raw_status, 'Active: active' ) ) {
 				$services_status['ufw'] = 'running';
-			} elseif ( strpos( $raw_status, 'Active: inactive' ) !== false ) {
+			} elseif ( str_contains( $raw_status, 'Active: inactive' ) ) {
 				$services_status['ufw'] = 'off';
 			} else {
 				$services_status['ufw'] = 'errored';
@@ -1887,7 +1887,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			if ( is_wp_error( $raw_status ) ) {
 				$services_status['redis'] = __( 'still unknown - last status request errored', 'wpcd' );
 			} else {
-				if ( strpos( $raw_status, 'Active: active (running)' ) !== false ) {
+				if ( str_contains( $raw_status, 'Active: active (running)' ) ) {
 					$services_status['redis'] = 'running';
 				} else {
 					$services_status['redis'] = 'errored';
@@ -1920,7 +1920,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			if ( is_wp_error( $raw_status ) ) {
 				$services_status['memcached'] = __( 'still unknown - last status request errored', 'wpcd' );
 			} else {
-				if ( strpos( $raw_status, 'Active: active (running)' ) !== false ) {
+				if ( str_contains( $raw_status, 'Active: active (running)' ) ) {
 					$services_status['memcached'] = 'running';
 				} else {
 					$services_status['memcached'] = 'errored';
@@ -1991,9 +1991,9 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			if ( is_wp_error( $raw_status ) ) {
 				$services_status[ $service_key ] = __( 'still unknown - last status request errored', 'wpcd' );
 			} else {
-				if ( ( strpos( $raw_status, 'Active: active' ) !== false ) || ( strpos( $raw_status, 'active (running)' ) !== false ) ) {
+				if ( ( str_contains( $raw_status, 'Active: active' ) ) || ( str_contains( $raw_status, 'active (running)' ) ) ) {
 					$services_status[ $service_key ] = 'running';
-				} elseif ( strpos( $raw_status, 'Active: inactive' ) !== false ) {
+				} elseif ( str_contains( $raw_status, 'Active: inactive' ) ) {
 					$services_status[ $service_key ] = 'off';
 				} else {
 					$services_status[ $service_key ] = 'errored';
@@ -2857,7 +2857,7 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 			// Different handling for different actions.
 			switch ( $action ) {
 				case 'antivirus_install':
-					if ( strpos( $result, '1 G+ RAM' ) !== false ) {
+					if ( str_contains( $result, '1 G+ RAM' ) ) {
 						// custom error message for 1 GB requirement.
 						return new \WP_Error( __( 'Unable to install Malware & Antivirus scanning software - 1 minimum of GB of RAM is needed on the server. Unfortunately, this server seems to have less than that.', 'wpcd' ) );
 					}

@@ -189,7 +189,7 @@ class WPCD_CT_Public_Loader extends Loader {
 			if ( 'profile_update' === $hook || 'user_register' === $hook ) {
 				return 'user';
 			}
-			if ( 0 === strpos( $hook, 'edited_' ) || 0 === strpos( $hook, 'created_' ) ) {
+			if ( str_starts_with( $hook, 'edited_' ) || str_starts_with( $hook, 'created_' ) ) {
 				return 'term';
 			}
 			if ( 'mbct_model_edit_load' === $hook ) {

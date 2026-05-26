@@ -594,7 +594,7 @@ class WPCD_BASIC_SERVER_APP extends WPCD_APP {
 				continue;  // this key, if present, should not be added to the array since it shouldn't even be in the server cpt in the first place. But it might get there accidentally on certain operations.
 			}
 
-			if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+			if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 				$value = wpcd_maybe_unserialize( $value );
 				$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 			}

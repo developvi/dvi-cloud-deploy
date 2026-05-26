@@ -757,7 +757,7 @@ class WPCD_VPN_APP extends WPCD_APP {
 				continue;  // this key, if present, should not be added to the array since it shouldn't even be in the server cpt in the first place. But it might get there accidentally on certain operations.
 			}
 
-			if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+			if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 				$value = wpcd_maybe_unserialize( $value );
 				$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 			}
@@ -767,7 +767,7 @@ class WPCD_VPN_APP extends WPCD_APP {
 		if ( ! empty( $app_post_id ) ) {
 			$all_app_meta = get_post_meta( $app_post_id );
 			foreach ( $all_app_meta as $key => $value ) {
-				if ( strpos( $key, 'vpn_' ) === 0 ) {
+				if ( str_starts_with( $key, 'vpn_' ) ) {
 					$value = maybe_unserialize( $value );
 					$attributes[ str_replace( 'vpn_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 				}

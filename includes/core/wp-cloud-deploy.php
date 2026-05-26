@@ -542,7 +542,7 @@ class WP_CLOUD_DEPLOY {
 		$this->wpcd_inject_custom_css();
 
 		/* Do not allow auto-saves on any wpcd-screen. */
-		if ( is_object( $screen ) && wpcd_str_starts_with( $screen->post_type, 'wpcd_' ) ) {
+		if ( is_object( $screen ) && str_starts_with( $screen->post_type, 'wpcd_' ) ) {
 			wp_dequeue_script( 'autosave' );
 		}
 
@@ -891,7 +891,7 @@ class WP_CLOUD_DEPLOY {
 		}
 
 		// Check to see if encryption used is v1 or v2.
-		if ( strpos( $encryptedText, 'wpcd-encrypt-v2:' ) !== false ) {
+		if ( str_contains( $encryptedText, 'wpcd-encrypt-v2:' ) ) {
 			$version = 'v2';
 		} else {
 			$version = 'v1';

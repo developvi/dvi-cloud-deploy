@@ -32,7 +32,7 @@ class ListCards
             return $content;
         }
 
-        if (false !== strpos((string) $content, 'dvicd-ap-list-cards')) {
+        if (str_contains( (string) $content, 'dvicd-ap-list-cards' )) {
             return $content;
         }
 

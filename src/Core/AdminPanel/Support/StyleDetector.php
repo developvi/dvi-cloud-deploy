@@ -41,7 +41,7 @@ class StyleDetector
         }
 
         // Settings has its own Admin Panel UI — never load site/server ui.js there.
-        if (false !== strpos((string) $screen->id, 'wpcd_settings')) {
+        if (str_contains( (string) $screen->id, 'wpcd_settings' )) {
             return false;
         }
 

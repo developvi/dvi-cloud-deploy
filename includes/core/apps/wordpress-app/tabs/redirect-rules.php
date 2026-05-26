@@ -223,7 +223,7 @@ class WPCD_WORDPRESS_TABS_REDIRECT_RULES extends WPCD_WORDPRESS_TABS {
 				'std'                 => __( 'Add This Rule', 'wpcd' ),
 				'confirmation_prompt' => __( 'Are you sure you would like to add this rule?', 'wpcd' ),
 				// fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_redirect-rules-from-url', '#wpcd_app_action_redirect-rules-to-url', '#wpcd_app_action_redirect-rules-type' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_redirect-rules-from-url', '#wpcd_app_action_redirect-rules-to-url', '#wpcd_app_action_redirect-rules-type' ) ),
 			),
 			'type'           => 'button',
 		);
@@ -275,7 +275,7 @@ class WPCD_WORDPRESS_TABS_REDIRECT_RULES extends WPCD_WORDPRESS_TABS {
 					'std'                 => __( 'Remove This Rule', 'wpcd' ),
 					'confirmation_prompt' => __( 'Are you sure you would like to REMOVE this rule?', 'wpcd' ),
 					// fields that contribute data for this action.
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_redirect-rules-to-remove' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_redirect-rules-to-remove' ) ),
 				),
 				'type'           => 'button',
 			);
@@ -360,12 +360,12 @@ class WPCD_WORDPRESS_TABS_REDIRECT_RULES extends WPCD_WORDPRESS_TABS {
 				}
 
 				// If we got here make sure that there is an "http://" or "https://" at the start of the "from" url.
-				if ( ( 'http://' <> substr( $args['source_url'], 0, 7 ) ) && ( 'https://' <> substr( $args['source_url'], 0, 8 ) ) ) {
+				if ( ! str_starts_with( $args['source_url'], 'http://' ) && ! str_starts_with( $args['source_url'], 'https://' ) ) {
 					return new \WP_Error( __( 'Your source URL needs to start with http:// or https://!', 'wpcd' ) );
 				}
 
 				// If we got here make sure that there is an "http://" or "https://" at the start of the "to" url.
-				if ( ( 'http://' <> substr( $args['destination_url'], 0, 7 ) ) && ( 'https://' <> substr( $args['destination_url'], 0, 8 ) ) ) {
+				if ( ! str_starts_with( $args['destination_url'], 'http://' ) && ! str_starts_with( $args['destination_url'], 'https://' ) ) {
 					return new \WP_Error( __( 'Your destination URL needs to start with http:// or https://!', 'wpcd' ) );
 				}
 
@@ -375,7 +375,7 @@ class WPCD_WORDPRESS_TABS_REDIRECT_RULES extends WPCD_WORDPRESS_TABS {
 				}
 
 				// Make sure that the domain is in both urls...
-				if ( strpos( $args['source_url'], $domain ) === false || strpos( $args['destination_url'], $domain ) === false ) {
+				if ( ! str_contains( $args['source_url'], $domain ) || ! str_contains( $args['destination_url'], $domain ) ) {
 					return new \WP_Error( __( 'Your source & destination URLs must be for this domain!', 'wpcd' ) );
 				}
 

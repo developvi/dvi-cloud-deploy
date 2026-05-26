@@ -608,7 +608,7 @@ class WPCD_STABLEDIFF_APP extends WPCD_APP {
 			if ( is_wp_error( $result ) ) {
 				return false;
 			}
-			if ( strpos( $result, 'Please delete this server' ) !== false ) {
+			if ( str_contains( $result, 'Please delete this server' ) ) {
 				return false;
 			}
 			return true;
@@ -866,7 +866,7 @@ class WPCD_STABLEDIFF_APP extends WPCD_APP {
 			}
 
 			// Any field that starts with "wpcd_server_" goes into the array.
-			if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+			if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 				$value = wpcd_maybe_unserialize( $value );
 				$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 			}
@@ -990,7 +990,7 @@ class WPCD_STABLEDIFF_APP extends WPCD_APP {
 				continue;  // this key, if present, should not be added to the array since it shouldn't even be in the server cpt in the first place. But it might get there accidentally on certain operations.
 			}
 
-			if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+			if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 				$value = wpcd_maybe_unserialize( $value );
 				$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 			}
@@ -1000,7 +1000,7 @@ class WPCD_STABLEDIFF_APP extends WPCD_APP {
 		if ( ! empty( $app_post_id ) ) {
 			$all_app_meta = get_post_meta( $app_post_id );
 			foreach ( $all_app_meta as $key => $value ) {
-				if ( strpos( $key, 'stablediff_' ) === 0 ) {
+				if ( str_starts_with( $key, 'stablediff_' ) ) {
 					$value = maybe_unserialize( $value );
 					$attributes[ str_replace( 'stablediff_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 				}
@@ -1413,7 +1413,7 @@ class WPCD_STABLEDIFF_APP extends WPCD_APP {
 							$image_urls = wpcd_maybe_unserialize( get_post_meta( $server_post->ID, 'wpcd_stablediff_image_urls', true ) );
 
 							if ( ! empty( $image_urls ) && is_array( $image_urls ) && count( $image_urls ) > 0 ) {
-								$last_generated_image = end( $image_urls ); // most recent image will be at the bottom of the array.
+								$last_generated_image = array_last( $image_urls ); // most recent image will be at the bottom of the array.
 								$image_to_show        = $last_generated_image['signed-url'];
 
 								$buttons .= sprintf( '<img class="wpcd-stablediff-generated-img" src=%s />', $image_to_show );

@@ -584,7 +584,7 @@ class WPCD_WORDPRESS_TABS_7G_FIREWALL extends WPCD_WORDPRESS_TABS {
 	 *                        enable_query_string_7g, enable_query_string_7g, enable_request_string_7g, disable_request_string_7g, enable_request_method_7g, disable_request_method_7g.
 	 */
 	public function convert_bash_action_to_value( $action ) {
-		if ( strpos( $action, 'enable' ) !== false ) {
+		if ( str_contains( $action, 'enable' ) ) {
 			return 'on';
 		} else {
 			return 'off';

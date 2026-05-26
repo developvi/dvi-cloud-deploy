@@ -72,7 +72,7 @@ class StatsSidebar
         // Drop the first IP row — summary already shows IP.
         $fields = array_values(array_filter($fields, static function ($field) {
             $class = isset($field['class']) ? (string) $field['class'] : '';
-            return false === strpos($class, '_top_row_ip');
+            return ! str_contains( $class, '_top_row_ip' );
         }));
 
         $html = self::renderHtml((int) $postId, $context, true);

@@ -1008,7 +1008,7 @@ class WPCD_POSTS_APP extends WPCD_Posts_Base {
 				$_meta_or_title = $wp_query->query_vars['_meta_or_title'];
 				$_meta_or_title = trim( $_meta_or_title );
 
-				if ( strpos( $_meta_or_title, ' ' ) !== false ) {
+				if ( str_contains( $_meta_or_title, ' ' ) ) {
 					$search_terms = explode( ' ', $_meta_or_title );
 
 					foreach ( $search_terms as $search_term ) {
@@ -2093,7 +2093,7 @@ class WPCD_POSTS_APP extends WPCD_Posts_Base {
 					$post_author_name = empty( $post_author_id ) ? __( 'No Author or Owner provided.', 'wpcd' ) : esc_html( get_user_by( 'ID', $post_author_id )->user_login );
 
 					// Match search term with owner name.
-					if ( strpos( $post_author_name, $search_term ) !== false ) {
+					if ( str_contains( $post_author_name, $search_term ) ) {
 						$owner_options_arr[ $post_author_id ] = $post_author_name;
 					}
 				}

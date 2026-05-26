@@ -1348,7 +1348,7 @@ class WPCD_POSTS_APP_SERVER extends WPCD_Posts_Base {
 				$_meta_or_title = $wp_query->query_vars['_meta_or_title'];
 				$_meta_or_title = trim( $_meta_or_title );
 
-				if ( strpos( $_meta_or_title, ' ' ) !== false ) {
+				if ( str_contains( $_meta_or_title, ' ' ) ) {
 					$search_terms = explode( ' ', $_meta_or_title );
 
 					foreach ( $search_terms as $search_term ) {
