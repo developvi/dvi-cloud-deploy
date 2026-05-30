@@ -80,14 +80,16 @@ class AssetManager
         $repo     = new TabGroupRepository();
         $context  = self::resolveContext();
         $i10n     = [
-            'backLabel'    => __('Back to Home', 'wpcd'),
-            'searchLabel'  => __('Search features…', 'wpcd'),
-            'searchEmpty'  => __('No matching features', 'wpcd'),
-            'openLabel'    => __('Open', 'wpcd'),
-            'hashPrefix'   => 'ap',
-            'context'      => $context,
-            'tabGroups'    => $repo->get($context),
-            'isRtl'        => is_rtl(),
+            'backLabel'           => __('Back to Home', 'wpcd'),
+            'searchLabel'         => __('Search features…', 'wpcd'),
+            'searchEmpty'         => __('No matching features', 'wpcd'),
+            'openLabel'           => __('Open', 'wpcd'),
+            'oneClickLoginLabel'  => __('One-click Login', 'wpcd'),
+            'wpAdminLabel'        => __('WP Admin', 'wpcd'),
+            'hashPrefix'          => 'ap',
+            'context'             => $context,
+            'tabGroups'           => $repo->get($context),
+            'isRtl'               => is_rtl(),
         ];
 
         /**

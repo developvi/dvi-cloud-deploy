@@ -391,7 +391,41 @@
 			$side.prepend($overview);
 		}
 
+		// Legacy fallback: move any leftover footer mount into Overview.
 		mergeSummaryIntoOverview($overview);
+		normalizeOverviewActions($overview);
+	}
+
+	function normalizeOverviewActions($overview) {
+		if (!$overview || !$overview.length || $overview.data('dvicdApActionsReady')) {
+			return;
+		}
+		$overview.data('dvicdApActionsReady', 1);
+
+		// Passwordless chicklet → clear one-click login label.
+		$overview
+			.find('.wpcd_site_details_top_row_element_passwordless_login a.wpcd_action_passwordless_login')
+			.each(function () {
+				var $link = $(this);
+				if ($link.data('dvicdApLabeled')) {
+					return;
+				}
+				$link
+					.data('dvicdApLabeled', 1)
+					.text(cfg.oneClickLoginLabel || 'One-click Login')
+					.attr('title', cfg.oneClickLoginLabel || 'One-click Login');
+			});
+
+		// Avoid two "Login" CTAs: Admin Login → WP Admin.
+		$overview.find('.wpcd_site_details_top_row_admin_login .button').each(function () {
+			var $btn = $(this);
+			var $inner = $btn.children('a').first();
+			var $target = $inner.length ? $inner : $btn;
+			var text = String($target.text() || '').replace(/\s+/g, ' ').trim();
+			if (/admin\s*login/i.test(text) || text === 'Login') {
+				$target.text(cfg.wpAdminLabel || 'WP Admin');
+			}
+		});
 	}
 
 	function mergeSummaryIntoOverview($overview) {
