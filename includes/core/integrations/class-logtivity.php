@@ -60,7 +60,7 @@ class WPCD_LOGTIVITY extends WPCD_Base {
 			'wpcd_error_log',
 		);
 
-		if ( true === wpcd_str_starts_with( $logtivity_logger->post_type, 'wpcd_' ) && ( ! in_array( $logtivity_logger->post_type, $post_types_to_accept, true ) ) ) {
+		if ( true === str_starts_with( $logtivity_logger->post_type, 'wpcd_' ) && ( ! in_array( $logtivity_logger->post_type, $post_types_to_accept, true ) ) ) {
 			$logtivity_logger->stop();
 		}
 	}

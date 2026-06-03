@@ -457,50 +457,71 @@ function wpcd_generate_alpha_numeric_string( $length = 32 ) {
 /**
  * Check to see if a string starts with another.
  *
- * @Note: This would not be needed with running under php 8.0, which we cannot guarantee at this time.
- * Under PHP 8.0 we could use str_starts_with
+ * @since 6.3.0
  *
- * @credit: https://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
+ * @param string $haystack The string to check.
+ * @param string $needle What are we searching for.
+ */
+function dvicd_str_starts_with( $haystack, $needle ) {
+	return str_starts_with( (string) $haystack, (string) $needle );
+}
+
+/**
+ * Deprecated alias of dvicd_str_starts_with(). Prefer str_starts_with().
  *
- * @since 5.5.2
+ * @deprecated 6.3.0 Use str_starts_with() or dvicd_str_starts_with().
  *
  * @param string $haystack The string to check.
  * @param string $needle What are we searching for.
  */
 function wpcd_str_starts_with( $haystack, $needle ) {
-	$length = strlen( $needle );
-	return substr( $haystack, 0, $length ) === $needle;
+	_deprecated_function( __FUNCTION__, '6.3.0', 'dvicd_str_starts_with' );
+	return dvicd_str_starts_with( $haystack, $needle );
 }
 
 /**
  * Check to see if a string ends with another.
  *
- * @Note: This would not be needed with running under php 8.0, which we cannot guarantee at this time.
- * Under PHP 8.0 we could use str_starts_with str_ends_with
+ * @since 6.3.0
  *
- * @credit: https://stackoverflow.com/questions/834303/startswith-and-endswith-functions-in-php
+ * @param string $haystack The string to check.
+ * @param string $needle What are we searching for.
+ */
+function dvicd_str_ends_with( $haystack, $needle ) {
+	return str_ends_with( (string) $haystack, (string) $needle );
+}
+
+/**
+ * Deprecated alias of dvicd_str_ends_with(). Prefer str_ends_with().
  *
- * @since 5.5.2
+ * @deprecated 6.3.0 Use str_ends_with() or dvicd_str_ends_with().
  *
  * @param string $haystack The string to check.
  * @param string $needle What are we searching for.
  */
 function wpcd_str_ends_with( $haystack, $needle ) {
-	$length = strlen( $needle );
-	if ( ! $length ) {
-		return true;
-	}
-	return substr( $haystack, -$length ) === $needle;
+	_deprecated_function( __FUNCTION__, '6.3.0', 'dvicd_str_ends_with' );
+	return dvicd_str_ends_with( $haystack, $needle );
 }
 
 /**
- * Polyfil for PHP 8 str_contains.
+ * Check if a string contains a substring.
  *
- * @see https://www.php.net/manual/en/function.str-contains
+ * @since 6.3.0
  *
- * @credit: https://gist.github.com/juliyvchirkov/8f325f9ac534fe736b504b93a1a8b2ce
+ * @param string $haystack string to search.
+ * @param string $needle what we're searching for.
  *
- * @since 5.6.1
+ * @return boolean.
+ */
+function dvicd_str_contains( string $haystack, string $needle ): bool {
+	return str_contains( $haystack, $needle );
+}
+
+/**
+ * Deprecated alias of dvicd_str_contains(). Prefer str_contains().
+ *
+ * @deprecated 6.3.0 Use str_contains() or dvicd_str_contains().
  *
  * @param string $haystack string to search.
  * @param string $needle what we're searching for.
@@ -508,7 +529,8 @@ function wpcd_str_ends_with( $haystack, $needle ) {
  * @return boolean.
  */
 function wpcd_str_contains( string $haystack, string $needle ): bool {
-	return strlen( $needle ) === 0 || strpos( $haystack, $needle ) !== false;
+	_deprecated_function( __FUNCTION__, '6.3.0', 'dvicd_str_contains' );
+	return dvicd_str_contains( $haystack, $needle );
 }
 
 /**
@@ -1103,39 +1125,29 @@ function wpcd_check_user_is_team_manager( $user_id, $team_id = 0 ) {
 		return false;
 	}
 
+	$is_team_manager_rule = function( $rule ) use ( $user_id ) {
+		return is_array( $rule ) && array_key_exists( 'wpcd_team_manager', $rule ) && $rule['wpcd_team_member'] == $user_id;
+	};
+
 	// return true if passed $user_id is a team manager in passed $team_id.
 	if ( ! empty( $team_id ) ) {
 		$wpcd_permission_rule = get_post_meta( $team_id, 'wpcd_permission_rule', true );
+		return is_array( $wpcd_permission_rule ) && array_any( $wpcd_permission_rule, $is_team_manager_rule );
+	}
 
-		foreach ( $wpcd_permission_rule as $rule ) {
-			if ( array_key_exists( 'wpcd_team_manager', $rule ) && $rule['wpcd_team_member'] == $user_id ) {
+	$args  = array(
+		'post_type'   => 'wpcd_team',
+		'post_status' => 'private',
+		'numberposts' => -1,
+		'fields'      => 'ids',
+	);
+	$teams = get_posts( $args );
+
+	if ( $teams ) {
+		foreach ( $teams as $team ) {
+			$rules = get_post_meta( $team, 'wpcd_permission_rule', true );
+			if ( is_array( $rules ) && array_any( $rules, $is_team_manager_rule ) ) {
 				return true;
-			}
-		}
-	} else {
-		$args  = array(
-			'post_type'   => 'wpcd_team',
-			'post_status' => 'private',
-			'numberposts' => -1,
-			'fields'      => 'ids',
-		);
-		$teams = get_posts( $args );
-
-		if ( $teams ) {
-			foreach ( $teams as $team ) {
-				$wpcd_permission_rule[] = get_post_meta( $team, 'wpcd_permission_rule', true );
-			}
-
-			if ( $wpcd_permission_rule ) {
-				foreach ( $wpcd_permission_rule as $rules ) {
-					if ( $rules ) {
-						foreach ( $rules as $rule ) {
-							if ( array_key_exists( 'wpcd_team_manager', $rule ) && $rule['wpcd_team_member'] == $user_id ) {
-								return true;
-							}
-						}
-					}
-				}
 			}
 		}
 	}
