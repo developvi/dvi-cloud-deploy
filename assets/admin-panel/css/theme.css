@@ -9,7 +9,7 @@
 	--dvicd-ap-negative: var(--wpcd-negative-color, #8b0000);
 	--dvicd-ap-white: var(--wpcd-white-color, #fff);
 	--dvicd-ap-radius: 14px;
-	--dvicd-ap-radius-sm: 10px;
+	--dvicd-ap-radius-sm: 8px;
 	--dvicd-ap-shadow: 0 1px 2px rgba(3, 17, 74, 0.04), 0 4px 16px rgba(3, 17, 74, 0.06);
 	--dvicd-ap-shadow-hover: 0 8px 24px rgba(3, 17, 74, 0.12);
 	--dvicd-ap-gap: 14px;
@@ -19,6 +19,22 @@
 	--dvicd-ap-card-bg: #ffffff;
 	--dvicd-ap-surface: #f6f7fb;
 	--dvicd-ap-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+	/* Unified type scale */
+	--dvicd-ap-font-xs: 11px;
+	--dvicd-ap-font-sm: 12px;
+	--dvicd-ap-font-md: 13px;
+	--dvicd-ap-font-lg: 14px;
+	--dvicd-ap-font-xl: 15px;
+	--dvicd-ap-line: 1.4;
+	--dvicd-ap-weight: 600;
+
+	/* Unified control / button scale */
+	--dvicd-ap-ctrl-h: 36px;
+	--dvicd-ap-ctrl-px: 14px;
+	--dvicd-ap-ctrl-py: 8px;
+	--dvicd-ap-ctrl-radius: var(--dvicd-ap-radius-sm);
+	--dvicd-ap-ctrl-gap: 6px;
 }
 
 .dvicd-ap-active {
@@ -58,15 +74,17 @@
 .dvicd-ap-search {
 	flex: 1 1 240px;
 	min-width: 200px;
-	padding: 11px 14px 11px 40px;
-	border: 1px solid transparent;
-	border-radius: var(--dvicd-ap-radius-sm);
+	min-height: var(--dvicd-ap-ctrl-h);
+	padding: var(--dvicd-ap-ctrl-py) var(--dvicd-ap-ctrl-px) var(--dvicd-ap-ctrl-py) 40px;
+	border: 1px solid var(--dvicd-ap-border);
+	border-radius: var(--dvicd-ap-ctrl-radius);
 	background:
 		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3.5 3.5'/%3E%3C/svg%3E")
 		14px 50% / 16px 16px no-repeat,
 		var(--dvicd-ap-surface);
 	color: var(--dvicd-ap-text);
-	font-size: 14px;
+	font-size: var(--dvicd-ap-font-md);
+	line-height: var(--dvicd-ap-line);
 	transition: border-color 0.2s var(--dvicd-ap-ease), box-shadow 0.2s var(--dvicd-ap-ease), background-color 0.2s var(--dvicd-ap-ease);
 }
 
@@ -84,17 +102,20 @@
 .dvicd-ap-back {
 	display: none;
 	align-items: center;
-	gap: 8px;
-	padding: 10px 14px;
+	justify-content: center;
+	gap: var(--dvicd-ap-ctrl-gap);
+	min-height: var(--dvicd-ap-ctrl-h);
+	padding: var(--dvicd-ap-ctrl-py) var(--dvicd-ap-ctrl-px);
 	border: 1px solid var(--dvicd-ap-border);
-	border-radius: var(--dvicd-ap-radius-sm);
+	border-radius: var(--dvicd-ap-ctrl-radius);
 	background: var(--dvicd-ap-surface);
 	color: var(--dvicd-ap-tertiary);
 	cursor: pointer;
 	text-decoration: none;
-	font-size: 13px;
-	font-weight: 600;
-	transition: background 0.2s var(--dvicd-ap-ease), border-color 0.2s var(--dvicd-ap-ease), color 0.2s var(--dvicd-ap-ease), transform 0.2s var(--dvicd-ap-ease);
+	font-size: var(--dvicd-ap-font-md);
+	font-weight: var(--dvicd-ap-weight);
+	line-height: var(--dvicd-ap-line);
+	transition: background 0.2s var(--dvicd-ap-ease), border-color 0.2s var(--dvicd-ap-ease), color 0.2s var(--dvicd-ap-ease);
 }
 
 .dvicd-ap-back::before {
@@ -119,13 +140,7 @@
 .dvicd-ap-back:hover {
 	border-color: color-mix(in srgb, var(--dvicd-ap-primary) 40%, var(--dvicd-ap-border));
 	color: var(--dvicd-ap-primary);
-	background: color-mix(in srgb, var(--dvicd-ap-primary) 6%, white);
-	transform: translateX(-2px);
-}
-
-[dir="rtl"] .dvicd-ap-back:hover,
-.rtl .dvicd-ap-back:hover {
-	transform: translateX(2px);
+	background: #fff;
 }
 
 .dvicd-ap-toolbar.is-detail {
@@ -228,9 +243,10 @@
 	align-items: center;
 	gap: 10px;
 	margin: 0;
-	font-size: 14px;
+	font-size: var(--dvicd-ap-font-lg);
 	font-weight: 700;
 	letter-spacing: 0.01em;
+	line-height: var(--dvicd-ap-line);
 	color: var(--dvicd-ap-tertiary);
 }
 
@@ -243,7 +259,7 @@
 	border-radius: 9px;
 	background: color-mix(in srgb, var(--dvicd-ap-primary) 10%, white);
 	color: var(--dvicd-ap-primary);
-	font-size: 15px;
+	font-size: var(--dvicd-ap-font-xl);
 	flex: 0 0 auto;
 }
 
@@ -270,7 +286,7 @@
 	border-radius: 999px;
 	background: var(--dvicd-ap-surface);
 	color: var(--dvicd-ap-muted);
-	font-size: 11px;
+	font-size: var(--dvicd-ap-font-xs);
 	font-weight: 700;
 	letter-spacing: 0.02em;
 }
@@ -388,15 +404,15 @@
 }
 
 .dvicd-ap-card__label {
-	font-size: 13px;
-	font-weight: 600;
+	font-size: var(--dvicd-ap-font-md);
+	font-weight: var(--dvicd-ap-weight);
 	line-height: 1.35;
 	color: var(--dvicd-ap-tertiary);
 }
 
 .dvicd-ap-card__hint {
 	margin-top: auto;
-	font-size: 11px;
+	font-size: var(--dvicd-ap-font-xs);
 	font-weight: 500;
 	color: var(--dvicd-ap-muted);
 	opacity: 0;
@@ -420,7 +436,7 @@
 	padding: 36px 24px;
 	text-align: center;
 	color: var(--dvicd-ap-muted);
-	font-size: 14px;
+	font-size: var(--dvicd-ap-font-lg);
 	background: var(--dvicd-ap-card-bg);
 	border: 1px dashed var(--dvicd-ap-border);
 	border-radius: var(--dvicd-ap-radius);
@@ -436,7 +452,7 @@
 	align-items: center;
 	padding: 3px 9px;
 	border-radius: 999px;
-	font-size: 11px;
+	font-size: var(--dvicd-ap-font-xs);
 	font-weight: 700;
 	line-height: 1.5;
 	background: var(--dvicd-ap-surface);
@@ -486,7 +502,7 @@ body.dvicd-ap-active #post-body-content .dvicd-ap-layout {
 	margin: 0 0 14px;
 	padding-bottom: 12px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-	font-size: 13px;
+	font-size: var(--dvicd-ap-font-md);
 	font-weight: 700;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
@@ -500,7 +516,7 @@ body.dvicd-ap-active #post-body-content .dvicd-ap-layout {
 	gap: 10px;
 	padding: 10px 0;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-	font-size: 13px;
+	font-size: var(--dvicd-ap-font-md);
 }
 
 .dvicd-ap-stats__row:last-child {
@@ -765,10 +781,10 @@ body.dvicd-ap-active #post-body-content .dvicd-ap-layout {
 	padding: 0 0 10px !important;
 	border-bottom: 1px solid var(--dvicd-ap-border) !important;
 	color: var(--dvicd-ap-tertiary) !important;
-	font-size: 14px !important;
+	font-size: var(--dvicd-ap-font-lg) !important;
 	font-weight: 700 !important;
 	letter-spacing: 0.01em;
-	line-height: 1.4;
+	line-height: var(--dvicd-ap-line);
 }
 
 .dvicd-ap-active .dvicd-ap-metabox .rwmb-field {
@@ -782,7 +798,7 @@ body.dvicd-ap-active #post-body-content .dvicd-ap-layout {
 .dvicd-ap-active .dvicd-ap-metabox .rwmb-label > label,
 .dvicd-ap-active .dvicd-ap-metabox .rwmb-label label {
 	color: var(--dvicd-ap-tertiary) !important;
-	font-size: 12px !important;
+	font-size: var(--dvicd-ap-font-sm) !important;
 	font-weight: 700 !important;
 	letter-spacing: 0.02em;
 }
@@ -792,30 +808,32 @@ body.dvicd-ap-active #post-body-content .dvicd-ap-layout {
 .dvicd-ap-active .dvicd-ap-metabox .rwmb-input p.description {
 	margin-top: 8px !important;
 	color: var(--dvicd-ap-muted) !important;
-	font-size: 12px !important;
+	font-size: var(--dvicd-ap-font-sm) !important;
 	line-height: 1.5 !important;
 }
 
 /* Inputs */
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="text"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="number"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="email"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="url"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="password"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="search"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="date"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input select,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input textarea,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--single {
-	min-height: 40px;
-	padding: 9px 12px !important;
-	border: 1px solid var(--dvicd-ap-border) !important;
-	border-radius: var(--dvicd-ap-radius-sm) !important;
-	background: var(--dvicd-ap-surface) !important;
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="text"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="number"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="email"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="url"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="password"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="search"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="date"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input:not([type]),
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input select,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input textarea,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--single,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--multiple {
+	min-height: var(--dvicd-ap-ctrl-h);
+	padding: var(--dvicd-ap-ctrl-py) var(--dvicd-ap-ctrl-px) !important;
+	border: 1px solid #cfd6e4 !important;
+	border-radius: var(--dvicd-ap-ctrl-radius) !important;
+	background: #fff !important;
 	color: var(--dvicd-ap-text) !important;
 	box-shadow: none !important;
-	font-size: 13px !important;
-	line-height: 1.4 !important;
+	font-size: var(--dvicd-ap-font-md) !important;
+	line-height: var(--dvicd-ap-line) !important;
 	transition: border-color 0.2s var(--dvicd-ap-ease), box-shadow 0.2s var(--dvicd-ap-ease), background 0.2s var(--dvicd-ap-ease);
 }
 
@@ -823,101 +841,162 @@ body.dvicd-ap-active #post-body-content .dvicd-ap-layout {
 	min-height: 96px;
 }
 
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input:focus,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input select:focus,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input textarea:focus {
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input:focus,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input select:focus,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input textarea:focus,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default.select2-container--focus .select2-selection--single,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default.select2-container--focus .select2-selection--multiple {
 	outline: none !important;
-	border-color: color-mix(in srgb, var(--dvicd-ap-primary) 50%, white) !important;
+	border-color: color-mix(in srgb, var(--dvicd-ap-primary) 55%, #94a3b8) !important;
 	background: #fff !important;
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--dvicd-ap-primary) 16%, transparent) !important;
 }
 
-/* Buttons — primary / secondary / danger */
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-primary,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-secondary,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input button.button,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input a.button,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-button,
-.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .button,
-.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .button a {
+/* Unified button system — same size/type everywhere in Admin Panel */
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-primary,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-secondary,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input button.button,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input a.button,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-button,
+body.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .button,
+body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button,
+body.dvicd-ap-active #postbox-container-1 .button,
+body.dvicd-ap-active #postbox-container-1 .button-primary,
+body.dvicd-ap-active #postbox-container-1 .button-secondary,
+body.dvicd-ap-active #postbox-container-1 #publishing-action .button-primary,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row_app_count a {
 	display: inline-flex !important;
 	align-items: center;
 	justify-content: center;
-	gap: 8px;
-	min-height: 40px;
-	padding: 9px 16px !important;
-	border-radius: 999px !important;
+	gap: var(--dvicd-ap-ctrl-gap);
+	box-sizing: border-box !important;
+	min-height: var(--dvicd-ap-ctrl-h) !important;
+	height: auto !important;
+	padding: var(--dvicd-ap-ctrl-py) var(--dvicd-ap-ctrl-px) !important;
+	border-radius: var(--dvicd-ap-ctrl-radius) !important;
 	border: 1px solid transparent !important;
-	background: linear-gradient(135deg, var(--dvicd-ap-primary) 0%, color-mix(in srgb, var(--dvicd-ap-primary) 70%, var(--dvicd-ap-secondary)) 100%) !important;
-	border-color: transparent !important;
+	background: var(--dvicd-ap-primary) !important;
 	color: #fff !important;
-	box-shadow: 0 6px 16px color-mix(in srgb, var(--dvicd-ap-primary) 28%, transparent) !important;
-	font-size: 13px !important;
-	font-weight: 700 !important;
-	line-height: 1.2 !important;
+	box-shadow: none !important;
+	font-size: var(--dvicd-ap-font-md) !important;
+	font-weight: var(--dvicd-ap-weight) !important;
+	line-height: var(--dvicd-ap-line) !important;
 	text-decoration: none !important;
 	text-shadow: none !important;
 	cursor: pointer;
-	transition: transform 0.18s var(--dvicd-ap-ease), box-shadow 0.18s var(--dvicd-ap-ease), filter 0.18s var(--dvicd-ap-ease) !important;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
 }
 
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button:hover,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-primary:hover,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input button.button:hover,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input a.button:hover,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-button:hover,
-.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .button:hover,
-.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .button a:hover {
-	filter: brightness(1.05);
-	transform: translateY(-1px);
-	box-shadow: 0 10px 22px color-mix(in srgb, var(--dvicd-ap-primary) 34%, transparent) !important;
-	background: linear-gradient(135deg, var(--dvicd-ap-primary) 0%, color-mix(in srgb, var(--dvicd-ap-primary) 60%, var(--dvicd-ap-secondary)) 100%) !important;
-	color: #fff !important;
-	border-color: transparent !important;
-}
-
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button:active,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-button:active {
-	transform: translateY(0);
-	filter: brightness(0.98);
-}
-
-/* Secondary / outline buttons */
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-secondary,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button.button-secondary {
-	background: #fff !important;
-	color: var(--dvicd-ap-tertiary) !important;
-	border: 1px solid var(--dvicd-ap-border) !important;
-	box-shadow: none !important;
-}
-
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-secondary:hover,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button.button-secondary:hover {
-	background: var(--dvicd-ap-surface) !important;
-	border-color: color-mix(in srgb, var(--dvicd-ap-primary) 35%, var(--dvicd-ap-border)) !important;
-	color: var(--dvicd-ap-primary) !important;
-	box-shadow: none !important;
-	filter: none;
-}
-
-/* Danger actions */
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button.wpcd-danger,
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button[class*="delete"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button[class*="remove"],
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button[class*="disable"],
-.dvicd-ap-active .dvicd-ap-metabox .button.button-link-delete {
-	background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
-	box-shadow: 0 6px 16px rgba(220, 38, 38, 0.25) !important;
-	color: #fff !important;
-}
-
-.dvicd-ap-active .dvicd-ap-metabox .rwmb-button i,
-.dvicd-ap-active .dvicd-ap-metabox .button i,
-.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .rwmb-button i {
+/* Nested <a> inside .button must NOT look like a second button */
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button > a,
+body.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .button > a,
+body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button > a,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button > a,
+body.dvicd-ap-active #postbox-container-1 .button > a {
+	display: inline !important;
+	align-items: unset;
+	justify-content: unset;
+	gap: 0;
+	min-height: 0 !important;
+	height: auto !important;
+	width: auto !important;
 	margin: 0 !important;
-	font-size: 13px;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 0 !important;
+	background: transparent !important;
+	box-shadow: none !important;
+	color: inherit !important;
+	font-size: inherit !important;
+	font-weight: inherit !important;
+	line-height: inherit !important;
+	text-decoration: none !important;
+	text-shadow: none !important;
+}
+
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button:hover,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-primary:hover,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input button.button:hover,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input a.button:hover,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-button:hover,
+body.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .button:hover,
+body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button:hover,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button:hover,
+body.dvicd-ap-active #postbox-container-1 .button-primary:hover,
+body.dvicd-ap-active #postbox-container-1 #publishing-action .button-primary:hover {
+	background: color-mix(in srgb, var(--dvicd-ap-primary) 88%, #000) !important;
+	border-color: transparent !important;
+	color: #fff !important;
+	filter: none;
+	transform: none;
+	box-shadow: none !important;
+}
+
+/* Outline / secondary */
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-secondary,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button.button-secondary,
+body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button,
+body.dvicd-ap-active #postbox-container-1 .button-secondary,
+body.dvicd-ap-active #postbox-container-1 .button:not(.button-primary),
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row_app_count a {
+	background: #fff !important;
+	color: var(--dvicd-ap-primary) !important;
+	border: 1px solid color-mix(in srgb, var(--dvicd-ap-primary) 45%, var(--dvicd-ap-border)) !important;
+	box-shadow: none !important;
+}
+
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button-secondary:hover,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button.button-secondary:hover,
+body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button:hover,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button:hover,
+body.dvicd-ap-active #postbox-container-1 .button-secondary:hover,
+body.dvicd-ap-active #postbox-container-1 .button:not(.button-primary):hover,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row_app_count a:hover {
+	background: var(--dvicd-ap-primary) !important;
+	border-color: var(--dvicd-ap-primary) !important;
+	color: #fff !important;
+	filter: none;
+	transform: none;
+	box-shadow: none !important;
+	text-decoration: none !important;
+}
+
+/* Danger */
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button.wpcd-danger,
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button[class*="delete"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button[class*="remove"],
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .button[class*="disable"],
+body.dvicd-ap-active .dvicd-ap-metabox .button.button-link-delete {
+	background: #dc2626 !important;
+	border-color: #dc2626 !important;
+	box-shadow: none !important;
+	color: #fff !important;
+}
+
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-button i,
+body.dvicd-ap-active .dvicd-ap-metabox .button i,
+body.dvicd-ap-active .dvicd-ap-metabox .wpcd-card-group .rwmb-button i,
+body.dvicd-ap-active #postbox-container-1 .button i {
+	margin: 0 !important;
+	font-size: var(--dvicd-ap-font-md) !important;
 	line-height: 1;
+}
+
+/* Overview / sidebar full-width actions */
+body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button,
+body.dvicd-ap-active #postbox-container-1 #publishing-action .button-primary {
+	width: 100% !important;
+	margin: 0 0 8px !important;
+}
+
+body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button:last-child,
+body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button:last-child,
+body.dvicd-ap-active #postbox-container-1 #publishing-action .button-primary {
+	margin-bottom: 0 !important;
 }
 
 /* Custom HTML blocks / tool details */
@@ -928,7 +1007,7 @@ body.dvicd-ap-active #post-body-content .dvicd-ap-layout {
 	background: var(--dvicd-ap-surface);
 	border: 1px solid var(--dvicd-ap-border);
 	color: var(--dvicd-ap-text);
-	font-size: 13px;
+	font-size: var(--dvicd-ap-font-md);
 }
 
 .dvicd-ap-active .dvicd-ap-metabox .wpcd-click-to-copy-label,
@@ -1004,7 +1083,7 @@ body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details > .pos
 
 body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details > .postbox-header .hndle,
 body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details > .postbox-header .hndle {
-	font-size: 12px !important;
+	font-size: var(--dvicd-ap-font-sm) !important;
 	font-weight: 700 !important;
 	letter-spacing: 0.03em;
 	text-transform: uppercase;
@@ -1040,8 +1119,8 @@ body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-
 
 body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .wpcd_site_details_top_row,
 body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row {
-	font-size: 13px !important;
-	font-weight: 600 !important;
+	font-size: var(--dvicd-ap-font-md) !important;
+	font-weight: var(--dvicd-ap-weight) !important;
 	margin: 0 0 10px !important;
 	padding: 0 0 10px !important;
 	border-bottom: 1px solid var(--dvicd-ap-border);
@@ -1057,8 +1136,8 @@ body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_
 
 body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .wpcd_site_details_top_row .rwmb-label,
 body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row .rwmb-label {
-	font-size: 11px !important;
-	font-weight: 600 !important;
+	font-size: var(--dvicd-ap-font-xs) !important;
+	font-weight: var(--dvicd-ap-weight) !important;
 	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	color: var(--dvicd-ap-muted) !important;
@@ -1068,7 +1147,7 @@ body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_
 body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .wpcd_site_details_top_row_domain_left .rwmb-input,
 body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row_server_name .rwmb-input {
 	color: var(--dvicd-ap-tertiary) !important;
-	font-size: 15px !important;
+	font-size: var(--dvicd-ap-font-xl) !important;
 	font-weight: 700 !important;
 	margin-top: 0 !important;
 	line-height: 1.35;
@@ -1078,23 +1157,73 @@ body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_
 body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input,
 body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input {
 	color: var(--dvicd-ap-text) !important;
-	font-size: 13px !important;
+	font-size: var(--dvicd-ap-font-md) !important;
 }
 
 /* Status chips — quiet */
+body.dvicd-ap-active .wpcd_site_details_top_row_element_wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin-top: 8px;
+}
+
 body.dvicd-ap-active .wpcd_site_details_top_row .wpcd_medium_chicklet,
 body.dvicd-ap-active .wpcd_server_details_top_row .wpcd_medium_chicklet {
 	display: inline-flex;
 	align-items: center;
-	font-size: 10px !important;
-	font-weight: 600 !important;
+	font-size: var(--dvicd-ap-font-xs) !important;
+	font-weight: var(--dvicd-ap-weight) !important;
 	padding: 3px 8px !important;
 	border-radius: 6px !important;
 	border: 1px solid var(--dvicd-ap-border) !important;
 	background: var(--dvicd-ap-surface) !important;
 	color: var(--dvicd-ap-muted) !important;
-	margin: 0 4px 4px 0 !important;
+	margin: 0 !important;
 	min-width: 0 !important;
+}
+
+/* Passwordless login — real action button, not a tiny chip */
+body.dvicd-ap-active .wpcd_site_details_top_row .wpcd_site_details_top_row_element_passwordless_login {
+	display: flex !important;
+	flex: 1 1 100%;
+	width: 100% !important;
+	order: -1;
+	margin: 0 0 4px !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+	min-width: 0 !important;
+	color: inherit !important;
+}
+
+body.dvicd-ap-active .wpcd_site_details_top_row .wpcd_site_details_top_row_element_passwordless_login a.wpcd_action_passwordless_login {
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	gap: var(--dvicd-ap-ctrl-gap);
+	box-sizing: border-box !important;
+	width: 100% !important;
+	min-height: var(--dvicd-ap-ctrl-h) !important;
+	padding: var(--dvicd-ap-ctrl-py) var(--dvicd-ap-ctrl-px) !important;
+	border-radius: var(--dvicd-ap-ctrl-radius) !important;
+	border: 1px solid transparent !important;
+	background: var(--dvicd-ap-primary) !important;
+	color: #fff !important;
+	box-shadow: none !important;
+	font-size: var(--dvicd-ap-font-md) !important;
+	font-weight: var(--dvicd-ap-weight) !important;
+	line-height: var(--dvicd-ap-line) !important;
+	text-decoration: none !important;
+	cursor: pointer;
+	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+}
+
+body.dvicd-ap-active .wpcd_site_details_top_row .wpcd_site_details_top_row_element_passwordless_login a.wpcd_action_passwordless_login:hover {
+	background: color-mix(in srgb, var(--dvicd-ap-primary) 88%, #000) !important;
+	color: #fff !important;
+	text-decoration: none !important;
 }
 
 body.dvicd-ap-active .wpcd_site_details_top_row .wpcd_site_details_top_row_element_ssl_on,
@@ -1111,47 +1240,16 @@ body.dvicd-ap-active .wpcd_site_details_top_row .wpcd_site_details_top_row_eleme
 	color: #b91c1c !important;
 }
 
-/* Overview actions — clear, compact, not flashy */
-body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button,
-body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button a,
-body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button,
-body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button a {
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	box-sizing: border-box;
-	gap: 6px;
-	min-height: 36px;
-	margin: 0 0 8px !important;
-	padding: 8px 12px !important;
-	border-radius: 8px !important;
-	border: 1px solid color-mix(in srgb, var(--dvicd-ap-primary) 55%, var(--dvicd-ap-border)) !important;
-	background: #fff !important;
-	color: var(--dvicd-ap-primary) !important;
-	box-shadow: none !important;
-	font-size: 12px !important;
-	font-weight: 600 !important;
-	text-decoration: none !important;
-	transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease !important;
+/* Summary rows merged into Site/Server Overview (no separate card/title) */
+body.dvicd-ap-active .dvicd-ap-overview-summary,
+body.dvicd-ap-active .dvicd-ap-overview-summary .rwmb-label {
+	display: block !important;
 }
 
-body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button:hover,
-body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button a:hover,
-body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button:hover,
-body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button a:hover {
-	background: var(--dvicd-ap-primary) !important;
-	border-color: var(--dvicd-ap-primary) !important;
-	color: #fff !important;
-	transform: none;
+body.dvicd-ap-active .dvicd-ap-overview-summary .rwmb-label {
+	display: none !important;
 }
 
-body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .rwmb-input .button:last-child,
-body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .rwmb-input .button:last-child {
-	margin-bottom: 0 !important;
-}
-
-/* Site/Server Summary embedded inside Overview */
 body.dvicd-ap-active .dvicd-ap-stats--embedded {
 	margin: 14px 0 0 !important;
 	padding: 12px 0 0 !important;
@@ -1165,20 +1263,13 @@ body.dvicd-ap-active .dvicd-ap-stats--embedded {
 }
 
 body.dvicd-ap-active .dvicd-ap-stats--embedded .dvicd-ap-stats__title {
-	margin: 0 0 10px !important;
-	padding: 0 0 8px !important;
-	border-bottom: 1px solid var(--dvicd-ap-border) !important;
-	font-size: 11px !important;
-	font-weight: 700 !important;
-	letter-spacing: 0.03em;
-	text-transform: uppercase;
-	color: var(--dvicd-ap-muted) !important;
+	display: none !important;
 }
 
 body.dvicd-ap-active .dvicd-ap-stats--embedded .dvicd-ap-stats__row {
 	padding: 7px 0 !important;
 	border-bottom: 1px solid var(--dvicd-ap-border) !important;
-	font-size: 12px !important;
+	font-size: var(--dvicd-ap-font-sm) !important;
 }
 
 body.dvicd-ap-active .dvicd-ap-stats--embedded .dvicd-ap-stats__row:last-child {
@@ -1195,35 +1286,12 @@ body.dvicd-ap-active .dvicd-ap-stats--embedded .dvicd-ap-stats__value {
 	font-weight: 600 !important;
 }
 
-body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row_app_count a {
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	min-width: 32px;
-	height: 28px;
-	padding: 0 10px !important;
-	border-radius: 8px !important;
-	border: 1px solid var(--dvicd-ap-border) !important;
-	background: var(--dvicd-ap-surface) !important;
-	color: var(--dvicd-ap-tertiary) !important;
-	text-decoration: none !important;
-	font-weight: 700;
-	font-size: 12px;
-}
-
-body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd_server_details_top_row_app_count a:hover {
-	border-color: color-mix(in srgb, var(--dvicd-ap-primary) 40%, var(--dvicd-ap-border)) !important;
-	color: var(--dvicd-ap-primary) !important;
-	background: #fff !important;
-	text-decoration: none !important;
-}
-
 body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .wpcd-click-to-copy-label,
 body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd-click-to-copy-label,
 body.dvicd-ap-active #wpcd_wordpress-app_tab_top_of_site_details .wpcd-copied,
 body.dvicd-ap-active #wpcd_server_wordpress-app_tab_top_of_server_details .wpcd-copied {
 	color: var(--dvicd-ap-primary) !important;
-	font-size: 11px;
+	font-size: var(--dvicd-ap-font-xs);
 }
 
 /* Right sidebar chrome — quiet control panel */
@@ -1247,7 +1315,7 @@ body.dvicd-ap-active #postbox-container-1 .postbox > .postbox-header {
 }
 
 body.dvicd-ap-active #postbox-container-1 .postbox > .postbox-header .hndle {
-	font-size: 12px !important;
+	font-size: var(--dvicd-ap-font-sm) !important;
 	font-weight: 700 !important;
 	letter-spacing: 0.02em;
 	color: var(--dvicd-ap-tertiary) !important;
@@ -1270,38 +1338,6 @@ body.dvicd-ap-active #postbox-container-1 #major-publishing-actions {
 	padding: 0 !important;
 }
 
-body.dvicd-ap-active #postbox-container-1 #publishing-action .button-primary,
-body.dvicd-ap-active #postbox-container-1 .button-primary {
-	display: inline-flex !important;
-	align-items: center;
-	justify-content: center;
-	width: 100%;
-	min-height: 36px;
-	padding: 8px 12px !important;
-	border: 0 !important;
-	border-radius: 8px !important;
-	background: var(--dvicd-ap-primary) !important;
-	box-shadow: none !important;
-	color: #fff !important;
-	font-weight: 600 !important;
-	text-shadow: none !important;
-}
-
-body.dvicd-ap-active #postbox-container-1 #publishing-action .button-primary:hover,
-body.dvicd-ap-active #postbox-container-1 .button-primary:hover {
-	filter: brightness(1.04);
-}
-
-body.dvicd-ap-active #postbox-container-1 .button-secondary,
-body.dvicd-ap-active #postbox-container-1 .button:not(.button-primary) {
-	border-radius: 8px !important;
-	border: 1px solid var(--dvicd-ap-border) !important;
-	background: var(--dvicd-ap-surface) !important;
-	color: var(--dvicd-ap-tertiary) !important;
-	box-shadow: none !important;
-	font-weight: 600 !important;
-}
-
 body.dvicd-ap-active #postbox-container-1 #misc-publishing-actions,
 body.dvicd-ap-active #postbox-container-1 #minor-publishing-actions {
 	padding: 0 0 10px !important;
@@ -1313,7 +1349,7 @@ body.dvicd-ap-active #postbox-container-1 .misc-pub-section {
 	padding: 7px 0 !important;
 	border-bottom: 1px solid var(--dvicd-ap-border);
 	color: var(--dvicd-ap-muted);
-	font-size: 12px;
+	font-size: var(--dvicd-ap-font-sm);
 }
 
 body.dvicd-ap-active #postbox-container-1 .misc-pub-section:last-child {
@@ -1341,7 +1377,7 @@ body.dvicd-ap-active .dvicd-ap-stats__title {
 	color: var(--dvicd-ap-tertiary) !important;
 	text-transform: uppercase;
 	letter-spacing: 0.03em;
-	font-size: 12px !important;
+	font-size: var(--dvicd-ap-font-sm) !important;
 }
 
 body.dvicd-ap-active .dvicd-ap-stats__row {
