@@ -71,17 +71,50 @@
 	box-shadow: var(--dvicd-ap-shadow);
 }
 
-.dvicd-ap-search {
+.dvicd-ap-search-form {
+	position: relative;
 	flex: 1 1 240px;
 	min-width: 200px;
+	margin: 0;
+	display: flex;
+}
+
+.dvicd-ap-search-form::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	width: 16px;
+	height: 16px;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3.5 3.5'/%3E%3C/svg%3E")
+		center / 16px 16px no-repeat;
+	pointer-events: none;
+	z-index: 1;
+}
+
+.dvicd-ap-search-honeypot {
+	position: absolute !important;
+	left: -10000px !important;
+	top: auto !important;
+	width: 1px !important;
+	height: 1px !important;
+	opacity: 0 !important;
+	overflow: hidden !important;
+	pointer-events: none !important;
+}
+
+.dvicd-ap-search {
+	flex: 1 1 auto;
+	width: 100%;
+	min-width: 0;
 	min-height: var(--dvicd-ap-ctrl-h);
-	padding: var(--dvicd-ap-ctrl-py) var(--dvicd-ap-ctrl-px) var(--dvicd-ap-ctrl-py) 40px;
+	padding-block: var(--dvicd-ap-ctrl-py);
+	padding-inline-start: 42px;
+	padding-inline-end: var(--dvicd-ap-ctrl-px);
 	border: 1px solid var(--dvicd-ap-border);
 	border-radius: var(--dvicd-ap-ctrl-radius);
-	background:
-		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3.5 3.5'/%3E%3C/svg%3E")
-		14px 50% / 16px 16px no-repeat,
-		var(--dvicd-ap-surface);
+	background: var(--dvicd-ap-surface);
 	color: var(--dvicd-ap-text);
 	font-size: var(--dvicd-ap-font-md);
 	line-height: var(--dvicd-ap-line);
@@ -95,7 +128,7 @@
 .dvicd-ap-search:focus {
 	outline: none;
 	border-color: color-mix(in srgb, var(--dvicd-ap-primary) 45%, white);
-	background-color: var(--dvicd-ap-card-bg);
+	background: var(--dvicd-ap-card-bg);
 	box-shadow: 0 0 0 3px color-mix(in srgb, var(--dvicd-ap-primary) 18%, transparent);
 }
 
@@ -147,7 +180,7 @@
 	background: linear-gradient(180deg, #fff 0%, var(--dvicd-ap-surface) 100%);
 }
 
-.dvicd-ap-toolbar.is-detail .dvicd-ap-search {
+.dvicd-ap-toolbar.is-detail .dvicd-ap-search-form {
 	display: none;
 }
 

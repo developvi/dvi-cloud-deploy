@@ -21,11 +21,66 @@
 		var $toolbar = $('<div class="dvicd-ap-toolbar" />');
 		var $back = $('<button type="button" class="dvicd-ap-back" />')
 			.text(cfg.backLabel || 'Back to Home');
-		var $search = $('<input type="search" class="dvicd-ap-search" />')
-			.attr('placeholder', cfg.searchLabel || 'Search features…');
 
-		$toolbar.append($back, $search);
+		// Isolated form + honeypot so browsers do not treat the filter as a login field.
+		var $form = $('<form class="dvicd-ap-search-form" autocomplete="off" novalidate="novalidate" />')
+			.on('submit', function (e) {
+				e.preventDefault();
+			});
+		var $honeypot = $('<input type="text" class="dvicd-ap-search-honeypot" tabindex="-1" aria-hidden="true" />')
+			.attr({
+				autocomplete: 'username',
+				name: 'username_' + Date.now(),
+				value: '',
+			});
+		var $search = $('<input type="text" class="dvicd-ap-search" />')
+			.attr({
+				placeholder: cfg.searchLabel || 'Search features…',
+				autocomplete: 'new-password',
+				autocorrect: 'off',
+				autocapitalize: 'none',
+				spellcheck: 'false',
+				inputmode: 'search',
+				role: 'searchbox',
+				readonly: 'readonly',
+				'data-lpignore': 'true',
+				'data-1p-ignore': 'true',
+				'data-bwignore': 'true',
+				'data-form-type': 'other',
+				'aria-autocomplete': 'none',
+			})
+			.on('focus', function () {
+				var el = this;
+				el.removeAttribute('readonly');
+				// Re-focus after Chrome drops readonly so the caret appears.
+				window.setTimeout(function () {
+					el.focus();
+				}, 0);
+			})
+			.on('blur', function () {
+				if (!$.trim($(this).val())) {
+					$(this).attr('readonly', 'readonly');
+				}
+			});
+
+		$form.append($honeypot, $search);
+		$toolbar.append($back, $form);
 		$tabs.prepend($toolbar);
+
+		// Strip any delayed browser autofill.
+		window.setTimeout(function () {
+			if (!$search.data('dvicdTyped') && $search.val()) {
+				$search.val('').trigger('input');
+			}
+			$honeypot.val('');
+		}, 250);
+		window.setTimeout(function () {
+			if (!$search.data('dvicdTyped') && $search.val()) {
+				$search.val('').trigger('input');
+			}
+			$honeypot.val('');
+		}, 1000);
+
 		return $toolbar;
 	}
 
@@ -33,7 +88,34 @@
 		if (map.tabs && map.tabs[slug] && map.tabs[slug].group) {
 			return map.tabs[slug].group;
 		}
-		return 'other';
+		return '';
+	}
+
+	function slugifyKey(str) {
+		return String(str || '')
+			.toLowerCase()
+			.replace(/[^a-z0-9]+/g, '-')
+			.replace(/^-+|-+$/g, '') || 'item';
+	}
+
+	function metaboxTitle($tabs) {
+		var $box = $tabs.closest('.postbox');
+		if (!$box.length) {
+			return '';
+		}
+		var raw = $box.children('.postbox-header').find('.hndle').first().text()
+			|| $box.children('h2.hndle, .hndle').first().text()
+			|| '';
+		return $.trim(String(raw).replace(/\s+/g, ' '));
+	}
+
+	function ensureGroup(groups, $home, key, meta) {
+		if (groups[key]) {
+			return groups[key];
+		}
+		groups[key] = createGroup(key, meta || {});
+		$home.append(groups[key].$el);
+		return groups[key];
 	}
 
 	function normalizeIcon(cls) {
@@ -119,18 +201,20 @@
 		var $home = $('<div class="dvicd-ap-home" />');
 		var $empty = $('<div class="dvicd-ap-empty" />').text(cfg.searchEmpty || 'No matching features');
 		var groups = {};
+		var boxTitle = metaboxTitle($tabs);
+		var $postbox = $tabs.closest('.postbox');
+		var isPrimary = $postbox.hasClass('wpcd-wpapp-actions')
+			|| $tabs.closest('.wpcd-wpapp-actions').length > 0;
 
 		$home.append($empty);
 
 		sortedGroupKeys(map).forEach(function (key) {
-			groups[key] = createGroup(key, map.groups[key]);
-			$home.append(groups[key].$el);
+			// Skip generic Other — unnamed tabs get real metabox/tab titles instead.
+			if (key === 'other') {
+				return;
+			}
+			ensureGroup(groups, $home, key, map.groups[key]);
 		});
-
-		if (!groups.other) {
-			groups.other = createGroup('other', { label: 'Other', icon: 'fas fa-ellipsis' });
-			$home.append(groups.other.$el);
-		}
 
 		$nav.children('li').each(function () {
 			var $li = $(this);
@@ -140,12 +224,25 @@
 			}
 
 			var label = $.trim($li.find('a').clone().children().remove().end().text()) || slug;
+			var icon = resolveIcon(slug, $li, map);
 			var groupKey = resolveGroup(slug, map);
-			if (!groups[groupKey]) {
-				groupKey = 'other';
+
+			if (!groupKey || !groups[groupKey]) {
+				if (!isPrimary && boxTitle) {
+					groupKey = 'metabox-' + slugifyKey(boxTitle);
+					ensureGroup(groups, $home, groupKey, {
+						label: boxTitle,
+						icon: 'fas fa-layer-group',
+					});
+				} else {
+					groupKey = 'tab-' + slugifyKey(slug);
+					ensureGroup(groups, $home, groupKey, {
+						label: label,
+						icon: icon,
+					});
+				}
 			}
 
-			var icon = resolveIcon(slug, $li, map);
 			var openLabel = (cfg.openLabel || 'Open');
 			var $card = $('<div class="dvicd-ap-card" role="button" tabindex="0" />')
 				.attr('data-panel', slug)
@@ -275,8 +372,16 @@
 	}
 
 	function bindSearch($home, $toolbar) {
+		$toolbar.on('keydown compositionstart paste', '.dvicd-ap-search', function () {
+			$(this).data('dvicdTyped', 1);
+		});
+
 		$toolbar.on('input', '.dvicd-ap-search', function () {
-			var q = $.trim($(this).val()).toLowerCase();
+			var $input = $(this);
+			if ($input.val()) {
+				$input.data('dvicdTyped', 1);
+			}
+			var q = $.trim($input.val()).toLowerCase();
 			var visible = 0;
 
 			$home.find('.dvicd-ap-card').each(function () {
