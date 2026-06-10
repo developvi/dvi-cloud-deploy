@@ -126,6 +126,33 @@ Note: Even though the entire git development history isn't available on github, 
 [Friendly Release Notes](https://wpclouddeploy.com/category/release-notes/)
 
 ## Change Log ##
+7.0.0
+----
+* New: Admin Panel tab style for site and server screens (card dashboard instead of classic left tabs).
+* New: Admin Panel core module (`src/Core/AdminPanel/`) with contracts, repositories, services, and bootstrap.
+* New: Style detection so Admin Panel UI loads only when tab style is set to `adminpanel`.
+* New: Card-based home dashboard with grouped features, icons, counts, search, and back navigation.
+* New: Hash-based deep links for open feature panels (`#ap/{slug}`).
+* New: Site Overview / Server Overview metabox in the right sidebar.
+* New: Site/Server summary stats embedded into the Overview card.
+* New: Filter `dvicd_admin_panel_overview_fields` to extend Overview fields.
+* New: Public portal shell, list cards, and stats sidebar for Admin Panel mode on the front end.
+* New: Dedicated Email Notifications and Descriptions/Notes/Labels feature groups.
+* New: Admin Panel theme CSS, UI script, and portal styles; Font Awesome Free icons for the dashboard.
+* Tweak: Site and server settings expose the Admin Panel tab style option.
+* Tweak: Metabox registration supports Admin Panel placement (side overview, seamless main actions).
+* Tweak: Hide empty Meta Box card-container rows so they no longer consume vertical space.
+* Tweak: Unified control scale for buttons, inputs, and search (height, padding, radius, typography).
+* Tweak: Clearer Overview/sidebar button styles; passwordless login as a full action button.
+* Tweak: Form inputs use a visible border and consistent focus ring.
+* Tweak: Search field LTR/RTL icon alignment; hardened against browser autofill.
+* Tweak: Unmapped tabs/metaboxes use their real names instead of a generic “Other” group.
+* Fix: Admin layout wrappers that broke the edit-screen DOM.
+* Fix: Feature panels opening without Meta Box hash conflicts.
+* Fix: Card grid collapsing to a single column on larger viewports.
+* Fix: Nested `.button > a` rendering as a double button in Overview.
+* Fix: Duplicate Login CTAs and duplicate IP row in Site/Server Overview.
+
 6.2.1
 ----
 * Refactor: Change get_tasks_by_state_reference() to return count of tasks instead of full post objects for improved efficiency.
