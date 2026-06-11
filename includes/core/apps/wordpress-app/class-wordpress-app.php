@@ -776,7 +776,11 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
             }
 
             // Decode the response body
-            $body = json_decode(wp_remote_retrieve_body($response), true);
+            $raw_body = wp_remote_retrieve_body($response);
+            if ( ! is_string( $raw_body ) || ! json_validate( $raw_body ) ) {
+                return;
+            }
+            $body = json_decode($raw_body, true);
             $versions = array_column($body['offers'], 'version');
             $versions[] = 'latest';
        
@@ -2956,7 +2960,7 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 				// Validate the server name and return right away if invalid format.
 				$name_pattern = '/^[a-z0-9-_]+$/i';
 
-				if ( false !== strpos( mb_strtolower( $args['provider'] ), 'hivelocity' ) ) {
+				if ( str_contains( mb_strtolower( $args['provider'] ), 'hivelocity' ) ) {
 					// special check for hivelocity server names - periods are allowed because their names must be in xxx.yyy.zzz format
 					// @TODO: We need to have a hook for validation and move this check into the HIVELOCITY plugin.
 					$name_pattern = '/^[a-z0-9-_.]+$/i';
@@ -3221,7 +3225,7 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 			}
 
 			// Any field that starts with "wpcd_server_" goes into the array.
-			if ( strpos( $key, 'wpcd_server_' ) === 0 ) {
+			if ( str_starts_with( $key, 'wpcd_server_' ) ) {
 				$value = wpcd_maybe_unserialize( $value );
 				$attributes[ str_replace( 'wpcd_server_', '', $key ) ] = is_array( $value ) && count( $value ) === 1 ? $value[0] : $value;
 			}

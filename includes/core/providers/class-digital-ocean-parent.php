@@ -381,6 +381,9 @@ runcmd:
 			do_action( 'wpcd_log_error', "$method with " . print_r( $attributes, true ) . ' gives error response = ' . print_r( $response, true ), 'error', __FILE__, __LINE__ ); //PHPcs warning normally issued because of print_r
 
 			$body = wp_remote_retrieve_body( $response );
+			if ( ! is_string( $body ) || ! json_validate( $body ) ) {
+				return new \WP_Error( 'error', $body );
+			}
 			$body = json_decode( $body );
 			if ( is_object( $body ) ) {
 				return new \WP_Error( $body->id, $body->message );
@@ -390,7 +393,10 @@ runcmd:
 		}
 
 		/* If no execution errors, get body of response */
-		$body   = wp_remote_retrieve_body( $response );
+		$body = wp_remote_retrieve_body( $response );
+		if ( ! is_string( $body ) || ! json_validate( $body ) ) {
+			return new \WP_Error( 'error', __( 'Invalid JSON response from provider.', 'wpcd' ) );
+		}
 		$body   = json_decode( $body );
 		$return = array();
 
@@ -399,7 +405,7 @@ runcmd:
 			case 'sizes':
 				foreach ( $body->sizes as $size ) {
 					// Make sure size is available and that it's not one of the smaller sizes (512MB RAM) before adding it to the return array.
-					if ( 1 === (int) $size->available && ( false === strpos( $size->slug, '512mb' ) ) ) {
+					if ( 1 === (int) $size->available && ( ! str_contains( $size->slug, '512mb' ) ) ) {
 						/* translators: %1$s is the digital ocean slug/plan description. Hopefully the remaining replacements are self-explanatory - they all refer to various aspects of the digital ocean plan. */
 						$return[ $size->slug ] = sprintf( __( '%1$s (%2$d CPUs, %3$d MB RAM, %4$d GB SSD, $%5$d per month USD, %6$d TB data transfer/month)', 'wpcd' ), $size->slug, $size->vcpus, $size->memory, $size->disk, $size->price_monthly, $size->transfer );
 					}
@@ -633,29 +639,32 @@ runcmd:
 			);
 
 			$body = wp_remote_retrieve_body( $response );
+			if ( ! is_string( $body ) || ! json_validate( $body ) ) {
+				continue;
+			}
 			$body = json_decode( $body );
 
-			foreach ( $body->actions as $action ) {
-
-				if ( $action->id == $action_id ) {
-					if ( 'completed' === $action->status || 'errored' === $action->status ) {
-
-						// Update server record with new size.
-						if ( 'completed' === $action->status ) {
-							$server_post_id = WPCD_SERVER()->get_server_id_by_instance_id( $server_id );
-							WPCD_SERVER()->finalize_server_size( $server_post_id );
-						}
-
-						// restart the server.
-						$this->call( 'on', array( 'id' => $server_id ) );
-
-						// remove server from restart array.
-						unset( $all_servers[ $server_id ] );
-					}
-
-					break;
-
+			$actions = ( isset( $body->actions ) && is_array( $body->actions ) ) ? $body->actions : array();
+			$action  = array_find(
+				$actions,
+				function( $action ) use ( $action_id ) {
+					return $action->id == $action_id;
 				}
+			);
+
+			if ( $action && ( 'completed' === $action->status || 'errored' === $action->status ) ) {
+
+				// Update server record with new size.
+				if ( 'completed' === $action->status ) {
+					$server_post_id = WPCD_SERVER()->get_server_id_by_instance_id( $server_id );
+					WPCD_SERVER()->finalize_server_size( $server_post_id );
+				}
+
+				// restart the server.
+				$this->call( 'on', array( 'id' => $server_id ) );
+
+				// remove server from restart array.
+				unset( $all_servers[ $server_id ] );
 			}
 		}
 

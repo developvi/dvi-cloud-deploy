@@ -119,7 +119,10 @@ class WPCD_WORDPRESS_APP_LOGTIVITY extends WPCD_Base {
 		// Only do things if there is an api key.
 		if ( ! empty( $api_key ) ) {
 
-			$response = json_decode( ( new Logtivity_Api() )->setApiKey( $teams_api_key )->post( '/sites/' . $api_key . '/delete', array() ) );
+			$raw_response = ( new Logtivity_Api() )->setApiKey( $teams_api_key )->post( '/sites/' . $api_key . '/delete', array() );
+			$response     =  json_validate( $raw_response ) 
+				? json_decode( $raw_response )
+				: null;
 
 			if ( $response && property_exists( $response, 'message' ) ) {
 				if ( ! empty( $response ) ) {

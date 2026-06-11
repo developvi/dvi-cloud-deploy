@@ -91,7 +91,7 @@ class WPCD_DNS extends WPCD_Base {
 		// For now we just pull the cloudflare values and use them.
 		if ( wpcd_get_option( 'wordpress_app_dns_cf_enable' ) ) {
 			$root_domain = $this->get_active_root_domain();
-			if ( strpos( $domain, $root_domain ) ) {
+			if ( str_contains( $domain, $root_domain ) ) {
 				// Looks like the root domain is part of the $domain string so we can try to add to the cloudflare DNS.
 				$zone_id = wpcd_get_option( 'wordpress_app_dns_cf_zone_id' );
 				$token   = wpcd_get_option( 'wordpress_app_dns_cf_token' );
@@ -129,7 +129,7 @@ class WPCD_DNS extends WPCD_Base {
 		// For now we just pull the cloudflare values and use them.
 		if ( wpcd_get_option( 'wordpress_app_dns_cf_auto_delete' ) ) {
 			$root_domain = $this->get_active_root_domain();
-			if ( strpos( $domain, '.' . $root_domain ) ) {
+			if ( str_contains( $domain, '.' . $root_domain ) ) {
 				// Looks like the root domain is part of the $domain string so we can try to delete it from the cloudflare DNS.
 				$zone_id = wpcd_get_option( 'wordpress_app_dns_cf_zone_id' );
 				$token   = wpcd_get_option( 'wordpress_app_dns_cf_token' );
@@ -181,7 +181,6 @@ class WPCD_DNS extends WPCD_Base {
 					'Authorization' => "Bearer $token",
 					'Content-Type'  => 'application/json',
 				),
-				'data_format' => 'body',
 			);
 
 			$response = wp_remote_post( $url, $options );
@@ -229,7 +228,6 @@ class WPCD_DNS extends WPCD_Base {
 						'Authorization' => "Bearer $token",
 						'Content-Type'  => 'application/json',
 					),
-					'data_format' => 'body',
 				);
 
 				$response = wp_remote_post( $url, $options );
@@ -284,7 +282,6 @@ class WPCD_DNS extends WPCD_Base {
 					'Authorization' => "Bearer $token",
 					'Content-Type'  => 'application/json',
 				),
-				'data_format' => 'body',
 			);
 
 			// Get the data.
@@ -302,10 +299,15 @@ class WPCD_DNS extends WPCD_Base {
 			}
 
 			// Decode the data.
-			try {
-				$json = json_decode( $response['body'] );
-			} catch ( Exception $ex ) {
+			$body = $response['body'] ?? '';
+			if ( ! is_string( $body ) || ! json_validate( $body ) ) {
 				$json = null;
+			} else {
+				try {
+					$json = json_decode( $body );
+				} catch ( Exception $ex ) {
+					$json = null;
+				}
 			}
 
 			$response_code = wp_remote_retrieve_response_code( $response );
@@ -378,7 +380,6 @@ class WPCD_DNS extends WPCD_Base {
 				'Authorization' => "Bearer $token",
 				'Content-Type'  => 'application/json',
 			),
-			'data_format' => 'body',
 		);
 
 		// Send the delete request.
@@ -426,7 +427,6 @@ class WPCD_DNS extends WPCD_Base {
 					'Authorization' => "Bearer $token",
 					'Content-Type'  => 'application/json',
 				),
-				'data_format' => 'body',
 			);
 
 			// Send the delete request.

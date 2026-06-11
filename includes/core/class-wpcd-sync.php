@@ -227,7 +227,9 @@ class WPCD_SYNC {
 			openssl_decrypt(base64_decode($encrypted_json_data), 'AES-128-CBC', $secretKey, OPENSSL_RAW_DATA, $iv);
 			*/
 
-			$decoded_json_data = json_decode( $decrypted_json_data, true );
+			$decoded_json_data = ( is_string( $decrypted_json_data ) && json_validate( $decrypted_json_data ) )
+				? json_decode( $decrypted_json_data, true )
+				: null;
 
 			if ( empty( $decrypted_json_data ) || empty( $decoded_json_data ) ) {
 				$error_msg = array( 'msg' => __( 'The file can not be restored. Please enter a valid decryption key.', 'wpcd' ) );
@@ -1033,10 +1035,12 @@ class WPCD_SYNC {
 
 			curl_close( $ch );
 
-			$response_arr = json_decode( $response, true );
+			$response_arr = ( is_string( $response ) && json_validate( $response ) )
+				? json_decode( $response, true )
+				: array();
 
 			// if data not store at the target site.
-			if ( $response_arr['status'] == false ) {
+			if ( empty( $response_arr ) || $response_arr['status'] == false ) {
 				if ( $ajax == 0 ) {
 					do_action( 'wpcd_log_error', $response_arr['message'], 'debug', __FILE__, __LINE__ );
 				} else {

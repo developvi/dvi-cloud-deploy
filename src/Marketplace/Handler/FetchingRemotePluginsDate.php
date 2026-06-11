@@ -32,7 +32,10 @@ class FetchingRemotePluginsDate
                 return []; // Return an empty array in case of errors
             }
 
-            $plugins_data = json_decode(wp_remote_retrieve_body($remote), true);
+            $body = wp_remote_retrieve_body($remote);
+            $plugins_data = (is_string($body) && json_validate($body))
+                ? json_decode($body, true)
+                : [];
             // Cache the data for 1 day
             set_transient('dvi_marketplace_plugins', $plugins_data, DAY_IN_SECONDS);
         }

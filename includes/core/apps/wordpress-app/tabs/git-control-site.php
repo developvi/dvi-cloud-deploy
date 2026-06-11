@@ -2930,6 +2930,9 @@ class WPCD_WORDPRESS_TABS_GIT_CONTROL_SITE extends WPCD_WORDPRESS_TABS {
 		}
 
 		// Get the payload.
+		if ( ! is_string( $payload ) || ! json_validate( $payload ) ) {
+			return 'invalid payload';
+		}
 		$decoded_payload = json_decode( $payload, true ); // true means return an array.
 
 		// Which branch is it?
@@ -2941,7 +2944,7 @@ class WPCD_WORDPRESS_TABS_GIT_CONTROL_SITE extends WPCD_WORDPRESS_TABS {
 
 		// $ref contains something like /refs/heads/main or /refes/heads/dev01.  Need to extract the last part.
 		$parts  = explode( '/', $ref );
-		$branch = end( $parts );
+		$branch = array_last( $parts );
 		if ( empty( $branch ) ) {
 			do_action( 'wpcd_log_error', sprintf( 'Git push-to-deploy webhook cannot be handled because we could not determine a branch. App Id: %s', $id ), 'error', __FILE__, __LINE__, $instance, false );
 			return false;
