@@ -272,18 +272,6 @@ class WP_CLOUD_DEPLOY {
 			4
 		);
 
-		if ( ! defined( 'WPCD_HIDE_HELP_TAB' ) || ( defined( 'WPCD_HIDE_HELP_TAB' ) && ! WPCD_HIDE_HELP_TAB ) ) {
-			add_submenu_page(
-				'edit.php?post_type=wpcd_app_server',
-				__( 'FAQ & Help', 'wpcd' ),
-				__( 'FAQ & Help', 'wpcd' ),
-				'manage_options',
-				'wpcd_faq_and_help',
-				array( $this, 'wpcd_get_faq_and_help_text_page_callback' ),
-				20
-			);
-		}
-
 		// Sub-menu entries will be populated by each log CPT via their 'show_in_menu' config entry.
 		add_menu_page(
 			__( 'Server Alerts', 'wpcd' ),
@@ -355,116 +343,24 @@ class WP_CLOUD_DEPLOY {
 	}
 
 	/**
-	 * Construct the faq and help text to show on the FAQ & Help menu page.
+	 * Deprecated FAQ & Help page callback.
+	 *
+	 * @deprecated 6.3.0 Use \DVICloudDeploy\App\FaqHelp\Admin\FaqHelpPage::render().
 	 */
-	public function wpcd_get_faq_and_help_text_page_callback() {
-		$help = '<div class="wpcd_faq_help_sec"><h1 class="wp-heading-inline">FAQ & Help</h1>';
-
-		$help .= __( 'Links to commonly requested documentation.', 'wpcd' );
-		$help .= '<br />';
-
-		$help     .= '<div class="wpcd_settings_help_text_wrapper">';
-			$help .= '<div class="wpcd_settings_help_text_left_column">';
-
-				$help .= '<h2>' . __( 'Getting Started', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://wpclouddeploy.com/doc-landing/">' . __( 'Popular articles', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/">' . __( 'Quick start', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/category/release-notes/">' . __( 'Release notes', 'wpcd' ) . '</a>';
-
-				$help .= '<h2>' . __( 'Tasks', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-user-guide/deploy-a-server/">' . __( 'Deploy a new server', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-user-guide/add-a-new-wordpress-site/">' . __( 'Deploy a new WordPress site', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-user-guide/enable-or-disable-ssl/">' . __( 'SSL Certificates', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/backups-with-aws-s3/">' . __( 'Backups with AWS S3', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/cloning-sites/">' . __( 'Cloning sites', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/sftp/">' . __( 'sFTP', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-
-				$help .= '<h2>' . __( 'Troubleshooting', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy/reasons-servers-fail-to-deploy/">' . __( 'Common server deployment issues', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-
-				$help .= '<h2>' . __( 'Reading', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://wpclouddeploy.com/how-to-build-a-wordpress-saas-video-course-free/">' . __( 'How To Build A WordPress SaaS - Video Course', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/a-wordpress-server-sizing-guide/">' . __( 'WordPress Server Sizing Guide', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/the-five-levels-of-caching-in-wordpress/">' . __( 'Understanding WordPress Caching', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/page-cache/">' . __( 'Our NGINX Page Cache', 'wpcd' ) . '</a>';
-
-			$help .= '</div>';
-
-			$help     .= '<div class="wpcd_settings_help_text_middle_column">';
-				$help .= '<h2>' . __( 'Teams', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-teams/introduction-to-teams/">' . __( 'Introduction', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-teams/preparing-users-for-a-team/">' . __( 'Preparing users for a team', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-teams/creating-teams/">' . __( 'Creating teams', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-teams/assigning-teams/">' . __( 'Assigning teams', 'wpcd' ) . '</a>';
-
-				$help .= '<h2>' . __( 'Components', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-addons-and-upgrades/multisite-introduction/">' . __( 'Multisite', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/server-sync-introduction/">' . __( 'Server Sync', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/custom-servers-bring-your-own-server/">' . __( 'Custom Servers (Bring Your Own Server)', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy-admin/virtual-cloud-providers/">' . __( 'Virtual Providers', 'wpcd' ) . '</a>';
-
-				$help .= '<h2>' . __( 'Developers', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://wpclouddeploy.com/how-to-add-custom-functionality-to-wpcd-part-1/">' . __( 'Adding custom functionality part 1', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/tutorial-add-custom-functionality-to-wpcd-part-2/">' . __( 'Adding custom functionality part 2', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/tutorial-add-custom-functionality-to-wpcd-part-3/">' . __( 'Adding custom functionality part 3', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/tutorial-add-custom-functionality-to-wpcd-part-4/">' . __( 'Adding custom functionality part 4', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-			$help     .= '</div>';
-
-			$help     .= '<div class="wpcd_settings_help_text_right_column">';
-				$help .= '<h2>' . __( 'Videos', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://www.youtube.com/channel/UC-OM3lYLHMWYqkGLLy4eYFA" class="wpcd_help_button wpcd_help_button_videos">' . __( 'Videos', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-
-				$help .= '<br />';
-				$help .= '<h2>' . __( 'More documentation', 'wpcd' ) . '</h2>';
-
-				$help .= '<a href="https://wpclouddeploy.com/documentation/wpcloud-deploy/introduction-to-wpcloud-deploy/" class="wpcd_help_button wpcd_help_button_all_docs">' . __( 'View All Documentation', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<br />';
-
-				$help .= '<h2>' . __( 'Additional Resources', 'wpcd' ) . '</h2>';
-				$help .= '<a href="https://www.facebook.com/groups/wp.linux.support">' . __( 'Join the private facebook group', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://twitter.com/wpclouddeploy">' . __( 'Subscribe to our Twitter feed', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-				$help .= '<a href="https://wpclouddeploy.com/mailpoet-group/basic-subscription-form/">' . __( 'Get Email Updates', 'wpcd' ) . '</a>';
-
-				$help .= '<br />';
-				$help .= '<h2>' . __( 'Support', 'wpcd' ) . '</h2>';
-
-				$help .= '<a href="https://wpclouddeploy.com/support/" class="wpcd_help_button wpcd_help_button_all_support">' . __( 'All Support Options', 'wpcd' ) . '</a>';
-				$help .= '<br />';
-
-			$help .= '</div>';
-
-		$help .= '</div>';
-		$help .= '</div>';
-
-		echo apply_filters( 'wpcd_settings_help_tab_text', $help );
+	public function dvicd_get_faq_and_help_text_page_callback() {
+		_deprecated_function( __METHOD__, '6.3.0', \DVICloudDeploy\App\FaqHelp\Admin\FaqHelpPage::class . '::render' );
+		\DVICloudDeploy\App\FaqHelp\Admin\FaqHelpPage::render();
 	}
 
+	/**
+	 * Deprecated FAQ & Help page callback.
+	 *
+	 * @deprecated 6.3.0 Use \DVICloudDeploy\App\FaqHelp\Admin\FaqHelpPage::render().
+	 */
+	public function wpcd_get_faq_and_help_text_page_callback() {
+		_deprecated_function( __METHOD__, '6.3.0', \DVICloudDeploy\App\FaqHelp\Admin\FaqHelpPage::class . '::render' );
+		\DVICloudDeploy\App\FaqHelp\Admin\FaqHelpPage::render();
+	}
 
 	/**
 	 * Set up post types...
@@ -557,8 +453,7 @@ class WP_CLOUD_DEPLOY {
 		}
 
 		/* Style sheet for the settings screen. */
-		if ( 'wpcd_app_server_page_wpcd_settings' === $hook ||
-			'wpcd_app_server_page_wpcd_faq_and_help' === $hook ) {
+		if ( 'wpcd_app_server_page_wpcd_settings' === $hook ) {
 			wp_enqueue_style( 'dvicd-admin-settings', wpcd_url . 'assets/css/dvicd-admin-settings.css', array(), wpcd_scripts_version );
 			if ( defined( 'WPCD_SKIP_SERVER_SIZES_SETTING' ) && WPCD_SKIP_SERVER_SIZES_SETTING ) {
 				wp_enqueue_style( 'dvicd-admin-settings-server-sizes', wpcd_url . 'assets/css/dvicd-admin-settings-server-sizes.css', array(), wpcd_scripts_version );

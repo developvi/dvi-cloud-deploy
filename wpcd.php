@@ -17,6 +17,7 @@
 use DVICloudDeploy\Core\AdminPanel\Init as AdminPanelInit;
 use DVICloudDeploy\Core\CommandLog\Table\DVICDCreateTable;
 use DVICloudDeploy\Core\DviSetting\InitDviSetting;
+use DVICloudDeploy\App\FaqHelp\Init as FaqHelpInit;
 use DVICloudDeploy\Marketplace\Init;
 use DVICloudDeploy\Core\CommandLog\DVICDINIT as DVICOMMANDLOG;
 
@@ -124,6 +125,7 @@ class DVICDInit {
 		}
 		Init::init();
 		AdminPanelInit::init();
+		FaqHelpInit::init();
 
 		(new InitDviSetting)->init();
 
