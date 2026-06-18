@@ -267,32 +267,26 @@ class WPCD_ERROR_LOG extends WPCD_POSTS_LOG {
 		// Check for excluded text.
 		if ( $ok_to_log ) {
 			$exclude_msg_txt = wpcd_get_early_option( 'exclude_msg_txt' );
-			if(is_array($exclude_msg_txt) or is_object($exclude_msg_txt)){
-
-				foreach ( $exclude_msg_txt as $exclude ) {
-					if ( ! empty( $exclude ) && isset( $exclude['exclude_msg'] ) && ( ! empty( $exclude['exclude_msg'] ) ) ) {
-						if ( strpos( $msg, $exclude['exclude_msg'] ) !== false ) {
-							$ok_to_log = false;
-							break;
-						}
+			if ( is_array( $exclude_msg_txt ) || is_object( $exclude_msg_txt ) ) {
+				$ok_to_log = ! array_any(
+					(array) $exclude_msg_txt,
+					function( $exclude ) use ( $msg ) {
+						return ! empty( $exclude ) && isset( $exclude['exclude_msg'] ) && ! empty( $exclude['exclude_msg'] ) && str_contains( $msg, $exclude['exclude_msg'] );
 					}
-				}
+				);
 			}
-			}
+		}
 
 		// Check to see if the log entry meets the include message criteria.
 		if ( $ok_to_log ) {
 			$include_msg_txt = wpcd_get_early_option( 'include_msg_txt' );
 			if ( ! empty( $include_msg_txt ) && isset( $include_msg_txt[0] ) && ( ! empty( $include_msg_txt[0]['include_msg'] ) ) ) {
-				$ok_to_include = false;
-				foreach ( $include_msg_txt as $include ) {
-					if ( ! empty( $include ) && isset( $include['include_msg'] ) && ( ! empty( $include['include_msg'] ) ) ) {
-						if ( strpos( $msg, $include['include_msg'] ) !== false ) {
-							$ok_to_include = true;
-							break;
-						}
+				$ok_to_include = array_any(
+					(array) $include_msg_txt,
+					function( $include ) use ( $msg ) {
+						return ! empty( $include ) && isset( $include['include_msg'] ) && ! empty( $include['include_msg'] ) && str_contains( $msg, $include['include_msg'] );
 					}
-				}
+				);
 
 				/* At this point, the include criteria isn't met so no logging is to done */
 				if ( ! $ok_to_include ) {
@@ -308,7 +302,7 @@ class WPCD_ERROR_LOG extends WPCD_POSTS_LOG {
 				$ok_to_include = false;
 				foreach ( $include_file_txt as $include ) {
 					if ( ! empty( $include ) && isset( $include['include_files'] ) && ( ! empty( $include['include_files'] ) ) ) {
-						if ( strpos( $file, $include['include_files'] ) !== false ) {
+						if ( str_contains( $file, $include['include_files'] ) ) {
 							$ok_to_include = true;
 							break;
 						}

@@ -727,7 +727,7 @@ abstract class WPCD_MB_Custom_Table {
 				}
 				$_action = sanitize_text_field( $_action );
 				$_action_parts = explode( '_', $_action );
-				$action =  end( $_action_parts );
+				$action = array_last( $_action_parts );
 			} else {
 				$action = rwmb_request()->get( 'model-action' );
 			}
@@ -787,7 +787,7 @@ abstract class WPCD_MB_Custom_Table {
 
 		$model_id = filter_input( INPUT_GET, 'model-id', FILTER_SANITIZE_NUMBER_INT );
 		$action_param = sanitize_text_field( filter_input( INPUT_GET, 'action', FILTER_UNSAFE_RAW ) );
-		$type =  end( explode( '_', $action_param ) );
+		$type = array_last( explode( '_', $action_param ) );
 		$parent_id = filter_input( INPUT_GET, 'parent-id', FILTER_SANITIZE_NUMBER_INT );
 		$nonce = sanitize_text_field( filter_input( INPUT_GET, 'nonce', FILTER_UNSAFE_RAW ) );
 		$view = sanitize_text_field( filter_input( INPUT_GET, 'view', FILTER_UNSAFE_RAW ) );

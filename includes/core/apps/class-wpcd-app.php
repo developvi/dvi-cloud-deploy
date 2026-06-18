@@ -1034,7 +1034,7 @@ class WPCD_APP extends WPCD_Base {
 			return $name;
 		}
 
-		if ( false === strpos( $name, '---' ) ) {
+		if ( ! str_contains( $name, '---' ) ) {
 			// command is likely format #1.
 			$start_of_numbers = wpcd_locate_first_number_in_string( $name );
 			if ( $start_of_numbers >= 1 ) {
@@ -1488,7 +1488,7 @@ class WPCD_APP extends WPCD_Base {
 			}
 
 			// Is our data already in the column?  If not, add it!
-			if ( false === strpos( $column_data, $our_data ) ) {
+			if ( ! str_contains( $column_data, $our_data ) ) {
 
 				/* Put a line break to separate our data section from others if the column already contains data */
 				if ( ! empty( $column_data ) ) {
@@ -1536,7 +1536,7 @@ class WPCD_APP extends WPCD_Base {
 		);
 
 		// get app id from found result.
-		return ! empty( $app_posts ) ? reset($app_posts)->ID : false;
+		return ! empty( $app_posts ) ? array_first( $app_posts )->ID : false;
 
 	}
 

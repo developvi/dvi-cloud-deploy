@@ -46,13 +46,10 @@ class Updater
         // Fetch remote plugin data
         $remote_plugins = FetchingRemotePluginsDate::getData();
 
-        // Check if data is available and extract the relevant plugin using array_filter
-        $remote = array_filter($remote_plugins, function ($plugin) use ($args) {
+        // Check if data is available and extract the first matching plugin.
+        $remote = array_find($remote_plugins, function ($plugin) use ($args) {
             return isset($plugin['slug']) && $plugin['slug'] == $args->slug;
         });
-
-        // Get the first matching plugin
-        $remote = !empty($remote) ? reset($remote) : null;
 
         // Return the existing response if the plugin data is not found
         if (!$remote) {

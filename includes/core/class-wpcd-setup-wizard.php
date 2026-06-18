@@ -198,7 +198,7 @@ class WPCD_Admin_Setup_Wizard {
 
 		// What is the next step?
 		$this->steps = apply_filters( 'as_setup_wizard_steps', $default_steps );
-		$this->step  = isset( $_GET['step'] ) ? sanitize_key( $_GET['step'] ) : current( array_keys( $this->steps ) ); // WPCS: CSRF ok, input var ok.
+		$this->step  = isset( $_GET['step'] ) ? sanitize_key( $_GET['step'] ) : array_key_first( $this->steps ); // WPCS: CSRF ok, input var ok.
 
 		if ( ! empty( $_POST['save_step'] ) && isset( $this->steps[ $this->step ]['handler'] ) ) {
 			call_user_func( $this->steps[ $this->step ]['handler'], $this );
@@ -357,10 +357,10 @@ class WPCD_Admin_Setup_Wizard {
 		check_admin_referer( 'wpcd-setup' );
 		if ( ! DEFINED( 'WPCD_ENCRYPTION_KEY' ) ) {
 			// Do not move on from the wizard since the encryption key is not defined in wp-config.php.
-			wp_safe_redirect( esc_url_raw( $this->get_this_step_link() ) );
+			wp_safe_redirect( sanitize_url( $this->get_this_step_link() ) );
 			exit;
 		} else {
-			wp_safe_redirect( esc_url_raw( $this->get_next_step_link() ) );
+			wp_safe_redirect( sanitize_url( $this->get_next_step_link() ) );
 			exit;
 		}
 	}
@@ -429,7 +429,7 @@ class WPCD_Admin_Setup_Wizard {
 
 		// Empty key?  Stay on the current step.
 		if ( empty( $selected_provider ) ) {
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'error_msg' => __( 'Please select a provider.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
+			wp_safe_redirect( sanitize_url( add_query_arg( array( 'error_msg' => __( 'Please select a provider.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
 			exit;
 		}
 
@@ -437,7 +437,7 @@ class WPCD_Admin_Setup_Wizard {
 		update_option( 'wpcd_setup_wizard_selected_provider', $selected_provider );
 
 		// Go to next step.
-		wp_safe_redirect( esc_url_raw( $this->get_next_step_link() ) );
+		wp_safe_redirect( sanitize_url( $this->get_next_step_link() ) );
 		exit;
 
 	}
@@ -629,7 +629,7 @@ class WPCD_Admin_Setup_Wizard {
 
 				// Empty key?  Stay on the current step.
 				if ( empty( $user_name ) ) {
-					wp_safe_redirect( esc_url_raw( add_query_arg( array( 'error_msg' => __( 'Please provide the Linode user name.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
+					wp_safe_redirect( sanitize_url( add_query_arg( array( 'error_msg' => __( 'Please provide the Linode user name.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
 					exit;
 				}
 
@@ -644,7 +644,7 @@ class WPCD_Admin_Setup_Wizard {
 
 				// Empty key?  Stay on the current step.
 				if ( empty( $user_name ) ) {
-					wp_safe_redirect( esc_url_raw( add_query_arg( array( 'error_msg' => __( 'Please provide your UpCloud user name.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
+					wp_safe_redirect( sanitize_url( add_query_arg( array( 'error_msg' => __( 'Please provide your UpCloud user name.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
 					exit;
 				}
 
@@ -656,7 +656,7 @@ class WPCD_Admin_Setup_Wizard {
 
 				// Empty password?  Stay on the current step.
 				if ( empty( $password ) ) {
-					wp_safe_redirect( esc_url_raw( add_query_arg( array( 'error_msg' => __( 'Please provide your UpCloud Password.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
+					wp_safe_redirect( sanitize_url( add_query_arg( array( 'error_msg' => __( 'Please provide your UpCloud Password.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
 					exit;
 				}
 
@@ -698,7 +698,7 @@ class WPCD_Admin_Setup_Wizard {
 
 		// Empty key?  Stay on the current step.
 		if ( empty( $api_key ) ) {
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'error_msg' => __( 'Please provide the API Key/Token.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
+			wp_safe_redirect( sanitize_url( add_query_arg( array( 'error_msg' => __( 'Please provide the API Key/Token.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
 			exit;
 		}
 
@@ -723,11 +723,11 @@ class WPCD_Admin_Setup_Wizard {
 		$connection_status = WPCD()->get_provider_api( $provider )->call( 'test_connection', $attributes );
 		if ( ! is_wp_error( $connection_status ) && ! empty( $connection_status['test_status'] ) && true === (bool) $connection_status['test_status'] ) {
 			// Go to next step.
-			wp_safe_redirect( esc_url_raw( $this->get_next_step_link() ) );
+			wp_safe_redirect( sanitize_url( $this->get_next_step_link() ) );
 			exit;
 		} else {
 			// Stay on this step.
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'error_msg' => __( 'We were unable to connect to your server provider with this API key/token. Did you accidentally enter an extra space or character? Please re-enter it or try a different one.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
+			wp_safe_redirect( sanitize_url( add_query_arg( array( 'error_msg' => __( 'We were unable to connect to your server provider with this API key/token. Did you accidentally enter an extra space or character? Please re-enter it or try a different one.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
 			exit;
 		}
 
@@ -786,12 +786,12 @@ class WPCD_Admin_Setup_Wizard {
 			// Clear caches so the settings screen will have a new list of ssh keys.
 			WPCD()->get_provider_api( $provider )->clear_cache();
 
-			wp_safe_redirect( esc_url_raw( $this->get_next_step_link() ) );
+			wp_safe_redirect( sanitize_url( $this->get_next_step_link() ) );
 			exit;
 
 		} else {
 			// Stay on this step.
-			wp_safe_redirect( esc_url_raw( add_query_arg( array( 'error_msg' => __( 'It looks like we were unable to create the key for you. You can try again or cancel this wizard and setup your own pair in the settings area.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
+			wp_safe_redirect( sanitize_url( add_query_arg( array( 'error_msg' => __( 'It looks like we were unable to create the key for you. You can try again or cancel this wizard and setup your own pair in the settings area.', 'wpcd' ) ), $this->get_this_step_link() ) ) );
 			exit;
 		}
 	}
@@ -855,7 +855,7 @@ class WPCD_Admin_Setup_Wizard {
 		}
 
 		$keys = array_keys( $this->steps );
-		if ( end( $keys ) === $step ) {
+		if ( array_last( $keys ) === $step ) {
 			return admin_url();
 		}
 
@@ -879,7 +879,7 @@ class WPCD_Admin_Setup_Wizard {
 		}
 
 		$keys = array_keys( $this->steps );
-		if ( end( $keys ) === $step ) {
+		if ( array_last( $keys ) === $step ) {
 			return admin_url();
 		}
 

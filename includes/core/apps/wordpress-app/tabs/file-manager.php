@@ -67,24 +67,24 @@ class WPCD_WORDPRESS_TABS_FILE_MANAGER extends WPCD_WORDPRESS_TABS {
 
 				// 1. user name.
 				$searchword   = 'User:';
-				$matches_user = array_filter(
+				$matches_user = array_find(
 					$logs_array,
 					function( $var ) use ( $searchword ) {
-						return strpos( $var, $searchword ) !== false;
+						return str_contains( $var, $searchword );
 					}
 				);
 				// 2. password.
 				$searchword       = 'Password:';
-				$matches_password = array_filter(
+				$matches_password = array_find(
 					$logs_array,
 					function( $var ) use ( $searchword ) {
-						return strpos( $var, $searchword ) !== false;
+						return str_contains( $var, $searchword );
 					}
 				);
 
 				update_post_meta( $id, 'wpapp_file_manager_status', 'on' );
-				update_post_meta( $id, 'wpapp_file_manager_user_id', array_values( $matches_user )[0] );
-				update_post_meta( $id, 'wpapp_file_manager_user_password', $this::encrypt( array_values( $matches_password )[0] ) );
+				update_post_meta( $id, 'wpapp_file_manager_user_id', $matches_user );
+				update_post_meta( $id, 'wpapp_file_manager_user_password', $this::encrypt( $matches_password ) );
 			}
 		}
 
@@ -465,7 +465,7 @@ class WPCD_WORDPRESS_TABS_FILE_MANAGER extends WPCD_WORDPRESS_TABS {
 				'desc'       => '',
 				'attributes' => array(
 					// Get User Name & Password.
-					'data-wpcd-fields'              => json_encode( array( '#username-for-file-manager', '#password-for-file-manager' ) ),
+					'data-wpcd-fields'              => wp_json_encode( array( '#username-for-file-manager', '#password-for-file-manager' ) ),
 					// the _action that will be called in ajax.
 					'data-wpcd-action'              => 'install-tinyfilemanager',
 					// the id.
@@ -578,7 +578,7 @@ class WPCD_WORDPRESS_TABS_FILE_MANAGER extends WPCD_WORDPRESS_TABS {
 				'desc'       => '',
 				'attributes' => array(
 					// Get User Name & Password.
-					'data-wpcd-fields'              => json_encode( array( '#username-for-file-manager', '#password-for-file-manager' ) ),
+					'data-wpcd-fields'              => wp_json_encode( array( '#username-for-file-manager', '#password-for-file-manager' ) ),
 					// the _action that will be called in ajax.
 					'data-wpcd-action'              => 'change-auth-tinyfilemanager',
 					// the id.
