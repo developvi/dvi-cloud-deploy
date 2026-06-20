@@ -40,6 +40,11 @@ class StyleDetector
             return false;
         }
 
+        // Settings has its own Admin Panel UI — never load site/server ui.js there.
+        if (false !== strpos((string) $screen->id, 'wpcd_settings')) {
+            return false;
+        }
+
         if ('wpcd_app' === $screen->post_type) {
             return self::isSiteStyle();
         }

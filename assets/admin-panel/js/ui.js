@@ -560,6 +560,10 @@
 	}
 
 	function boot() {
+		// Settings page uses dvicd-admin-settings.js — do not mount site/server toolbar/search.
+		if ($('body').hasClass('dvicd-ap-settings-page')) {
+			return;
+		}
 		if (!$('body').hasClass('dvicd-ap-active') && !$('.dvicd-ap-metabox').length) {
 			return;
 		}

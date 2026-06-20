@@ -855,9 +855,7 @@ body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="search"],
 body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input[type="date"],
 body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input input:not([type]),
 body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input select,
-body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input textarea,
-body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--single,
-body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--multiple {
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input textarea {
 	min-height: var(--dvicd-ap-ctrl-h);
 	padding: var(--dvicd-ap-ctrl-py) var(--dvicd-ap-ctrl-px) !important;
 	border: 1px solid #cfd6e4 !important;
@@ -868,6 +866,48 @@ body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .
 	font-size: var(--dvicd-ap-font-md) !important;
 	line-height: var(--dvicd-ap-line) !important;
 	transition: border-color 0.2s var(--dvicd-ap-ease), box-shadow 0.2s var(--dvicd-ap-ease), background 0.2s var(--dvicd-ap-ease);
+}
+
+/* Select2: do not inherit text-input padding/line-height (breaks rendered text) */
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--single {
+	display: flex !important;
+	align-items: center !important;
+	min-height: var(--dvicd-ap-ctrl-h) !important;
+	height: var(--dvicd-ap-ctrl-h) !important;
+	padding: 0 28px 0 0 !important;
+	border: 1px solid #cfd6e4 !important;
+	border-radius: var(--dvicd-ap-ctrl-radius) !important;
+	background: #fff !important;
+	box-shadow: none !important;
+}
+
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--single .select2-selection__rendered {
+	display: block !important;
+	width: 100%;
+	padding: 0 0 0 12px !important;
+	margin: 0 !important;
+	line-height: normal !important;
+	font-size: var(--dvicd-ap-font-md) !important;
+	color: var(--dvicd-ap-text) !important;
+}
+
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--single .select2-selection__arrow {
+	top: 0 !important;
+	height: 100% !important;
+	width: 28px !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
+}
+
+body.dvicd-ap-active .dvicd-ap-metabox .rwmb-input .select2-container--default .select2-selection--multiple {
+	min-height: var(--dvicd-ap-ctrl-h) !important;
+	padding: 4px 8px !important;
+	border: 1px solid #cfd6e4 !important;
+	border-radius: var(--dvicd-ap-ctrl-radius) !important;
+	background: #fff !important;
+	box-shadow: none !important;
+	line-height: normal !important;
 }
 
 .dvicd-ap-active .dvicd-ap-metabox .rwmb-input textarea {

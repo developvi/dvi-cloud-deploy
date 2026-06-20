@@ -80,6 +80,11 @@ class WPCD_Settings {
 		// Register an options page.
 		add_filter( 'mb_settings_pages', array( &$this, 'register_options_page' ) );
 
+		// Prepare settings metaboxes for Admin Panel card UI (keep nested tabs).
+		add_filter( 'wpcd_settings_metaboxes', array( $this, 'flatten_settings_metabox_tabs' ), 999 );
+
+		add_filter( 'admin_body_class', array( $this, 'settings_admin_body_class' ) );
+
 		// Register meta boxes and fields for settings page.
 		add_filter(
 			'rwmb_meta_boxes',
@@ -1115,21 +1120,275 @@ class WPCD_Settings {
 			$tabs['data-sync'] = __( 'Data Sync', 'wpcd' );
 		}
 
-		// Settings page array with the tabs.
+		// Settings page as a single full page (no top-level tab navigation).
+		// $tabs is still built/filtered above for compatibility with other filters.
 		$settings_pages[] = array(
 			'id'          => 'wpcd_settings',
 			'option_name' => 'wpcd_settings',
 			'menu_title'  => __( 'Settings', 'wpcd' ),
 			'icon_url'    => 'dashicons-layout',
-			'style'       => 'no-boxes',
+			'style'       => 'boxes',
+			'class'       => 'wpcd-settings-single-page',
 			'parent'      => 'edit.php?post_type=wpcd_app_server',
 			'position'    => 80,
-			'columns'     => 2,
-			'tabs'        => $tabs,
+			'columns'     => 1,
+			'tabs'        => array(),
 			'capability'  => 'wpcd_manage_settings',
 		);
 
 		return apply_filters( 'wpcd_settings_pages', $settings_pages );
+	}
+
+	/**
+	 * Drop page-tab binding so Meta Box settings.js cannot hide boxes.
+	 * Nested metabox tabs are kept for the Admin Panel card UI.
+	 *
+	 * Filter hook: wpcd_settings_metaboxes
+	 *
+	 * @param array $metaboxes Settings metaboxes.
+	 * @return array
+	 */
+	public function flatten_settings_metabox_tabs( $metaboxes ) {
+		if ( ! is_array( $metaboxes ) ) {
+			return $metaboxes;
+		}
+
+		foreach ( $metaboxes as $index => $box ) {
+			$pages = isset( $box['settings_pages'] ) ? (array) $box['settings_pages'] : array();
+			if ( ! in_array( 'wpcd_settings', $pages, true ) ) {
+				continue;
+			}
+
+			// Keep nested tabs; only remove page-level tab key.
+			unset( $metaboxes[ $index ]['tab'] );
+		}
+
+		return $metaboxes;
+	}
+
+	/**
+	 * Add Admin Panel body class on the settings screen.
+	 *
+	 * @param string $classes Body classes.
+	 * @return string
+	 */
+	public function settings_admin_body_class( $classes ) {
+		if ( ! function_exists( 'get_current_screen' ) ) {
+			return $classes;
+		}
+		$screen = get_current_screen();
+		if ( $screen && false !== strpos( (string) $screen->id, 'wpcd_settings' ) ) {
+			$classes .= ' dvicd-ap-active dvicd-ap-settings-page';
+		}
+		return $classes;
+	}
+
+	/**
+	 * Rebuild fields list: inject a heading per former tab, strip field-level tab keys.
+	 *
+	 * @param array $fields   Metabox fields.
+	 * @param array $tab_defs Former tabs definition.
+	 * @return array
+	 */
+	private function flatten_settings_fields_with_headings( $fields, $tab_defs ) {
+		if ( empty( $fields ) ) {
+			return $fields;
+		}
+
+		if ( empty( $tab_defs ) ) {
+			return $this->strip_settings_field_tabs( $fields );
+		}
+
+		$by_tab = array();
+		$no_tab = array();
+
+		foreach ( $fields as $field ) {
+			if ( ! is_array( $field ) ) {
+				continue;
+			}
+			$tab_key = isset( $field['tab'] ) ? (string) $field['tab'] : '';
+			unset( $field['tab'] );
+			if ( '' !== $tab_key ) {
+				if ( ! isset( $by_tab[ $tab_key ] ) ) {
+					$by_tab[ $tab_key ] = array();
+				}
+				$by_tab[ $tab_key ][] = $field;
+			} else {
+				$no_tab[] = $field;
+			}
+		}
+
+		$out = $no_tab;
+
+		foreach ( $tab_defs as $tab_key => $tab_meta ) {
+			if ( empty( $by_tab[ $tab_key ] ) ) {
+				continue;
+			}
+			$label = is_array( $tab_meta )
+				? ( isset( $tab_meta['label'] ) ? (string) $tab_meta['label'] : (string) $tab_key )
+				: (string) $tab_meta;
+			$icon  = is_array( $tab_meta ) && ! empty( $tab_meta['icon'] )
+				? (string) $tab_meta['icon']
+				: '';
+
+			$out[] = array(
+				'type'  => 'custom_html',
+				'std'   => $this->render_settings_section_card( $label, $icon ),
+				'class' => 'wpcd-settings-section-card-field',
+			);
+
+			foreach ( $by_tab[ $tab_key ] as $field ) {
+				$out[] = $field;
+			}
+			unset( $by_tab[ $tab_key ] );
+		}
+
+		// Any leftover fields whose tab key was not in $tab_defs.
+		foreach ( $by_tab as $orphan_fields ) {
+			foreach ( $orphan_fields as $field ) {
+				$out[] = $field;
+			}
+		}
+
+		return $out;
+	}
+
+	/**
+	 * Recursively remove field-level tab keys.
+	 *
+	 * @param array $fields Fields.
+	 * @return array
+	 */
+	private function strip_settings_field_tabs( $fields ) {
+		foreach ( $fields as $key => $field ) {
+			if ( ! is_array( $field ) ) {
+				continue;
+			}
+			unset( $fields[ $key ]['tab'] );
+			if ( ! empty( $field['fields'] ) && is_array( $field['fields'] ) ) {
+				$fields[ $key ]['fields'] = $this->strip_settings_field_tabs( $field['fields'] );
+			}
+		}
+		return $fields;
+	}
+
+	/**
+	 * Render a section header card (Admin Panel card style) with icon + label.
+	 *
+	 * @param string $label Section label.
+	 * @param string $icon  Dashicon or Font Awesome class.
+	 * @return string
+	 */
+	private function render_settings_section_card( $label, $icon = '' ) {
+		$icon_class = $this->normalize_settings_icon( $icon );
+		return sprintf(
+			'<div class="dvicd-ap-card wpcd-settings-section-card" role="presentation">'
+			. '<span class="dvicd-ap-card__icon" aria-hidden="true"><i class="%1$s"></i></span>'
+			. '<span class="dvicd-ap-card__label">%2$s</span>'
+			. '</div>',
+			esc_attr( $icon_class ),
+			esc_html( $label )
+		);
+	}
+
+	/**
+	 * Normalize dashicons / FA icon classes to Font Awesome Free.
+	 *
+	 * @param string $icon Raw icon class.
+	 * @return string
+	 */
+	private function normalize_settings_icon( $icon ) {
+		$icon = trim( (string) $icon );
+		if ( '' === $icon ) {
+			return 'fas fa-sliders';
+		}
+
+		if ( false !== strpos( $icon, 'fa-' ) ) {
+			return preg_replace( '/\bfad\b|\bfa-duotone\b/', 'fas', $icon );
+		}
+
+		$map = array(
+			'dashicons-text'               => 'fas fa-align-left',
+			'dashicons-text-page'          => 'fas fa-file-lines',
+			'dashicons-align-full-width'   => 'fas fa-server',
+			'dashicons-admin-multisite'    => 'fas fa-globe',
+			'dashicons-images-alt2'        => 'fas fa-cloud-arrow-up',
+			'dashicons-editor-unlink'      => 'fas fa-link',
+			'dashicons-admin-plugins'      => 'fas fa-puzzle-piece',
+			'dashicons-cloud'              => 'fas fa-cloud',
+			'dashicons-bell'               => 'fas fa-bell',
+			'dashicons-email'              => 'fas fa-envelope',
+			'dashicons-email-alt2'         => 'fas fa-at',
+			'dashicons-welcome-write-blog' => 'fas fa-plug',
+			'dashicons-color-picker'       => 'fas fa-palette',
+			'dashicons-editor-kitchensink' => 'fas fa-table-columns',
+			'dashicons-rest-api'           => 'fas fa-code',
+			'dashicons-randomize'          => 'fas fa-shuffle',
+			'dashicons-shortcode'          => 'fas fa-terminal',
+			'dashicons-editor-code'        => 'fas fa-code',
+			'dashicons-analytics'          => 'fas fa-chart-line',
+			'dashicons-format-quote'       => 'fas fa-tags',
+			'dashicons-admin-links'        => 'fas fa-link',
+			'dashicons-shield'             => 'fas fa-shield-halved',
+			'dashicons-lock'               => 'fas fa-lock',
+			'dashicons-admin-users'        => 'fas fa-users',
+			'dashicons-admin-tools'        => 'fas fa-wrench',
+			'dashicons-admin-generic'      => 'fas fa-gear',
+			'dashicons-admin-settings'     => 'fas fa-sliders',
+			'dashicons-database'           => 'fas fa-database',
+			'dashicons-backup'             => 'fas fa-hard-drive',
+			'dashicons-warning'            => 'fas fa-triangle-exclamation',
+			'dashicons-info'               => 'fas fa-circle-info',
+			'dashicons-yes'                => 'fas fa-circle-check',
+			'dashicons-no'                 => 'fas fa-circle-xmark',
+			'dashicons-update'             => 'fas fa-rotate',
+			'dashicons-download'           => 'fas fa-download',
+			'dashicons-upload'             => 'fas fa-upload',
+			'dashicons-hammer'             => 'fas fa-hammer',
+			'dashicons-performance'        => 'fas fa-gauge-high',
+			'dashicons-chart-area'         => 'fas fa-chart-area',
+			'dashicons-chart-bar'          => 'fas fa-chart-column',
+			'dashicons-media-code'         => 'fas fa-file-code',
+			'dashicons-portfolio'          => 'fas fa-briefcase',
+			'dashicons-building'           => 'fas fa-building',
+		);
+
+		foreach ( $map as $dash => $fa ) {
+			if ( false !== strpos( $icon, $dash ) ) {
+				return $fa;
+			}
+		}
+
+		return 'fas fa-sliders';
+	}
+
+	/**
+	 * Icon map for top-level settings metaboxes (postbox ids).
+	 *
+	 * @return array<string,string>
+	 */
+	public function get_settings_metabox_icons() {
+		$icons = array(
+			'general'                    => 'fas fa-house',
+			'ssh-and-webserver-timeouts' => 'fas fa-clock',
+			'backup'                     => 'fas fa-hard-drive',
+			'provider-cache-settings'    => 'fas fa-database',
+			'cloud-provider'             => 'fas fa-cloud',
+			'wordpress-app'              => 'fab fa-wordpress',
+			'wordpress-app-security'     => 'fas fa-shield-halved',
+			'fields'                     => 'fas fa-input-text',
+			'misc'                       => 'fas fa-ellipsis',
+			'logging'                    => 'fas fa-file-lines',
+			'tools'                      => 'fas fa-wrench',
+			'data-sync'                  => 'fas fa-right-left',
+		);
+
+		/**
+		 * Filter settings metabox icons (Font Awesome classes keyed by metabox id).
+		 *
+		 * @param array $icons
+		 */
+		return apply_filters( 'wpcd_settings_metabox_icons', $icons );
 	}
 
 	/**
@@ -1860,16 +2119,49 @@ class WPCD_Settings {
 		wp_enqueue_style( 'wpcd-magnific', wpcd_url . 'assets/css/magnific-popup.css', array(), wpcd_scripts_version );
 		wp_enqueue_script( 'wpcd-custom_table', wpcd_url . 'assets/js/custom_table.js', array( 'jquery', 'wpcd-magnific' ), wpcd_scripts_version, true );
 
-		// Enqueue some of our scripts.
-		wp_register_script( 'wpcd-admin-settings', wpcd_url . 'assets/js/wpcd-admin-settings.js', array( 'jquery', 'wpcd-magnific', 'wp-util' ), wpcd_scripts_version, true );
-		wp_enqueue_script( 'wpcd-admin-settings' );
+		// Admin Panel card styles + FA icons for the single-page settings UI.
+		wp_enqueue_style(
+			'dvicd-admin-panel-fa',
+			'https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.2/css/all.min.css',
+			array(),
+			'6.5.2'
+		);
+		if ( defined( 'DVICD_URL' ) ) {
+			wp_enqueue_style(
+				'dvicd-admin-panel-theme',
+				DVICD_URL . 'assets/admin-panel/css/theme.css',
+				array( 'dvicd-admin-panel-fa' ),
+				defined( 'DVICD_VERSION' ) ? DVICD_VERSION : wpcd_scripts_version
+			);
+		}
 
-		wp_register_script( 'wpcd-admin-settings-data-sync', wpcd_url . 'assets/js/wpcd-admin-settings-data-sync.js', array( 'jquery', 'wp-util' ), wpcd_scripts_version, true );
-		wp_enqueue_script( 'wpcd-admin-settings-data-sync' );
+		// Select2 for settings dropdowns.
+		wp_enqueue_style( 'wpcd-select2-css', wpcd_url . 'assets/css/select2.min.css', array(), wpcd_scripts_version );
+		wp_register_script( 'wpcd-select2-js', wpcd_url . 'assets/js/select2.min.js', array( 'jquery' ), wpcd_scripts_version, true );
+		wp_enqueue_script( 'wpcd-select2-js' );
+
+		// Enqueue some of our scripts.
+		wp_register_script( 'dvicd-admin-settings', wpcd_url . 'assets/js/dvicd-admin-settings.js', array( 'jquery', 'wpcd-magnific', 'wp-util', 'wpcd-select2-js' ), wpcd_scripts_version, true );
+		wp_enqueue_script( 'dvicd-admin-settings' );
 
 		wp_localize_script(
-			'wpcd-admin-settings-data-sync',
-			'wpcd_admin_settings_data_sync_params',
+			'dvicd-admin-settings',
+			'dvicdSettingsCards',
+			array(
+				'icons'       => $this->get_settings_metabox_icons(),
+				'openLabel'   => __( 'Open', 'wpcd' ),
+				'backLabel'   => __( 'Back to Home', 'wpcd' ),
+				'defaultIcon' => 'fas fa-gear',
+				'hashPrefix'  => 'ap',
+			)
+		);
+
+		wp_register_script( 'dvicd-admin-settings-data-sync', wpcd_url . 'assets/js/dvicd-admin-settings-data-sync.js', array( 'jquery', 'wp-util' ), wpcd_scripts_version, true );
+		wp_enqueue_script( 'dvicd-admin-settings-data-sync' );
+
+		wp_localize_script(
+			'dvicd-admin-settings-data-sync',
+			'dvicd_admin_settings_data_sync_params',
 			array(
 				'nonce' => wp_create_nonce( 'wpcd-settings' ),
 				'i10n'  => array(
@@ -1904,7 +2196,9 @@ class WPCD_Settings {
 			'wpcd_bp_master',
 		);
 
-		if ( in_array( $wpcd_screen->base, array( 'post', 'upload', 'wpcd_app_server_page_wpcd_settings' ), true ) && in_array( $wpcd_screen->post_type, $wpcd_check_post_type, true ) ) {
+		// Skip on Settings Admin Panel page — ~~ hash rewriting fights card/detail routing.
+		$is_settings_ap = ( 'wpcd_app_server_page_wpcd_settings' === $wpcd_screen->base );
+		if ( ! $is_settings_ap && in_array( $wpcd_screen->base, array( 'post', 'upload' ), true ) && in_array( $wpcd_screen->post_type, $wpcd_check_post_type, true ) ) {
 			// JS fix for Metabox.io issue where the user ends up on tab #1 after a page refreshes.  This JS keeps the user on the tab they were on after a page refresh.
 			wp_register_script( 'wpcd-mbio-tabs-fix.', wpcd_url . 'assets/js/wpcd-mbio-tabs-fix.js', array( 'jquery', 'rwmb-tabs' ), wpcd_scripts_version, true );
 			wp_enqueue_script( 'wpcd-mbio-tabs-fix.' );

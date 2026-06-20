@@ -548,7 +548,7 @@ class WP_CLOUD_DEPLOY {
 
 		/* Cloud Providers Screen - Uses the settings screen style sheet for now. */
 		if ( is_object( $screen ) && in_array( $screen->post_type, array( 'wpcd_cloud_provider' ) ) ) {
-			wp_enqueue_style( 'wpcd-admin-settings', wpcd_url . 'assets/css/wpcd-admin-settings.css', array(), wpcd_scripts_version );
+			wp_enqueue_style( 'dvicd-admin-settings', wpcd_url . 'assets/css/dvicd-admin-settings.css', array(), wpcd_scripts_version );
 		}
 
 		/* CSS common to server and app screens. */
@@ -559,9 +559,9 @@ class WP_CLOUD_DEPLOY {
 		/* Style sheet for the settings screen. */
 		if ( 'wpcd_app_server_page_wpcd_settings' === $hook ||
 			'wpcd_app_server_page_wpcd_faq_and_help' === $hook ) {
-			wp_enqueue_style( 'wpcd-admin-settings', wpcd_url . 'assets/css/wpcd-admin-settings.css', array(), wpcd_scripts_version );
+			wp_enqueue_style( 'dvicd-admin-settings', wpcd_url . 'assets/css/dvicd-admin-settings.css', array(), wpcd_scripts_version );
 			if ( defined( 'WPCD_SKIP_SERVER_SIZES_SETTING' ) && WPCD_SKIP_SERVER_SIZES_SETTING ) {
-				wp_enqueue_style( 'wpcd-admin-settings-server-sizes', wpcd_url . 'assets/css/wpcd-admin-settings-server-sizes.css', array(), wpcd_scripts_version );
+				wp_enqueue_style( 'dvicd-admin-settings-server-sizes', wpcd_url . 'assets/css/dvicd-admin-settings-server-sizes.css', array(), wpcd_scripts_version );
 			}
 		}
 

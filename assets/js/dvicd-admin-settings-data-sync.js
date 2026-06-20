@@ -2,7 +2,7 @@
  * This JS file is loaded for the WPCD settings screen.
  */
 
-(function($, wpcd_admin_settings_data_sync_params) {
+(function($, dvicd_admin_settings_data_sync_params) {
 
     var interval;
 
@@ -71,7 +71,7 @@
                     wpcd_export_all_settings = 0;
                 }
 
-                jQuery("<span class='display_waiting_message'>" + wpcd_admin_settings_data_sync_params.i10n.wait_msg + "</span>").insertAfter('#wpcd-sync-push');
+                jQuery("<span class='display_waiting_message'>" + dvicd_admin_settings_data_sync_params.i10n.wait_msg + "</span>").insertAfter('#wpcd-sync-push');
                 jQuery('#wpcd-sync-push').attr('disabled', 'disabled');
 
                 $.ajax({
@@ -110,7 +110,7 @@
             var file_name = $(this).attr('data-file-name');
             var restore_id = $(this).attr('data-restore-id');
 
-            jQuery(this).parent().parent().append('<span class="display_waiting_message">' + wpcd_admin_settings_data_sync_params.i10n.delete_wait_msg + '</span>');
+            jQuery(this).parent().parent().append('<span class="display_waiting_message">' + dvicd_admin_settings_data_sync_params.i10n.delete_wait_msg + '</span>');
             jQuery(this).css('pointer-events', 'none');
 
             $.ajax({
@@ -118,7 +118,7 @@
                 method: 'POST',
                 data: {
                     action: 'wpcd_delete_received_file',
-                    nonce: wpcd_admin_settings_data_sync_params.nonce,
+                    nonce: dvicd_admin_settings_data_sync_params.nonce,
                     file_name: file_name,
                     restore_id: restore_id,
                 },
@@ -187,11 +187,11 @@
                 jQuery('#restore_file_key_popup').hide();
 
                 // Confirmation for deleting the existing data on the restore action
-                var confirm_restore = confirm(wpcd_admin_settings_data_sync_params.i10n.restore_confirmation);
+                var confirm_restore = confirm(dvicd_admin_settings_data_sync_params.i10n.restore_confirmation);
 
                 if (confirm_restore) {
 
-                    jQuery('a[data-file-name="' + file_name + '"]').parent().parent().append('<span class="display_waiting_message">' + wpcd_admin_settings_data_sync_params.i10n.restore_wait_msg + '</span>');
+                    jQuery('a[data-file-name="' + file_name + '"]').parent().parent().append('<span class="display_waiting_message">' + dvicd_admin_settings_data_sync_params.i10n.restore_wait_msg + '</span>');
                     jQuery('a[data-file-name="' + file_name + '"]').css('pointer-events', 'none');
 
                     $.ajax({
@@ -199,7 +199,7 @@
                         method: 'POST',
                         data: {
                             action: 'wpcd_restore_received_file',
-                            nonce: wpcd_admin_settings_data_sync_params.nonce,
+                            nonce: dvicd_admin_settings_data_sync_params.nonce,
                             file_name: file_name,
                             restore_id: restore_id,
                             delete_existing: delete_existing,
@@ -228,7 +228,7 @@
 
             var wpcd_encryption_key_v2 = $('#wpcd_encryption_key_v2').val();
             if (wpcd_encryption_key_v2 == '') {
-                alert(wpcd_admin_settings_data_sync_params.i10n.empty_encryption_key_v2)
+                alert(dvicd_admin_settings_data_sync_params.i10n.empty_encryption_key_v2)
                 return false;
             }
 
@@ -237,7 +237,7 @@
 
             var wpcd_encryption_key_v2 = $('#wpcd_encryption_key_v2').val();
 
-            jQuery("<span class='display_waiting_message'>" + wpcd_admin_settings_data_sync_params.i10n.save_wait_msg + "</span>").insertAfter('#wpcd-encryption-key-save');
+            jQuery("<span class='display_waiting_message'>" + dvicd_admin_settings_data_sync_params.i10n.save_wait_msg + "</span>").insertAfter('#wpcd-encryption-key-save');
             jQuery('#wpcd-encryption-key-save').attr('disabled', 'disabled');
 
             $.ajax({
@@ -272,16 +272,16 @@
         var wpcd_sync_password = $('#wpcd_sync_password').val();
 
         if (wpcd_sync_target_site == '') {
-            alert(wpcd_admin_settings_data_sync_params.i10n.empty_target_site)
+            alert(dvicd_admin_settings_data_sync_params.i10n.empty_target_site)
             return false;
         } else if (wpcd_sync_enc_key == '') {
-            alert(wpcd_admin_settings_data_sync_params.i10n.empty_enc_key)
+            alert(dvicd_admin_settings_data_sync_params.i10n.empty_enc_key)
             return false;
         } else if (wpcd_sync_user_id == '') {
-            alert(wpcd_admin_settings_data_sync_params.i10n.empty_user_id)
+            alert(dvicd_admin_settings_data_sync_params.i10n.empty_user_id)
             return false;
         } else if (wpcd_sync_password == '') {
-            alert(wpcd_admin_settings_data_sync_params.i10n.empty_password)
+            alert(dvicd_admin_settings_data_sync_params.i10n.empty_password)
             return false;
         } else {
             return true;
@@ -295,4 +295,4 @@
         initValidateSyncOptions();
     }
 
-})(jQuery, wpcd_admin_settings_data_sync_params);
+})(jQuery, dvicd_admin_settings_data_sync_params);

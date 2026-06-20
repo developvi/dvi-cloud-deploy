@@ -139,6 +139,7 @@ Note: Even though the entire git development history isn't available on github, 
 * New: Public portal shell, list cards, and stats sidebar for Admin Panel mode on the front end.
 * New: Dedicated Email Notifications and Descriptions/Notes/Labels feature groups.
 * New: Admin Panel theme CSS, UI script, and portal styles; Font Awesome Free icons for the dashboard.
+* New: Settings Admin Panel — card home → detail flow with hash routing (`#ap/{slug}`) and Back to Home.
 * Tweak: Site and server settings expose the Admin Panel tab style option.
 * Tweak: Metabox registration supports Admin Panel placement (side overview, seamless main actions).
 * Tweak: Hide empty Meta Box card-container rows so they no longer consume vertical space.
@@ -147,11 +148,15 @@ Note: Even though the entire git development history isn't available on github, 
 * Tweak: Form inputs use a visible border and consistent focus ring.
 * Tweak: Search field LTR/RTL icon alignment; hardened against browser autofill.
 * Tweak: Unmapped tabs/metaboxes use their real names instead of a generic “Other” group.
+* Tweak: Rename settings admin assets from `wpcd-admin-settings*` to `dvicd-admin-settings*`.
+* Tweak: Settings detail form layout — stacked fields, Select2, switch pills, and clearer control styling.
+* Tweak: Settings checkbox rows show control + title on one line; checkbox lists stack one option per row.
 * Fix: Admin layout wrappers that broke the edit-screen DOM.
 * Fix: Feature panels opening without Meta Box hash conflicts.
 * Fix: Card grid collapsing to a single column on larger viewports.
 * Fix: Nested `.button > a` rendering as a double button in Overview.
 * Fix: Duplicate Login CTAs and duplicate IP row in Site/Server Overview.
+* Fix: Do not load site/server Admin Panel `ui.js` (toolbar/search) on the Settings screen.
 
 6.2.1
 ----
