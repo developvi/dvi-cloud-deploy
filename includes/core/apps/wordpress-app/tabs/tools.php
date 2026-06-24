@@ -434,7 +434,7 @@ class WPCD_WORDPRESS_TABS_TOOLS extends WPCD_WORDPRESS_TABS {
 				'std'                 => __( 'Update Site Option', 'wpcd' ),
 				'confirmation_prompt' => __( 'Are you sure you would like to update this site option?', 'wpcd' ),
 				// fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_tools-wp-site-option-name', '#wpcd_app_action_tools-wp-site-option-value' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_tools-wp-site-option-name', '#wpcd_app_action_tools-wp-site-option-value' ) ),
 			),
 			'type'           => 'button',
 		);

@@ -248,7 +248,7 @@ class WPCD_WORDPRESS_TABS_SITE_SYSTEM_USERS extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'     => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields' => json_encode( array( '#wpcd_app_site_user_pass' ) ),
+				'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_site_user_pass' ) ),
 			),
 			'class'      => 'wpcd_app_action',
 			'save_field' => false,
@@ -298,7 +298,7 @@ class WPCD_WORDPRESS_TABS_SITE_SYSTEM_USERS extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'     => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields' => json_encode( array( '#wpcd_app_site_user_public_key_file' ) ),
+				'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_site_user_public_key_file' ) ),
 			),
 			'class'      => 'wpcd_app_action',
 			'save_field' => false,

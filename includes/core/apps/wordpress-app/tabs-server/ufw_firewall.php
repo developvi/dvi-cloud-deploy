@@ -209,7 +209,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UFW_FIREWALL extends WPCD_WORDPRESS_TABS {
 				// make sure we give the user a confirmation prompt.
 				'confirmation_prompt' => __( 'Are you sure you would like to open this port?', 'wpcd' ),
 				// fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_ufw-port-to-add-remove' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_ufw-port-to-add-remove' ) ),
 				'columns'             => 6,
 			),
 			'type'           => 'button',
@@ -223,7 +223,7 @@ class WPCD_WORDPRESS_TABS_SERVER_UFW_FIREWALL extends WPCD_WORDPRESS_TABS {
 				// make sure we give the user a confirmation prompt.
 				'confirmation_prompt' => __( 'Are you sure you would like to close this port?', 'wpcd' ),
 				// fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_ufw-port-to-add-remove' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_ufw-port-to-add-remove' ) ),
 				'columns'             => 6,
 			),
 			'type'           => 'button',

@@ -239,7 +239,7 @@ class WPCD_WORDPRESS_TABS_CRONS extends WPCD_WORDPRESS_TABS {
 						'desc'                => 'off' === $status ? __( 'Click to enable Cron', 'wpcd' ) : sprintf( __( 'Click to disable the Linux Cron currently configured to fire every %s', 'wpcd' ), $current_cron_interval ),
 						'confirmation_prompt' => $confirmation_prompt,
 						// fields that contribute data for this action.
-						'data-wpcd-fields'    => 'off' === $status ? json_encode( array( '#wpcd_app_action_wp-linux-cron-interval' ) ) : '',
+						'data-wpcd-fields'    => 'off' === $status ? wp_json_encode( array( '#wpcd_app_action_wp-linux-cron-interval' ) ) : '',
 					),
 					'type'           => 'switch',
 				);

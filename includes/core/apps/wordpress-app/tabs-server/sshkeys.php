@@ -292,7 +292,7 @@ class WPCD_WORDPRESS_TABS_KEYS extends WPCD_WORDPRESS_TABS {
 				/* Translators: %s is a fontawesome or similar icon. */
 				'std'              => wpcd_apply_save_icon( __( '%s Save', 'wpcd' ) ),
 				// fields that contribute data for this action.
-				'data-wpcd-fields' => json_encode( array( '#wpcd_app_action_server-ssh-keys-root-user-name', '#wpcd_app_action_server-ssh-keys-private-key', '#wpcd_app_action_server-ssh-keys-private-key-password', '#wpcd_app_action_server-ssh-keys-public-key', '#wpcd_app_action_server-ssh-keys-notes' ) ),
+				'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_action_server-ssh-keys-root-user-name', '#wpcd_app_action_server-ssh-keys-private-key', '#wpcd_app_action_server-ssh-keys-private-key-password', '#wpcd_app_action_server-ssh-keys-public-key', '#wpcd_app_action_server-ssh-keys-notes' ) ),
 				'columns'          => 12,
 			),
 		);

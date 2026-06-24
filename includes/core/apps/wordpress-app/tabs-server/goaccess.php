@@ -274,7 +274,7 @@ class WPCD_WORDPRESS_TABS_SERVER_GOACCESS extends WPCD_WORDPRESS_TABS {
 					'std'                 => __( 'Install GoAccess', 'wpcd' ),
 					'desc'                => '',
 					'confirmation_prompt' => __( 'Are you sure you would like to install the GoAccess service?', 'wpcd' ), // make sure we give the user a confirmation prompt.
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_goaccess-domain', '#wpcd_app_action_goaccess-basic-auth-user', '#wpcd_app_action_goaccess-basic-auth-pw' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_goaccess-domain', '#wpcd_app_action_goaccess-basic-auth-user', '#wpcd_app_action_goaccess-basic-auth-pw' ) ),
 				),
 				'type'           => 'button',
 			);
@@ -447,7 +447,7 @@ class WPCD_WORDPRESS_TABS_SERVER_GOACCESS extends WPCD_WORDPRESS_TABS {
 					'std'                 => __( 'Change', 'wpcd' ),
 					'desc'                => '',
 					'confirmation_prompt' => __( 'Are you sure you would like to change the user ID and Password for GoAccess?', 'wpcd' ), // make sure we give the user a confirmation prompt.
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_goaccess-basic-auth-user', '#wpcd_app_action_goaccess-basic-auth-pw' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_goaccess-basic-auth-user', '#wpcd_app_action_goaccess-basic-auth-pw' ) ),
 				),
 				'type'           => 'button',
 			);

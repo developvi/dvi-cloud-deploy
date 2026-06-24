@@ -26,7 +26,7 @@ class Modal
         $plugins = FetchingRemotePluginsDate::getData();
 
         if (!empty($plugins)) {
-            echo json_encode(['pluginsData' => $plugins]);
+            echo wp_json_encode(['pluginsData' => $plugins]);
             die;
         }
 

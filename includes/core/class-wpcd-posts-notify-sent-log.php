@@ -622,7 +622,7 @@ class WPCD_NOTIFY_SENT extends WPCD_POSTS_LOG {
 					$c = curl_init( $value );
 					curl_setopt( $c, CURLOPT_RETURNTRANSFER, true );
 					curl_setopt( $c, CURLOPT_POST, true );
-					curl_setopt( $c, CURLOPT_POSTFIELDS, array( 'payload' => json_encode( $msg ) ) );
+					curl_setopt( $c, CURLOPT_POSTFIELDS, array( 'payload' => wp_json_encode( $msg ) ) );
 					$sent_message = curl_exec( $c );
 					curl_close( $c );
 

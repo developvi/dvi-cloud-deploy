@@ -360,7 +360,7 @@ class WPCD_WORDPRESS_TABS_PHP_OPTIONS extends WPCD_WORDPRESS_TABS {
 				'std'                 => wpcd_apply_change_icon( __( '%s Change PHP Version', 'wpcd' ) ),
 				'confirmation_prompt' => $confirmation_prompt,
 				// fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_change-php-version-new-version' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_change-php-version-new-version' ) ),
 			),
 			'type'           => 'button',
 		);
@@ -430,7 +430,7 @@ class WPCD_WORDPRESS_TABS_PHP_OPTIONS extends WPCD_WORDPRESS_TABS {
 					/* Translators: %s is a fontawesome or similar icon. */
 					'std'                 => wpcd_apply_install_icon( __( '%s Set the selected option', 'wpcd' ) ),
 					'confirmation_prompt' => $confirmation_prompt,                  // fields that contribute data for this action.
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_change-php-common-options-select', '#wpcd_app_action_change-php-common-options-value' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_change-php-common-options-select', '#wpcd_app_action_change-php-common-options-value' ) ),
 				),
 				'type'           => 'button',
 			);
@@ -580,7 +580,7 @@ class WPCD_WORDPRESS_TABS_PHP_OPTIONS extends WPCD_WORDPRESS_TABS {
 					/* Translators: %s is a fontawesome or similar icon. */
 					'std'                 => wpcd_apply_install_icon( __( '%s Set the selected option', 'wpcd' ) ),
 					'confirmation_prompt' => $confirmation_prompt,                  // fields that contribute data for this action.
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_change-php-advanced-options-item', '#wpcd_app_action_change-php-advanced-options-value' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_change-php-advanced-options-item', '#wpcd_app_action_change-php-advanced-options-value' ) ),
 				),
 				'type'           => 'button',
 			);

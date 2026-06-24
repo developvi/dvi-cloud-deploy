@@ -203,7 +203,7 @@ class WPCD_WORDPRESS_TABS_SERVER_LOGS extends WPCD_WORDPRESS_TABS {
 				// the id.
 				// 'data-wpcd-id' => $id.
 				// fields that contribute data for this action.
-				'data-wpcd-fields' => json_encode( array( '#wpcd_app_action_server-logs-log-name-select' ) ),
+				'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_action_server-logs-log-name-select' ) ),
 			),
 		);
 

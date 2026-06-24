@@ -248,7 +248,7 @@ class WPCD_WORDPRESS_TABS_SITE_SECURITY extends WPCD_WORDPRESS_TABS {
 				// make sure we give the user a confirmation prompt.
 				'data-wpcd-confirmation-prompt' => __( 'Are you sure you would like to activate SolidWP Security for this site?', 'wpcd' ),
 				// fields that contribute data for this action.
-				// 'data-wpcd-fields' => json_encode( array( '#wpcd_app_site_log_name' ) ),
+				// 'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_site_log_name' ) ),
 			),
 			'class'      => 'wpcd_app_action',
 			'save_field' => false,

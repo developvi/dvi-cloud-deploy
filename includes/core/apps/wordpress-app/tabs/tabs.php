@@ -39,7 +39,7 @@ class WPCD_WORDPRESS_TABS extends WPCD_WORDPRESS_APP {
 						'desc'      => __( 'Add or remove password protection on your site', 'wpcd' ),
 						'confirmation_prompt' => $confirmation_prompt,
 						// fields that contribute data for this action
-						'data-wpcd-fields' => json_encode(array( '#wpcd_app_action_basic-auth-user', '#wpcd_app_action_basic-auth-pw' )),
+						'data-wpcd-fields' => wp_json_encode(array( '#wpcd_app_action_basic-auth-user', '#wpcd_app_action_basic-auth-pw' )),
 					),
 					'type'  => 'switch',
 				);

@@ -272,7 +272,7 @@ class WPCD_WORDPRESS_TABS_SERVER_MONITORIX extends WPCD_WORDPRESS_TABS {
 					'std'                 => __( 'Install Monitorix', 'wpcd' ),
 					'desc'                => '',
 					'confirmation_prompt' => __( 'Are you sure you would like to install the Monitorix service?', 'wpcd' ), // make sure we give the user a confirmation prompt.
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_monitorix-domain', '#wpcd_app_action_monitorix-basic-auth-user', '#wpcd_app_action_monitorix-basic-auth-pw' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_monitorix-domain', '#wpcd_app_action_monitorix-basic-auth-user', '#wpcd_app_action_monitorix-basic-auth-pw' ) ),
 				),
 				'type'           => 'button',
 			);

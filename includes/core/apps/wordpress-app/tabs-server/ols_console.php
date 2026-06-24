@@ -325,7 +325,7 @@ class WPCD_WORDPRESS_TABS_SERVER_OLS_CONSOLE extends WPCD_WORDPRESS_TABS {
 					'desc'                => '',
 					// make sure we give the user a confirmation prompt.
 					'confirmation_prompt' => __( 'Are you sure you would like to enable the OpenLiteSpeed webserver manager console?', 'wpcd' ),
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_username-for-ols-console', '#wpcd_app_action_password-for-ols-console' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_username-for-ols-console', '#wpcd_app_action_password-for-ols-console' ) ),
 				),
 				'type'           => 'button',
 			);

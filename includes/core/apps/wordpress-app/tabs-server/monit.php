@@ -324,7 +324,7 @@ class WPCD_WORDPRESS_TABS_SERVER_MONIT extends WPCD_WORDPRESS_TABS {
 					'std'                 => __( 'Install Monit', 'wpcd' ),
 					// make sure we give the user a confirmation prompt.
 					'confirmation_prompt' => __( 'Are you sure you would like to install the Monit service?', 'wpcd' ),
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_monit-domain', '#wpcd_app_action_monit-basic-auth-user', '#wpcd_app_action_monit-basic-auth-pw', '#wpcd_app_action_monit-smtp-server', '#wpcd_app_action_monit-smtp-port', '#wpcd_app_action_monit-smtp-user', '#wpcd_app_action_monit-smtp-password', '#wpcd_app_action_monit-alert-email', '#wpcd_app_action_monit-mmonit-domain' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_monit-domain', '#wpcd_app_action_monit-basic-auth-user', '#wpcd_app_action_monit-basic-auth-pw', '#wpcd_app_action_monit-smtp-server', '#wpcd_app_action_monit-smtp-port', '#wpcd_app_action_monit-smtp-user', '#wpcd_app_action_monit-smtp-password', '#wpcd_app_action_monit-alert-email', '#wpcd_app_action_monit-mmonit-domain' ) ),
 				),
 				'type'           => 'button',
 			);
@@ -422,7 +422,7 @@ class WPCD_WORDPRESS_TABS_SERVER_MONIT extends WPCD_WORDPRESS_TABS {
 					'tooltip'             => __( 'Turning this on will result in an attempt to obtain a certificate from LETSEncrypt.  For this to be successful your DNS must be pointing to the domain used when you installed Monit. <br />If the LETSEncrypt request fails, check the logs under the SSH LOG menu option. <br />Note that if you attempt to turn on SSL too many times in a row LETSEncrypt will block your domain for a period of time.', 'wpcd' ),
 					// make sure we give the user a confirmation prompt.
 					'confirmation_prompt' => $confirmation_prompt,
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_monit-ssl-email' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_monit-ssl-email' ) ),
 				),
 				'type'           => 'switch',
 			);
@@ -660,7 +660,7 @@ class WPCD_WORDPRESS_TABS_SERVER_MONIT extends WPCD_WORDPRESS_TABS {
 					'std'                 => __( 'Update Email', 'wpcd' ),
 					// make sure we give the user a confirmation prompt.
 					'confirmation_prompt' => __( 'Are you sure you would like to update the monit notifications email settings?', 'wpcd' ),
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_monit-smtp-server', '#wpcd_app_action_monit-smtp-port', '#wpcd_app_action_monit-smtp-user', '#wpcd_app_action_monit-smtp-password', '#wpcd_app_action_monit-alert-email' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_monit-smtp-server', '#wpcd_app_action_monit-smtp-port', '#wpcd_app_action_monit-smtp-user', '#wpcd_app_action_monit-smtp-password', '#wpcd_app_action_monit-alert-email' ) ),
 				),
 				'type'           => 'button',
 			);

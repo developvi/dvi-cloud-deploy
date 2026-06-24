@@ -240,7 +240,7 @@ class WPCD_WORDPRESS_TABS_WPCONFIG extends WPCD_WORDPRESS_TABS {
 					'std'                 => __( 'Change', 'wpcd' ),
 					'columns'             => 4,
 					'confirmation_prompt' => $confirmation_prompt,              // fields that contribute data for this action.
-					'data-wpcd-fields'    => json_encode( array( "#wpcd_app_action_change-$config_option_key-value" ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( "#wpcd_app_action_change-$config_option_key-value" ) ),
 				),
 				'type'           => 'button',
 			);
@@ -331,7 +331,7 @@ class WPCD_WORDPRESS_TABS_WPCONFIG extends WPCD_WORDPRESS_TABS {
 			'raw_attributes' => array(
 				'std'                 => __( 'Change', 'wpcd' ),
 				'confirmation_prompt' => $confirmation_prompt,              // fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_change-wpconfig-value', '#wpcd_app_action_change-wpconfig-key-name', '#wpcd_app_action_change-wpconfig-israw' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_change-wpconfig-value', '#wpcd_app_action_change-wpconfig-key-name', '#wpcd_app_action_change-wpconfig-israw' ) ),
 			),
 			'type'           => 'button',
 		);

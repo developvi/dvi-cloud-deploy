@@ -633,7 +633,7 @@ class WPCD_WORDPRESS_TABS_TWEAKS extends WPCD_WORDPRESS_TABS {
 				'std'                 => __( 'Change', 'wpcd' ),
 				'confirmation_prompt' => $uploadsize_confirmation_prompt,
 				// fields that contribute data for this action.
-				'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_tweaks-change-fileupload-size' ) ),
+				'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_tweaks-change-fileupload-size' ) ),
 
 			),
 			'type'           => 'button',

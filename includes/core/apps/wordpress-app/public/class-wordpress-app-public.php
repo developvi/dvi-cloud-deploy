@@ -513,8 +513,8 @@ class WPCD_WORDPRESS_APP_PUBLIC {
 		?>
 
 		<script type="text/javascript">
-		var wpcd_public_app_delete_messages   = '<?php echo json_encode( array_map( 'esc_html', WPCD_POSTS_APP()->wpcd_app_trash_prompt_messages() ) ); ?>';
-		var wpcd_public_server_delete_messages = '<?php echo json_encode( array_map( 'esc_html', WPCD_POSTS_APP_SERVER()->wpcd_app_trash_prompt_messages() ) ); ?>';
+		var wpcd_public_app_delete_messages   = '<?php echo wp_json_encode( array_map( 'esc_html', WPCD_POSTS_APP()->wpcd_app_trash_prompt_messages() ) ); ?>';
+		var wpcd_public_server_delete_messages = '<?php echo wp_json_encode( array_map( 'esc_html', WPCD_POSTS_APP_SERVER()->wpcd_app_trash_prompt_messages() ) ); ?>';
 		</script>
 		<?php
 

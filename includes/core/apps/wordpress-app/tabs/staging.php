@@ -621,7 +621,7 @@ class WPCD_WORDPRESS_TABS_STAGING extends WPCD_WORDPRESS_TABS {
 					// the id.
 					'data-wpcd-id'                  => $id,
 					// fields that contribute data for this action.
-					// 'data-wpcd-fields'              => json_encode( array( '#wpcd_app_clone_site_domain_new_domain' ) ),
+					// 'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_clone_site_domain_new_domain' ) ),
 					// make sure we give the user a confirmation prompt.
 					'data-wpcd-confirmation-prompt' => __( 'Are you sure you would like to overwrite your live site?', 'wpcd' ),
 					// show log console?
@@ -680,7 +680,7 @@ class WPCD_WORDPRESS_TABS_STAGING extends WPCD_WORDPRESS_TABS {
 					// the id.
 					'data-wpcd-id'                  => $id,
 					// fields that contribute data for this action.
-					// 'data-wpcd-fields'              => json_encode( array( '#wpcd_app_clone_site_domain_new_domain' ) ),
+					// 'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_clone_site_domain_new_domain' ) ),
 					// make sure we give the user a confirmation prompt.
 					'data-wpcd-confirmation-prompt' => (bool) $existing_staging_site ? __( 'Are you sure you would like to overwrite your existing staging site?', 'wpcd' ) : __( 'Are you sure you would like to create a new staging site?', 'wpcd' ),
 					// show log console?

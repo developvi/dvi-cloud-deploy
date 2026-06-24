@@ -209,7 +209,7 @@ class WPCD_WORDPRESS_TABS_SFTP extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'     => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields' => json_encode( array( '#wpcd_app_user1', '#wpcd_app_pass1' ) ),
+				'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_user1', '#wpcd_app_pass1' ) ),
 			),
 			'class'      => 'wpcd_app_action',
 			'save_field' => false,
@@ -258,7 +258,7 @@ class WPCD_WORDPRESS_TABS_SFTP extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'                  => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields'              => json_encode( array( '#wpcd_app_user2' ) ),
+				'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_user2' ) ),
 				// confirmation prompt.
 				'data-wpcd-confirmation-prompt' => __( 'Are you sure you want to remove this user?', 'wpcd' ),
 			),
@@ -316,7 +316,7 @@ class WPCD_WORDPRESS_TABS_SFTP extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'     => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields' => json_encode( array( '#wpcd_app_user3', '#wpcd_app_pass3' ) ),
+				'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_user3', '#wpcd_app_pass3' ) ),
 			),
 			'class'      => 'wpcd_app_action',
 			'save_field' => false,
@@ -372,7 +372,7 @@ class WPCD_WORDPRESS_TABS_SFTP extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'     => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields' => json_encode( array( '#wpcd_app_user6' ) ),
+				'data-wpcd-fields' => wp_json_encode( array( '#wpcd_app_user6' ) ),
 			),
 			'class'      => 'wpcd_app_action',
 			'save_field' => false,
@@ -414,7 +414,7 @@ class WPCD_WORDPRESS_TABS_SFTP extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'                  => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields'              => json_encode( array( '#wpcd_app_user4' ) ),
+				'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_user4' ) ),
 				// confirmation prompt.
 				'data-wpcd-confirmation-prompt' => __( 'Are you sure you want to remove this user\'s password?', 'wpcd' ),
 			),
@@ -458,7 +458,7 @@ class WPCD_WORDPRESS_TABS_SFTP extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'                  => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields'              => json_encode( array( '#wpcd_app_user5' ) ),
+				'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_user5' ) ),
 				// confirmation prompt.
 				'data-wpcd-confirmation-prompt' => __( 'Are you sure you want to remove this user\'s key?', 'wpcd' ),
 			),
@@ -691,7 +691,7 @@ class WPCD_WORDPRESS_TABS_SFTP extends WPCD_WORDPRESS_TABS {
 
 		// Certain actions need special checks in the $result var.
 		if ( 'sftp-add-user' === $action ) {
-			if ( strpos( $result, 'already exists. Use a different user name.' ) !== false ) {
+			if ( str_contains( $result, 'already exists. Use a different user name.' ) ) {
 				// User already exists so error out and return...
 				return new \WP_Error( __( 'A user with this name already exists and is likely associated with another site.  Please use a different user name', 'wpcd' ) );
 			}

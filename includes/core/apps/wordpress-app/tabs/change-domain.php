@@ -88,7 +88,7 @@ class WPCD_WORDPRESS_TABS_CHANGE_DOMAIN extends WPCD_WORDPRESS_TABS {
 						$this->set_ssl_status( $id, 'on' );
 					}
 					// This block not necessary, just a failsafe.
-					if ( strpos( $logs, 'All challenges have failed' ) !== false ) {
+					if ( str_contains( $logs, 'All challenges have failed' ) ) {
 						$this->set_ssl_status( $id, 'off' );
 					}
 
@@ -311,7 +311,7 @@ class WPCD_WORDPRESS_TABS_CHANGE_DOMAIN extends WPCD_WORDPRESS_TABS {
 		}
 
 		// However, not all things might have been successful.  This is one of those cases where you might have partial success so you want to let the user know...
-		if ( strpos( $result, 'Challenges failed for all domains' ) !== false ) {
+		if ( str_contains( $result, 'Challenges failed for all domains' ) ) {
 			return new \WP_Error( __( 'It seems not all actions were successful. We were unable to automatically issue an SSL certificate for the new domain.', 'wpcd' ) );
 		}
 
@@ -678,7 +678,7 @@ class WPCD_WORDPRESS_TABS_CHANGE_DOMAIN extends WPCD_WORDPRESS_TABS {
 				// the id.
 				'data-wpcd-id'                  => $id,
 				// fields that contribute data for this action.
-				'data-wpcd-fields'              => json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
+				'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
 				// make sure we give the user a confirmation prompt.
 				'data-wpcd-confirmation-prompt' => __( 'Are you sure you would like to perform a full database domain change? This might take a while!', 'wpcd' ),
 				// show log console?
@@ -712,7 +712,7 @@ class WPCD_WORDPRESS_TABS_CHANGE_DOMAIN extends WPCD_WORDPRESS_TABS {
 					// the id.
 					'data-wpcd-id'                  => $id,
 					// fields that contribute data for this action.
-					'data-wpcd-fields'              => json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
+					'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
 					// make sure we give the user a confirmation prompt.
 					'data-wpcd-confirmation-prompt' => __( 'Are you sure you would like to change the domain? Protect your data - make a backup before you start this operation!', 'wpcd' ),
 				),
@@ -749,7 +749,7 @@ class WPCD_WORDPRESS_TABS_CHANGE_DOMAIN extends WPCD_WORDPRESS_TABS {
 					// the id.
 					'data-wpcd-id'                  => $id,
 					// fields that contribute data for this action.
-					'data-wpcd-fields'              => json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
+					'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
 					// make sure we give the user a confirmation prompt.
 					'data-wpcd-confirmation-prompt' => __( 'Are you sure you would like to do a dry-run of a full database domain change? This might take a while!', 'wpcd' ),
 					// show log console?
@@ -785,7 +785,7 @@ class WPCD_WORDPRESS_TABS_CHANGE_DOMAIN extends WPCD_WORDPRESS_TABS {
 					// the id.
 					'data-wpcd-id'                  => $id,
 					// fields that contribute data for this action.
-					'data-wpcd-fields'              => json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
+					'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_change_domain_new_domain' ) ),
 					// make sure we give the user a confirmation prompt.
 					'data-wpcd-confirmation-prompt' => __( 'Are you sure you would like to only update the local record with this domain name?  If done incorrectly this can cause future domain operations to fail!', 'wpcd' ),
 				),
@@ -897,7 +897,7 @@ class WPCD_WORDPRESS_TABS_CHANGE_DOMAIN extends WPCD_WORDPRESS_TABS {
 					// the id.
 					'data-wpcd-id'                  => $id,
 					// fields that contribute data for this action.
-					'data-wpcd-fields'              => json_encode( array( '#wpcd_app_search_term', '#wpcd_app_replace_term' ) ),
+					'data-wpcd-fields'              => wp_json_encode( array( '#wpcd_app_search_term', '#wpcd_app_replace_term' ) ),
 					// make sure we give the user a confirmation prompt.
 					'data-wpcd-confirmation-prompt' => __( 'If you make a mistake there is no UNDO! Are you sure you would like to run this search & replace? ', 'wpcd' ),
 					// show log console?

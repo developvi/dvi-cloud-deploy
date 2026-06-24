@@ -184,15 +184,15 @@ class WPCD_WORDPRESS_TABS_SERVER_FAIL2BAN extends WPCD_WORDPRESS_TABS {
 			}
 
 			// This one handles the protocol specific actions that are created dynamically.
-			if ( strpos( $action, 'fail2ban-change-protocol-' ) !== false ) {
+			if ( str_contains( $action, 'fail2ban-change-protocol-' ) ) {
 				$action = 'fail2ban_update_protocol';
 				$result = $this->manage_fail2ban( $id, $action );
 			}
-			if ( strpos( $action, 'fail2ban-remove-protocol-' ) !== false ) {
+			if ( str_contains( $action, 'fail2ban-remove-protocol-' ) ) {
 				$action = 'fail2ban_remove_protocol';
 				$result = $this->manage_fail2ban( $id, $action );
 			}
-			if ( strpos( $action, 'fail2ban-remove-protocol-meta-' ) !== false ) {
+			if ( str_contains( $action, 'fail2ban-remove-protocol-meta-' ) ) {
 				$action = 'fail2ban-remove-protocol-meta';
 				$result = $this->manage_fail2ban( $id, $action );
 			}
@@ -366,7 +366,7 @@ class WPCD_WORDPRESS_TABS_SERVER_FAIL2BAN extends WPCD_WORDPRESS_TABS {
 					'std'                 => wpcd_apply_virus_icon( __( '%s Ban IP', 'wpcd' ) ),
 					'desc'                => __( 'Click the button to ban this IP.', 'wpcd' ), // make sure we give the user a confirmation prompt.
 					'confirmation_prompt' => __( 'Are you sure you would like to ban this IP?', 'wpcd' ),
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_fail2ban-ban-ip-field', '#wpcd_app_action_fail2ban-ban-ip-desc' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_fail2ban-ban-ip-field', '#wpcd_app_action_fail2ban-ban-ip-desc' ) ),
 					'columns'             => 6,
 				),
 				'type'           => 'button',
@@ -426,7 +426,7 @@ class WPCD_WORDPRESS_TABS_SERVER_FAIL2BAN extends WPCD_WORDPRESS_TABS {
 					'std'                 => wpcd_apply_open_icon( __( '%s Whitelist/Unban IP', 'wpcd' ) ),
 					'desc'                => __( 'Click the button to whitelist this IP.', 'wpcd' ), // make sure we give the user a confirmation prompt.
 					'confirmation_prompt' => __( 'Are you sure you would like to unban this IP?', 'wpcd' ),
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_fail2ban-unban-ip-field', '#wpcd_app_action_fail2ban-unban-ip-desc' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_fail2ban-unban-ip-field', '#wpcd_app_action_fail2ban-unban-ip-desc' ) ),
 					'columns'             => 6,
 				),
 				'type'           => 'button',
@@ -552,7 +552,7 @@ class WPCD_WORDPRESS_TABS_SERVER_FAIL2BAN extends WPCD_WORDPRESS_TABS {
 							'desc'                => '',
 							// make sure we give the user a confirmation prompt.
 							'confirmation_prompt' => sprintf( __( 'Are you sure you would like to change the parameters for the %s protocol on the Fail2Ban service?', 'wpcd' ), $protocol ),
-							'data-wpcd-fields'    => json_encode( array( "#wpcd_app_action_fail2ban-new-$protocol", "#wpcd_app_action_fail2ban-new-ban-time-$protocol", "#wpcd_app_action_fail2ban-new-find-time-$protocol", "#wpcd_app_action_fail2ban-new-max-retry-$protocol" ) ),
+							'data-wpcd-fields'    => wp_json_encode( array( "#wpcd_app_action_fail2ban-new-$protocol", "#wpcd_app_action_fail2ban-new-ban-time-$protocol", "#wpcd_app_action_fail2ban-new-find-time-$protocol", "#wpcd_app_action_fail2ban-new-max-retry-$protocol" ) ),
 							'columns'             => 4,
 						),
 						'type'           => 'button',
@@ -568,7 +568,7 @@ class WPCD_WORDPRESS_TABS_SERVER_FAIL2BAN extends WPCD_WORDPRESS_TABS {
 								// make sure we give the user a confirmation prompt.
 								/* Translators: %s is a fail2ban protocol such as sshd. */
 								'confirmation_prompt' => sprintf( __( 'Are you sure you would like to disable the %s protocol on the Fail2Ban service?', 'wpcd' ), $protocol ),
-								'data-wpcd-fields'    => json_encode( array( "#wpcd_app_action_fail2ban-new-$protocol" ) ),
+								'data-wpcd-fields'    => wp_json_encode( array( "#wpcd_app_action_fail2ban-new-$protocol" ) ),
 								'columns'             => 4,
 							),
 							'type'           => 'button',
@@ -583,7 +583,7 @@ class WPCD_WORDPRESS_TABS_SERVER_FAIL2BAN extends WPCD_WORDPRESS_TABS {
 								// make sure we give the user a confirmation prompt.
 								/* Translators: %s is a fail2ban protocol such as sshd. */
 								'confirmation_prompt' => sprintf( __( 'Are you sure you would like to remove metas for the %s protocol?', 'wpcd' ), $protocol ),
-								'data-wpcd-fields'    => json_encode( array( "#wpcd_app_action_fail2ban-new-$protocol" ) ),
+								'data-wpcd-fields'    => wp_json_encode( array( "#wpcd_app_action_fail2ban-new-$protocol" ) ),
 								'columns'             => 4,
 							),
 							'type'           => 'button',
@@ -651,7 +651,7 @@ class WPCD_WORDPRESS_TABS_SERVER_FAIL2BAN extends WPCD_WORDPRESS_TABS {
 					'std'                 => wpcd_apply_change_icon( __( '%s Change', 'wpcd' ) ),
 					'desc'                => __( 'Click the button to change your default parameters for Fail2ban.', 'wpcd' ), // make sure we give the user a confirmation prompt.
 					'confirmation_prompt' => __( 'Are you sure you would like to change default parameters for the Fail2Ban service?', 'wpcd' ),
-					'data-wpcd-fields'    => json_encode( array( '#wpcd_app_action_fail2ban-new-ban-time', '#wpcd_app_action_fail2ban-new-find-time', '#wpcd_app_action_fail2ban-new-max-retry' ) ),
+					'data-wpcd-fields'    => wp_json_encode( array( '#wpcd_app_action_fail2ban-new-ban-time', '#wpcd_app_action_fail2ban-new-find-time', '#wpcd_app_action_fail2ban-new-max-retry' ) ),
 				),
 				'type'           => 'button',
 			);
