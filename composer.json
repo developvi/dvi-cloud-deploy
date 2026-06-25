@@ -14,9 +14,12 @@
          }
     },
     "require": {
-        "php": "^7.4",
+        "php": "^8.2",
         "phpseclib/phpseclib": "^3.0",
-        "developvi/wp-orm": "^1.0"
+        "developvi/wp-orm": "^1.0",
+        "symfony/polyfill-php83": "^1.38",
+        "symfony/polyfill-php84": "^1.38",
+        "symfony/polyfill-php85": "^1.38"
     },
 
     "extra": {

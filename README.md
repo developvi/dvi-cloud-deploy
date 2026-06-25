@@ -140,6 +140,9 @@ Note: Even though the entire git development history isn't available on github, 
 * New: Dedicated Email Notifications and Descriptions/Notes/Labels feature groups.
 * New: Admin Panel theme CSS, UI script, and portal styles; Font Awesome Free icons for the dashboard.
 * New: Settings Admin Panel — card home → detail flow with hash routing (`#ap/{slug}`) and Back to Home.
+* New: Composer packages `symfony/polyfill-php83`, `symfony/polyfill-php84`, and `symfony/polyfill-php85`.
+* Update: Raise Composer PHP requirement from `^7.4` to `^8.2`.
+* Update: `phpseclib/phpseclib` to 3.0.55 and `paragonie/constant_time_encoding` to 3.1.3.
 * Tweak: Site and server settings expose the Admin Panel tab style option.
 * Tweak: Metabox registration supports Admin Panel placement (side overview, seamless main actions).
 * Tweak: Hide empty Meta Box card-container rows so they no longer consume vertical space.

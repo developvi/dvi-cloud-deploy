@@ -7,6 +7,9 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'phpseclib3\\' => array($vendorDir . '/phpseclib/phpseclib/phpseclib'),
+    'Symfony\\Polyfill\\Php85\\' => array($vendorDir . '/symfony/polyfill-php85'),
+    'Symfony\\Polyfill\\Php84\\' => array($vendorDir . '/symfony/polyfill-php84'),
+    'Symfony\\Polyfill\\Php83\\' => array($vendorDir . '/symfony/polyfill-php83'),
     'ParagonIE\\ConstantTime\\' => array($vendorDir . '/paragonie/constant_time_encoding/src'),
     'DVI\\WpOrm\\' => array($vendorDir . '/developvi/wp-orm/src'),
     'DVICloudDeploy\\' => array($baseDir . '/src'),

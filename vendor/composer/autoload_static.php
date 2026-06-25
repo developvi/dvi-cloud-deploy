@@ -8,18 +8,27 @@ class ComposerStaticInit3870d45cca9833d43343478c2b4ce10b
 {
     public static $files = array (
         'decc78cc4436b1292c6c0d151b19445c' => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+        '662a729f963d39afe703c9d9b7ab4a8c' => __DIR__ . '/..' . '/symfony/polyfill-php83/bootstrap.php',
+        '9d2b9fc6db0f153a0a149fefb182415e' => __DIR__ . '/..' . '/symfony/polyfill-php84/bootstrap.php',
+        '606a39d89246991a373564698c2d8383' => __DIR__ . '/..' . '/symfony/polyfill-php85/bootstrap.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'p' => 
+        'p' =>
         array (
             'phpseclib3\\' => 11,
         ),
-        'P' => 
+        'S' =>
+        array (
+            'Symfony\\Polyfill\\Php85\\' => 23,
+            'Symfony\\Polyfill\\Php84\\' => 23,
+            'Symfony\\Polyfill\\Php83\\' => 23,
+        ),
+        'P' =>
         array (
             'ParagonIE\\ConstantTime\\' => 23,
         ),
-        'D' => 
+        'D' =>
         array (
             'DVI\\WpOrm\\' => 10,
             'DVICloudDeploy\\' => 15,
@@ -27,19 +36,31 @@ class ComposerStaticInit3870d45cca9833d43343478c2b4ce10b
     );
 
     public static $prefixDirsPsr4 = array (
-        'phpseclib3\\' => 
+        'phpseclib3\\' =>
         array (
             0 => __DIR__ . '/..' . '/phpseclib/phpseclib/phpseclib',
         ),
-        'ParagonIE\\ConstantTime\\' => 
+        'Symfony\\Polyfill\\Php85\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php85',
+        ),
+        'Symfony\\Polyfill\\Php84\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php84',
+        ),
+        'Symfony\\Polyfill\\Php83\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-php83',
+        ),
+        'ParagonIE\\ConstantTime\\' =>
         array (
             0 => __DIR__ . '/..' . '/paragonie/constant_time_encoding/src',
         ),
-        'DVI\\WpOrm\\' => 
+        'DVI\\WpOrm\\' =>
         array (
             0 => __DIR__ . '/..' . '/developvi/wp-orm/src',
         ),
-        'DVICloudDeploy\\' => 
+        'DVICloudDeploy\\' =>
         array (
             0 => __DIR__ . '/../..' . '/src',
         ),
@@ -47,6 +68,30 @@ class ComposerStaticInit3870d45cca9833d43343478c2b4ce10b
 
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
+        'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
+        'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',
+        'DateInvalidTimeZoneException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidTimeZoneException.php',
+        'DateMalformedIntervalStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedIntervalStringException.php',
+        'DateMalformedPeriodStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedPeriodStringException.php',
+        'DateMalformedStringException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateMalformedStringException.php',
+        'DateObjectError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateObjectError.php',
+        'DateRangeError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateRangeError.php',
+        'DelayedTargetValidation' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/DelayedTargetValidation.php',
+        'Deprecated' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Deprecated.php',
+        'Filter\\FilterException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterException.php',
+        'Filter\\FilterFailedException' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/Filter/FilterFailedException.php',
+        'NoDiscard' => __DIR__ . '/..' . '/symfony/polyfill-php85/Resources/stubs/NoDiscard.php',
+        'Override' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/Override.php',
+        'Pdo\\Dblib' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Dblib.php',
+        'Pdo\\Firebird' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Firebird.php',
+        'Pdo\\Mysql' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Mysql.php',
+        'Pdo\\Odbc' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Odbc.php',
+        'Pdo\\Pgsql' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Pgsql.php',
+        'Pdo\\Sqlite' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/Pdo/Sqlite.php',
+        'ReflectionConstant' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/ReflectionConstant.php',
+        'RoundingMode' => __DIR__ . '/..' . '/symfony/polyfill-php84/Resources/stubs/RoundingMode.php',
+        'SQLite3Exception' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/SQLite3Exception.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

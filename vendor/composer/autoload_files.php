@@ -7,4 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'decc78cc4436b1292c6c0d151b19445c' => $vendorDir . '/phpseclib/phpseclib/phpseclib/bootstrap.php',
+    '662a729f963d39afe703c9d9b7ab4a8c' => $vendorDir . '/symfony/polyfill-php83/bootstrap.php',
+    '9d2b9fc6db0f153a0a149fefb182415e' => $vendorDir . '/symfony/polyfill-php84/bootstrap.php',
+    '606a39d89246991a373564698c2d8383' => $vendorDir . '/symfony/polyfill-php85/bootstrap.php',
 );
