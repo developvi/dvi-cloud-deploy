@@ -12,7 +12,7 @@
     function init() {
         // to check the validation rules 
         jQuery('#submitdiv').on('click', '#publish', function (e) {
-            var virtual_provider_title = $.trim($('#title').val());
+            var virtual_provider_title = ($('#title').val()).trim();
             if ((!virtual_provider_title)) {
                 alert(params.i10n.empty_title);
                 return false;

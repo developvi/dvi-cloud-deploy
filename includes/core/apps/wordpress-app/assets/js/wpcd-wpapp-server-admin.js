@@ -430,7 +430,7 @@
         $('body').on('click', '.wpcd-install-app', function (e) {
             e.preventDefault();
 
-            var version_value = $.trim($('#wpcd-wp-version').val());
+            var version_value = ($('#wpcd-wp-version').val()).trim();
             var valid_version = check_wp_version(version_value);
             if (!valid_version) {
                 alert(params.i10n.invalid_version);

@@ -57,7 +57,7 @@
 
 		// to check the validation rules 
 		jQuery('#submitdiv').on('click', '#publish', function (e) {
-			var team_title = $.trim($('#title').val());
+			var team_title = ($('#title').val()).trim();
 			if ((!team_title)) {
 				alert(params.i10n.empty_title);
 				return false;

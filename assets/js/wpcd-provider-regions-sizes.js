@@ -6,7 +6,7 @@
 
     function init(){
         // change regions when provider changes.
-        $('body').delegate('.wpcd_app_provider', 'change', function(e){
+        $('body').on('change', '.wpcd_app_provider', function(e){
             if(Object.keys(attributes.provider_regions).length > 0){
                 $('.wpcd_app_region').empty();
                 $regions = attributes.provider_regions[ $(this).val() ];
@@ -24,7 +24,7 @@
         });
 
         // change regions when provider changes for bulk installs (part of powertools).
-        $('body').delegate('select[name="wpcd_bulk_installs_provider[]"]', 'change', function (e) {
+        $('body').on('change', 'select[name="wpcd_bulk_installs_provider[]"]', function (e) {
 
             var bulk_install_provider = $(this);
             

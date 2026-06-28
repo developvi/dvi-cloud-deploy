@@ -97,7 +97,7 @@
             || $box.children('h2.hndle, .hndle').first().text()
             || $box.attr('id')
             || '';
-        return $.trim(String(raw).replace(/\s+/g, ' '));
+        return (String(raw).replace(/\s+/g, ' ')).trim();
     }
 
     function createGroup(key, meta) {
@@ -409,7 +409,7 @@
                     if (!slug) {
                         return;
                     }
-                    var label = $.trim($li.find('a').clone().children().remove().end().text()) || slug;
+                    var label = ($li.find('a').clone().children().remove().end().text()).trim() || slug;
                     var iconCls = $li.find('i').first().attr('class') || '';
                     var icon = dashToFa(iconCls) || boxIcon;
                     addCard({

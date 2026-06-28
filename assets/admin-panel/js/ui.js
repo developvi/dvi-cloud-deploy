@@ -58,7 +58,7 @@
 				}, 0);
 			})
 			.on('blur', function () {
-				if (!$.trim($(this).val())) {
+				if (!($(this).val()).trim()) {
 					$(this).attr('readonly', 'readonly');
 				}
 			});
@@ -106,7 +106,7 @@
 		var raw = $box.children('.postbox-header').find('.hndle').first().text()
 			|| $box.children('h2.hndle, .hndle').first().text()
 			|| '';
-		return $.trim(String(raw).replace(/\s+/g, ' '));
+		return (String(raw).replace(/\s+/g, ' ')).trim();
 	}
 
 	function ensureGroup(groups, $home, key, meta) {
@@ -223,7 +223,7 @@
 				return;
 			}
 
-			var label = $.trim($li.find('a').clone().children().remove().end().text()) || slug;
+			var label = ($li.find('a').clone().children().remove().end().text()).trim() || slug;
 			var icon = resolveIcon(slug, $li, map);
 			var groupKey = resolveGroup(slug, map);
 
@@ -381,7 +381,7 @@
 			if ($input.val()) {
 				$input.data('dvicdTyped', 1);
 			}
-			var q = $.trim($input.val()).toLowerCase();
+			var q = ($input.val()).trim().toLowerCase();
 			var visible = 0;
 
 			$home.find('.dvicd-ap-card').each(function () {

@@ -11,7 +11,7 @@ $(document).ready(function() {
         /**
          * Close add/edit form window
          */
-        $('body').delegate('.wpcd_mb_inline_edit_form_window .mfp-close-window-button', 'click', function() {
+        $('body').on('click', '.wpcd_mb_inline_edit_form_window .mfp-close-window-button', function() {
                 $('.wpcd_mb_inline_edit_form_window .mfp-close').trigger('click');
         });
         
@@ -19,7 +19,7 @@ $(document).ready(function() {
         /**
          * Handle add/edit window form submit
          */
-        $('body').delegate('.wpcd_mb_inline_edit_form_window form', 'submit', function(e) {
+        $('body').on('submit', '.wpcd_mb_inline_edit_form_window form', function(e) {
                 e.preventDefault();
                 
                 var form = $(this);
@@ -63,7 +63,7 @@ $(document).ready(function() {
         /**
          * Handle load dns zone records
          */
-        $('body').delegate('.wpcd_ct_load_dns_record_btn', 'click', function(e) {
+        $('body').on('click', '.wpcd_ct_load_dns_record_btn', function(e) {
                 e.preventDefault();
                 
                 $('#wpcd_ct_zone_records_table_container').data( 'zone', $(this).data('zone') );
@@ -163,7 +163,7 @@ $(document).ready(function() {
         /**
          * Handle delete item on page edit screen
          */
-        $('body').delegate('#wpcd-mbct-delete', 'click', function(e) {
+        $('body').on('click', '#wpcd-mbct-delete', function(e) {
                 e.preventDefault();
                 
                 if( !confirm( Mbct.confirm ) ) {
@@ -176,7 +176,7 @@ $(document).ready(function() {
         /**
          * Handle delete item on listing page
          */
-        $('body').delegate('.wpcd-ct-delete .wpcd-ct-delete-item', 'click', function(e) {
+        $('body').on('click', '.wpcd-ct-delete .wpcd-ct-delete-item', function(e) {
                 e.preventDefault();
                 
                 if( !confirm( MbctListTable.confirm ) ) {
@@ -190,7 +190,7 @@ $(document).ready(function() {
         /**
          * Handle delete items on child table view
          */
-        $('body').delegate('.wpcd-ct-delete-child-item', 'click', function(e) {
+        $('body').on('click', '.wpcd-ct-delete-child-item', function(e) {
                 e.preventDefault();
                 
                 if( !confirm( Mbct.confirm ) ) {
@@ -292,7 +292,7 @@ $(document).ready(function() {
         /**
          * Open add/edit child item window
          */
-        $('body').delegate('.mp_edit_inline', 'click', function(e) {
+        $('body').on('click', '.mp_edit_inline', function(e) {
                 e.preventDefault();
                 
                 if( typeof $(this).data('magnificPopup') == 'object' ) {
