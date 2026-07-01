@@ -102,8 +102,8 @@ class DVICDMetaBox
         // Add a submenu item under the specified parent menu
         add_submenu_page(
             'edit.php?post_type=wpcd_app_server', // Parent menu slug
-            __('Command Logs', 'dvicd'),    // Page title
-            __('Command Logs', 'dvicd'),    // Menu title
+            __('Command Logs', 'wpcd'),    // Page title
+            __('Command Logs', 'wpcd'),    // Menu title
             'manage_options',             // Required capability
             'model-dvicd_command_logs',     // Slug of the registered model
             null                          // Leave the callback null as mb_register_model will handle the display
@@ -147,45 +147,45 @@ class DVICDMetaBox
     {
         global $wpdb;
         $meta_boxes[] = [
-            'title'        => __('Command Log Details', 'textdomain'),
+            'title'        => __('Command Log Details', 'wpcd'),
             'storage_type' => 'custom_table',
             'table'        => $wpdb->prefix . 'dvicd_command_logs',
             'models'       => ['dvicd_command_logs'],
             'fields'       => [
                 [
                     'id'   => 'command_result',
-                    'name' => __('Command Result', 'textdomain'),
+                    'name' => __('Command Result', 'wpcd'),
                     'admin_columns' => true,
                     'type' => 'textarea',
-                    'desc' => __('Detailed Command message', 'textdomain'),
+                    'desc' => __('Detailed Command message', 'wpcd'),
                 ],
                 [
                     'id'   => 'command_type',
-                    'name' => __('Command Type', 'textdomain'),
+                    'name' => __('Command Type', 'wpcd'),
                     'type' => 'text',
                     'admin_columns' => true,
-                    'desc' => __('Type of the Command (e.g., Warning, Critical)', 'textdomain'),
+                    'desc' => __('Type of the Command (e.g., Warning, Critical)', 'wpcd'),
                 ],
                 [
                     'id'   => 'command_reference',
-                    'name' => __('Command reference', 'textdomain'),
+                    'name' => __('Command reference', 'wpcd'),
                     'admin_columns' => true,
                     'type' => 'text',
-                    'desc' => __('File where the Command occurred', 'textdomain'),
+                    'desc' => __('File where the Command occurred', 'wpcd'),
                 ],
                 [
                     'id'   => 'parent_post_id',
-                    'name' => __('Parent Post Id', 'textdomain'),
+                    'name' => __('Parent Post Id', 'wpcd'),
                     'admin_columns' => true,
                     'type' => 'number',
-                    'desc' => __('Line number of the Command', 'textdomain'),
+                    'desc' => __('Line number of the Command', 'wpcd'),
                 ],
 
                 [
                     'id'   => 'created_at',
-                    'name' => __('Created At', 'textdomain'),
+                    'name' => __('Created At', 'wpcd'),
                     'type' => 'datetime',
-                    'desc' => __('Time when the Command was logged', 'textdomain'),
+                    'desc' => __('Time when the Command was logged', 'wpcd'),
                     'admin_columns' => [
                         'sort' => true,
                     ],
