@@ -15,6 +15,7 @@
  */
 
 use DVICloudDeploy\Core\AdminPanel\Init as AdminPanelInit;
+use DVICloudDeploy\Core\Version\VersionRegistry;
 use DVICloudDeploy\Core\CommandLog\Table\DVICDCreateTable;
 use DVICloudDeploy\Core\DviSetting\InitDviSetting;
 use DVICloudDeploy\App\FaqHelp\Init as FaqHelpInit;
@@ -416,6 +417,9 @@ class DVICDInit {
 
 		/* Load up our files */
 		require_once wpcd_path . 'includes/core/functions.php';
+
+		VersionRegistry::boot();
+
 		require_once wpcd_path . 'includes/core/functions-kses.php';
 		require_once wpcd_path . 'includes/core/functions-icons.php';
 		require_once wpcd_path . 'includes/core/functions-metabox.php';

@@ -617,6 +617,10 @@ class WP_CLOUD_DEPLOY {
 	 * @return array
 	 */
 	public static function get_os_list() {
+		if ( class_exists( '\DVICloudDeploy\Core\Version\VersionRegistry' ) && \DVICloudDeploy\Core\Version\VersionRegistry::allOs() !== array() ) {
+			return apply_filters( 'wpcd_os_list', \DVICloudDeploy\Core\Version\VersionRegistry::osSelectList() );
+		}
+
 		$oslist = array(
 			'ubuntu2204lts' => __( 'Ubuntu 22.04 LTS', 'wpcd' ),
 			'ubuntu2004lts' => __( 'Ubuntu 20.04 LTS', 'wpcd' ),
@@ -671,6 +675,9 @@ class WP_CLOUD_DEPLOY {
 	 * @return string
 	 */
 	public static function get_os_description( $os ) {
+		if ( class_exists( '\DVICloudDeploy\Core\Version\VersionRegistry' ) && \DVICloudDeploy\Core\Version\VersionRegistry::hasOs( $os ) ) {
+			return \DVICloudDeploy\Core\Version\VersionRegistry::osDescription( $os );
+		}
 
 		$return = $os;
 
