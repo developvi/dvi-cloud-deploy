@@ -592,9 +592,7 @@ function wpcd_get_dir_list( $directory ) {
  * @return string
  */
 function wpcd_convert_php_version_to_ols_service( $version ) {
-	// Strip periods.
-	$version = str_replace( '.', '', $version );
-	return 'lsphp' . $version;
+	return \DVICloudDeploy\Core\Version\VersionRegistry::olsServiceName( (string) $version );
 }
 
 /**
@@ -605,6 +603,11 @@ function wpcd_convert_php_version_to_ols_service( $version ) {
  * @return string.
  */
 function wpcd_convert_ols_phpservice_to_php_version( $phpservice ) {
+
+	$label = \DVICloudDeploy\Core\Version\VersionRegistry::labelFromOlsService( (string) $phpservice );
+	if ( $label !== null ) {
+		return $label;
+	}
 
 	// Get last two characters of phpservice.
 	$version = mb_substr( $phpservice, -2 );
