@@ -35,11 +35,22 @@ echo $(date): "Installing PHP ${phpver}...."
 export DEBIAN_FRONTEND=noninteractive
 # Add Vhost config based on webserver_type
 if [ "$g_webserver_type" = "nginx" ]; then
-	apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"  php${phpver} php${phpver}-fpm php${phpver}-mbstring php${phpver}-curl php${phpver}-mysql php${phpver}-xml php${phpver}-zip php${phpver}-gd php${phpver}-imap php${phpver}-soap php${phpver}-bcmath php${phpver}-imagick -y
+	# Keep this extension set the same as the one 01-prepare_server.txt installs
+	# for the baseline versions, so a version added later is not missing
+	# anything the ones installed at provisioning time have.
+	apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold"  php${phpver} php${phpver}-fpm php${phpver}-mbstring php${phpver}-curl php${phpver}-mysql php${phpver}-xml php${phpver}-zip php${phpver}-gd php${phpver}-imap php${phpver}-soap php${phpver}-bcmath php${phpver}-imagick php${phpver}-intl -y
 	if [ $? -ne 0 ]  
 	then
 		echo "Failed!  Quitting process"
 		exit 1
+	fi
+
+	# Redis object caching, matching what 01-prepare_server.txt installs for the
+	# baseline versions.  Not fatal - the server still works without it.
+	if [ -f /etc/redis/redis.conf ]
+	then
+		echo $(date): "Adding the Redis extension..."
+		apt-get install -y php${phpver}-redis > /dev/null 2>&1 || echo $(date): "Could not install the Redis extension for PHP ${phpver}."
 	fi
 
 	# Update php.ini file to increase filesize uploads allowed in WordPress

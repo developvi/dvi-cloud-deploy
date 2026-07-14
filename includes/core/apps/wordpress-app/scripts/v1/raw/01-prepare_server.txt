@@ -97,6 +97,25 @@ if [ -f "$CHKPOINT_FOLDER/checkpoint10-end.txt" ]
 then
 	echo "Skip refreshing of repositories since it has already been done."
 else
+	# Debian 11 left standard support on 2026-08-31.  Its regular mirrors still
+	# advertise package versions that have already been pulled from the pool, so
+	# plain "apt-get install" fails on a stock bullseye image.  snapshot.debian.org
+	# keeps a consistent point-in-time view that still resolves.
+	#
+	# Note this pins bullseye to that date: no security updates land after it.
+	. /etc/os-release
+	if [ "${ID}" = "debian" ] && [ "${VERSION_CODENAME:-}" = "bullseye" ]
+	then
+		echo $(date): "Debian 11 is past end of standard support - pointing apt at snapshot.debian.org..."
+		snapshot_stamp="20260801T000000Z"
+		cat > /etc/apt/sources.list <<SOURCES
+deb http://snapshot.debian.org/archive/debian/${snapshot_stamp} bullseye main contrib
+deb http://snapshot.debian.org/archive/debian/${snapshot_stamp} bullseye-updates main contrib
+deb http://snapshot.debian.org/archive/debian-security/${snapshot_stamp} bullseye-security main contrib
+SOURCES
+		echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99wpcd-snapshot
+	fi
+
 	echo $(date): "Refreshing repositories..."
 	apt-get update > /dev/null 2>&1
 	if [ $? -ne 0 ]  
@@ -117,29 +136,70 @@ else
 	# Create directory if it doesn't exist. Else, add-apt-repository will be unable to configure the PPAs
 	mkdir -p /etc/apt/sources.list.d/
 
-	# Adding common software properties stack
-	echo $(date): "Adding common software properties to make repository management easier..."
-	apt-get install software-properties-common -y > /dev/null 2>&1
-	if [ $? -ne 0 ]  
+	# Adding additional repositories
+	#
+	# Where the PHP packages come from depends on the distribution:
+	#
+	#   * ppa:ondrej/php publishes for Ubuntu jammy (22.04) and noble (24.04)
+	#     only.  Its bionic (18.04) and focal (20.04) indices are now empty, and
+	#     it has never published for resolute (26.04).
+	#   * packages.sury.org/php covers Debian and the Ubuntu releases the PPA
+	#     does not - and is what the PPA itself now points people at.
+	#
+	# Pick whichever one actually serves this release.
+	echo $(date): "Adding additional repositories..."
+	. /etc/os-release
+	php_repo_codename="${VERSION_CODENAME:-}"
+
+	case "${ID}:${php_repo_codename}" in
+		ubuntu:jammy|ubuntu:noble)
+			php_repo="ondrej"
+			;;
+		*)
+			php_repo="sury"
+			;;
+	esac
+
+	if [ "$php_repo" = "ondrej" ]
 	then
-		echo "Failed!  Quitting process"
-		exit 1
+		# add-apt-repository lives in software-properties-common.  That package
+		# only exists on Ubuntu - Debian 13 dropped it - so install it only on
+		# the branch that actually needs it.
+		echo $(date): "Adding common software properties to make repository management easier..."
+		apt-get install software-properties-common -y > /dev/null 2>&1
+		if [ $? -ne 0 ]
+		then
+			echo "Failed!  Quitting process"
+			exit 1
+		fi
+
+		LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php -y > /dev/null 2>&1
+		if [ $? -ne 0 ]
+		then
+			echo "Failed!  Quitting process"
+			exit 1
+		fi
+	else
+		apt-get install -y ca-certificates curl gnupg lsb-release apt-transport-https > /dev/null 2>&1
+		curl -fsSL https://packages.sury.org/php/apt.gpg -o /usr/share/keyrings/sury-php.gpg
+		if [ $? -ne 0 ]
+		then
+			echo "Failed!  Quitting process"
+			exit 1
+		fi
+		echo "deb [signed-by=/usr/share/keyrings/sury-php.gpg] https://packages.sury.org/php/ ${php_repo_codename} main" > /etc/apt/sources.list.d/sury-php.list
 	fi
 
-	# Adding additional repositories
-	echo $(date): "Adding additional repositories..."
-	LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/php -y > /dev/null 2>&1
-	if [ $? -ne 0 ]  
+	# Whichever repository was added has to actually resolve, otherwise every
+	# later PHP install would fail one by one with a confusing message.
+	apt-get update > /dev/null 2>&1
+	if [ $? -ne 0 ]
 	then
 		echo "Failed!  Quitting process"
 		exit 1
 	fi
-	LC_ALL=C.UTF-8 add-apt-repository ppa:ondrej/nginx -y > /dev/null 2>&1
-	if [ $? -ne 0 ]  
-	then
-		echo "Failed!  Quitting process"
-		exit 1
-	fi
+	# The ppa:ondrej/nginx and ppa:ondrej/nginx-mainline archives no longer exist on
+	# Launchpad, so nginx now comes from the distribution repositories.
 	
 	# Make sure CURL is installed.
 	echo $(date): "Adding Curl..."
@@ -178,7 +238,10 @@ then
 	# Adding and installing PHP stack
 	echo $(date): "Installing PHP versions - this will take a while too!"
 
-	phpversion=(7.4 8.0 8.1 8.2 8.3 8.4)
+	# The install baseline: every server gets these, with all extensions.
+	# Mirrored from Catalog::baselinePhpLabels(); bin/build-compat-matrix fails
+	# the build if the two ever disagree.
+	phpversion=(8.3 8.4)
 	for ver in "${phpversion[@]}"
 	do
 		echo $(date): ".....PHP $ver"
@@ -190,9 +253,9 @@ then
 		fi
 	done
 
-	# Use PHP 8.1 as the default
-	echo $(date): "Making PHP 8.1 the default PHP version"
-	update-alternatives --set php /usr/bin/php8.1 > /dev/null 2>&1
+	# The CLI default.  Mirrored from Catalog::defaultAppPhpLabel().
+	echo $(date): "Making PHP 8.3 the default PHP version"
+	update-alternatives --set php /usr/bin/php8.3 > /dev/null 2>&1
 fi
 
 if [ "$webserver_type" = "ols" ]  || [ "$webserver_type" = "ols-enterprise" ]
@@ -380,14 +443,22 @@ else
 
 	# Set up unattended upgrades for the PPAs
 	echo $(date): "Adding additional repositories to unattended upgrade process..."
-	sed -i '/Unattended-Upgrade::Allowed-Origins /a "LP-PPA-ondrej-nginx:${distro_codename}";' /etc/apt/apt.conf.d/50unattended-upgrades
-	sed -i '/Unattended-Upgrade::Allowed-Origins /a "LP-PPA-ondrej-php:${distro_codename}";' /etc/apt/apt.conf.d/50unattended-upgrades	
+	# Only the PPA has an LP-PPA origin; the sury repository uses its own.
+	. /etc/os-release
+	case "${ID}:${VERSION_CODENAME:-}" in
+		ubuntu:jammy|ubuntu:noble)
+			sed -i '/Unattended-Upgrade::Allowed-Origins /a "LP-PPA-ondrej-php:${distro_codename}";' /etc/apt/apt.conf.d/50unattended-upgrades
+			;;
+		*)
+			sed -i '/Unattended-Upgrade::Allowed-Origins /a "deb.sury.org:${distro_codename}";' /etc/apt/apt.conf.d/50unattended-upgrades
+			;;
+	esac
 
 	if [ "$webserver_type" = "nginx" ]
 	then
 		# Update php.ini file to increase filesize uploads allowed in WordPress
 		echo $(date): "Adding required entries in php.ini to allow for larger file uploads in WordPress..."
-		phpversion=(7.4 8.0 8.1 8.2 8.3 8.4)
+		phpversion=(8.3 8.4)
 		for ver in "${phpversion[@]}"
 		do
 			sed -i "s/upload_max_filesize = 2M/upload_max_filesize = 25M/g" /etc/php/$ver/fpm/php.ini
@@ -424,23 +495,42 @@ else
 		# Configure NGINX to accept extra-long domain names (the seven back-slashes are to insert spaces before the actual line is inserted.)
 		sed -i '/^http {/a \ \n \ \ \ \ \ \ \ # Accept extra-long domain names \n \ \ \ \ \ \ \ server_names_hash_bucket_size 128;' /etc/nginx/nginx.conf
 
+		# Newer nginx packages already ship some of the directives below
+		# (nginx 1.26+ sets worker_cpu_affinity itself).  Inserting a second copy
+		# makes nginx refuse to start with "directive is duplicate", so only add
+		# one when nginx.conf does not set it already.  This also makes a repeated
+		# run of this script safe.
+		nginx_conf_add_once() {
+			if grep -qE "^[[:space:]]*$1([[:space:]]|;)" /etc/nginx/nginx.conf
+			then
+				return 0
+			fi
+			sed -i "$2" /etc/nginx/nginx.conf
+		}
+
 		# Configure nginx worker_cpu_affinity, worker_rlimit_nofile, pcre_jit, multi_accept, worker_connections, accept_mutex, epoll
-		sed -i '/^worker_processes auto;/a worker_cpu_affinity auto;' /etc/nginx/nginx.conf
-		sed -i '/^worker_processes auto;/a worker_rlimit_nofile 100000;' /etc/nginx/nginx.conf
-		sed -i '/^pid \/run\/nginx.pid;/a pcre_jit on;' /etc/nginx/nginx.conf
+		nginx_conf_add_once worker_cpu_affinity '/^worker_processes auto;/a worker_cpu_affinity auto;'
+		nginx_conf_add_once worker_rlimit_nofile '/^worker_processes auto;/a worker_rlimit_nofile 100000;'
+		nginx_conf_add_once pcre_jit '/^pid \/run\/nginx.pid;/a pcre_jit on;'
 
 		sed -i "s/# multi_accept on;/multi_accept on;/g" /etc/nginx/nginx.conf  ## Search for commented out multi_accept_on and uncomment it.
 		sed -i "s/worker_connections 768;/worker_connections 2048;/g" /etc/nginx/nginx.conf  ## search for existing worker_connections directive and increase it.
 
-		sed -i '/^events {/a \ \ \ \ \ \ \ \ use epoll;' /etc/nginx/nginx.conf  ## add epoll directive to events block
-		sed -i '/^events {/a \ \ \ \ \ \ \ \ accept_mutex on;' /etc/nginx/nginx.conf ## add accept_mutex directive to events block
+		nginx_conf_add_once use '/^events {/a \ \ \ \ \ \ \ \ use epoll;'  ## add epoll directive to events block
+		nginx_conf_add_once accept_mutex '/^events {/a \ \ \ \ \ \ \ \ accept_mutex on;' ## add accept_mutex directive to events block
 
 		# sed -i '/^http {/a \ \ \ \ \ \ \  # TLS Dynamic Records Patch: See https://github.com/nginx-modules/ngx_http_tls_dyn_size \n \ \ \ \ \ \ \ ssl_dyn_rec_enable on;' /etc/nginx/nginx.conf  ## ssl_dyn_rec_enable
 		sed -i '/^http {/a \ \n \ \ \ \ \ \ \ # AIO: See https://www.nginx.com/blog/thread-pools-boost-performance-9x/ and http://nginx.org/en/docs/http/ngx_http_core_module.html#aio \n \ \ \ \ \ \ \ aio threads;' /etc/nginx/nginx.conf  ## AIO threads
-		sed -i '/^http {/a \ \ \ \ \ \ \ \ variables_hash_bucket_size 512;' /etc/nginx/nginx.conf ## increase size of hash table
-		sed -i '/^http {/a \ \ \ \ \ \ \ \ variables_hash_max_size 4096;' /etc/nginx/nginx.conf  ## increase size of hash table
-		sed -i '/^http {/a \ \ \ \ \ \ \ \ keepalive_timeout 8;' /etc/nginx/nginx.conf ## add keepalive_timeout directive to http block to reduce keep_alive directive from the default 75s to 8s.
-		sed -i '/^http {/a \ \ \ \ \ \ \ \ reset_timedout_connection on;' /etc/nginx/nginx.conf ## add reset_timedout_connection directive to remove data from memory as soon as a connection times out. See http://nginx.org/en/docs/http/ngx_http_core_module.html#reset_timedout_connection
+		nginx_conf_add_once variables_hash_bucket_size '/^http {/a \ \ \ \ \ \ \ \ variables_hash_bucket_size 512;' ## increase size of hash table
+		nginx_conf_add_once variables_hash_max_size '/^http {/a \ \ \ \ \ \ \ \ variables_hash_max_size 4096;'  ## increase size of hash table
+		# keepalive_timeout is usually already present with the distribution default; retune it in place when it is.
+		if grep -qE '^[[:space:]]*keepalive_timeout([[:space:]]|;)' /etc/nginx/nginx.conf
+		then
+			sed -i 's/^\([[:space:]]*\)keepalive_timeout[[:space:]].*/\1keepalive_timeout 8;/' /etc/nginx/nginx.conf
+		else
+			sed -i '/^http {/a \ \ \ \ \ \ \ \ keepalive_timeout 8;' /etc/nginx/nginx.conf
+		fi
+		nginx_conf_add_once reset_timedout_connection '/^http {/a \ \ \ \ \ \ \ \ reset_timedout_connection on;' ## remove data from memory as soon as a connection times out
 
 		# Install rate limiting zone for wp-login.php (the seven back-slashes are to insert spaces before the actual line is inserted )
 		sed -i '/default_type application\/octet-stream;/a \ \n \ \ \ \ \ \ \ # Set zone to restrict rate of trying certain actions - primarily logins \n \ \ \ \ \ \ \ limit_req_zone \$binary_remote_addr zone=WPLOGIN:10m rate=10r\/s;' /etc/nginx/nginx.conf
@@ -932,7 +1022,21 @@ else
 	# Do Redis things related to NGINX
 	if [ "$webserver_type" = "nginx" ]
 	then
-		apt-get install -y php7.4-redis php8.0-redis php8.1-redis php8.2-redis php8.3-redis php8.4-redis > /dev/null 2>&1
+		# Follows the install baseline - see Catalog::baselinePhpLabels().
+		# Retry each one: the output used to be discarded entirely, so a failure
+		# here left the server without object caching and said nothing about it.
+		for redis_php in 8.3 8.4
+		do
+			for attempt in 1 2 3
+			do
+				apt-get install -y php${redis_php}-redis > /dev/null 2>&1 && break
+				sleep 5
+			done
+			if ! php${redis_php} -m 2>/dev/null | grep -qix redis
+			then
+				echo $(date): "Could not install the Redis extension for PHP ${redis_php} - object caching will be unavailable for it."
+			fi
+		done
 	fi
 
 	# Do Redis things related to OLS
@@ -985,7 +1089,20 @@ apt-get install -y libxmlb2 > /dev/null 2>&1
 # ufw
 echo $(date): "Configuring firewall..."
 apt-get install ufw -y > /dev/null 2>&1
-ssh_port=$(grep 'Port ' /etc/ssh/sshd_config | head -n 1 | cut -d " " -f 2)
+# Work out which port sshd actually listens on.  Ask sshd for its effective
+# configuration first - that honours sshd_config.d includes and gives the
+# built-in default when no Port directive is present anywhere.  Fall back to
+# parsing sshd_config, then to the well-known default.  An empty value here
+# would make the "ufw allow" below a no-op and lock us out of the server.
+ssh_port=$(sshd -T 2>/dev/null | awk '/^port /{print $2; exit}')
+if [ -z "$ssh_port" ]
+then
+	ssh_port=$(grep -E '^[[:space:]]*Port[[:space:]]+[0-9]+' /etc/ssh/sshd_config 2>/dev/null | head -n 1 | awk '{print $2}')
+fi
+if [ -z "$ssh_port" ]
+then
+	ssh_port=22
+fi
 ufw default deny incoming > /dev/null 2>&1
 if [ $? -ne 0 ] 
 then
@@ -1041,6 +1158,8 @@ then
 	mkdir -p /etc/wpcd
 	mkdir -p /etc/wpcd/php-versions-disabled
 
+	# Installed on request only, and left stopped/disabled until a site asks.
+	# Mirrored from Catalog::legacyInstallPhpLabels().
 	phpversion=(5.6 7.1 7.2 7.3)
 	for ver in "${phpversion[@]}"
 	do
@@ -1053,8 +1172,9 @@ then
 	done
 
 	# restart nginx
-	systemctl enable php8.1-fpm
-	systemctl restart php8.1-fpm
+	# The FPM pool new sites run on.  Mirrored from Catalog::defaultAppPhpLabel().
+	systemctl enable php8.3-fpm
+	systemctl restart php8.3-fpm
 	systemctl enable nginx
 	systemctl restart nginx
 elif [ "$webserver_type" = "ols" ]  || [ "$webserver_type" = "ols-enterprise" ]
