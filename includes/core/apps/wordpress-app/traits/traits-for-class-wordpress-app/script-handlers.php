@@ -8,6 +8,8 @@
  * @package wpcd
  */
 
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 /**
  * Trait wpcd_wpapp_script_handlers
  */
@@ -496,21 +498,11 @@ trait wpcd_wpapp_script_handlers {
 				||
 				( str_contains( $result, '7G Firewall is already installed' ) );
 				break;
-			case 'run_upgrade_install_php_81.txt':
-				$return = ( str_contains( $result, 'PHP 8.1 has been installed' ) );
-				break;
-			case 'run_upgrade_install_php_82.txt':
-				$return = ( str_contains( $result, 'PHP 8.2 has been installed' ) );
-				break;
-			case 'run_upgrade_install_php_83.txt':
-				$return = ( str_contains( $result, 'PHP 8.3 has been installed' ) );
-				break;
-			case 'run_upgrade_install_php_84.txt':
-				$return = ( str_contains( $result, 'PHP 8.4 has been installed' ) );
-				break;
-	
 			case 'run_upgrade_install_old_php_version.txt':
 				$return = ( str_contains( $result, 'has been installed' ) );
+				break;
+			case 'run_upgrade_install_php.txt':
+				$return = (bool) preg_match( '/PHP \d+\.\d+ has been installed/', $result );
 				break;
 			case 'run_upgrade_7g.txt':
 				$return = ( str_contains( $result, 'The 7G Firewall has been upgraded' ) );
@@ -774,6 +766,13 @@ trait wpcd_wpapp_script_handlers {
 				( str_contains( $result, 'The scheduled sync job has been re-enabled' ) )
 				||
 				( str_contains( $result, 'The sync service has been permanently removed' ) );
+				break;
+
+			default:
+				$php_install_phrase = VersionRegistry::installSuccessPhraseForScript( $command );
+				if ( $php_install_phrase !== null ) {
+					$return = str_contains( $result, $php_install_phrase );
+				}
 				break;
 
 		}
@@ -1523,41 +1522,11 @@ trait wpcd_wpapp_script_handlers {
 					$additional
 				);
 				break;
-			case 'run_upgrade_install_php_81.txt':
+			case 'run_upgrade_install_php.txt':
 				$new_array = array_merge(
 					array(
-						'SCRIPT_URL'  => trailingslashit( wpcd_url ) . $this->get_scripts_folder_relative() . $script_version . '/raw/1050-upgrade_install_php_81.txt',
-						'SCRIPT_NAME' => '1050-upgrade_install_php_81.sh',
-					),
-					$common_array,
-					$additional
-				);
-				break;
-			case 'run_upgrade_install_php_82.txt':
-				$new_array = array_merge(
-					array(
-						'SCRIPT_URL'  => trailingslashit( wpcd_url ) . $this->get_scripts_folder_relative() . $script_version . '/raw/1110-upgrade_install_php_82.txt',
-						'SCRIPT_NAME' => '1110-upgrade_install_php_82.sh',
-					),
-					$common_array,
-					$additional
-				);
-				break;
-			case 'run_upgrade_install_php_83.txt':
-				$new_array = array_merge(
-					array(
-						'SCRIPT_URL'  => trailingslashit( wpcd_url ) . $this->get_scripts_folder_relative() . $script_version . '/raw/1110-upgrade_install_php_83.txt',
-						'SCRIPT_NAME' => '1110-upgrade_install_php_83.sh',
-					),
-					$common_array,
-					$additional
-				);
-				break;
-			case 'run_upgrade_install_php_84.txt':
-					$new_array = array_merge(
-						array(
-							'SCRIPT_URL'  => trailingslashit( wpcd_url ) . $this->get_scripts_folder_relative() . $script_version . '/raw/1110-upgrade_install_php_84.txt',
-							'SCRIPT_NAME' => '1110-upgrade_install_php_84.sh',
+						'SCRIPT_URL'  => trailingslashit( wpcd_url ) . $this->get_scripts_folder_relative() . $script_version . '/raw/1110-upgrade_install_php.txt',
+						'SCRIPT_NAME' => '1110-upgrade_install_php.sh',
 					),
 					$common_array,
 					$additional
@@ -1789,6 +1758,20 @@ trait wpcd_wpapp_script_handlers {
 					$common_array,
 					$additional
 				);
+				break;
+
+			default:
+				$raw_basename = VersionRegistry::installScriptRawBasenameForLogicalScript( $script_name );
+				if ( $raw_basename !== null ) {
+					$new_array = array_merge(
+						array(
+							'SCRIPT_URL'  => trailingslashit( wpcd_url ) . $this->get_scripts_folder_relative() . $script_version . '/raw/' . $raw_basename . '.txt',
+							'SCRIPT_NAME' => $raw_basename . '.sh',
+						),
+						$common_array,
+						$additional
+					);
+				}
 				break;
 		}
 

@@ -13,6 +13,8 @@
  * @package wpcd
  */
 
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 /**
  * Trait wpcd_wpapp_push_commands
  */
@@ -142,7 +144,7 @@ trait wpcd_wpapp_push_commands {
 			if ( 'yes' === $server_status_items['restart'] ) {
 				do_action( 'wpcd_log_notification', $id, 'alert', __( 'This server needs to be restarted for security updates to take effect.', 'wpcd' ), 'updates', null );
 			}
-			if ( ! in_array( $server_status_items['default_php_version'], array( '7.4', '8.0', '8.1' ) ) ) {
+			if ( ! in_array( $server_status_items['default_php_version'], VersionRegistry::acceptableServerCliDefaultPhpLabels(), true ) ) {
 				/* Translators: %s is the incorrect PHP version. */
 				do_action( 'wpcd_log_notification', $id, 'alert', sprintf( __( 'The default PHP version on this server is incorrect - it should be 7.4, 8.0 or 8.1 but is currently set to %s.', 'wpcd' ), $server_status_items['default_php_version'] ), 'server-config', null );
 			}
