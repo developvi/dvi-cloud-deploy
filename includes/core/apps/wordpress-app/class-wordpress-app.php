@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 /**
  * Class WPCD_WORDPRESS_APP
  */
@@ -1174,157 +1176,43 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 	 */
 	public function is_old_php_version_installed( $server_id, $php_version ) {
 
-		// "old" versions are 5.6, 7.0, 7.1. 7.2, 7.3.
-		if ( ! in_array( $php_version, array( '56', '70', '71', '72', '73' ) ) ) {
+		if ( strlen( (string) $php_version ) === 2 ) {
+			$label = $php_version[0] . '.' . $php_version[1];
+		} else {
+			$label = (string) $php_version;
+		}
+
+		$slug = VersionRegistry::phpSlugForLabel( $label );
+		$php  = VersionRegistry::php( $slug );
+
+		if ( $php === null || ! $php->isLegacyInstall() ) {
 			return false;
 		}
 
-		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-
-		if ( version_compare( $initial_plugin_version, '5.3.9' ) === -1 ) {
-			// Versions of the plugin before 5.3.9 automatically install PHP 5.6/7.0./7.2/7.2/7.3.
-			return true;
-		} else {
-			// See if it was manually installed via an upgrade process - which would leave a meta field value behind on the server CPT record.
-			$meta_name    = '';
-			$meta_name    = sprintf( 'wpcd_server_php%s_installed', $php_version );
-			$is_installed = (bool) $this->get_server_meta_by_app_id( $server_id, $meta_name, true );   // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-			if ( true === $is_installed ) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * Returns a boolean true/false if PHP 80 is supposed to be installed.
-	 *
-	 * @param int $server_id ID of server being interrogated.
-	 *
-	 * @return boolean
-	 */
-	public function is_php_80_installed( $server_id ) {
-
-		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-
-		if ( version_compare( $initial_plugin_version, '4.2.4' ) > -1 ) {
-			return true;
-		} else {
-			return false;
-		}
+		return $this->is_php_version_installed( $server_id, $slug );
 
 	}
 
 	/**
-	 * Returns a boolean true/false if PHP 81 is supposed to be installed.
+	 * Returns a boolean true/false if a PHP version slug is supposed to be installed.
 	 *
-	 * @param int $server_id ID of server being interrogated.
+	 * @param int    $server_id ID of server being interrogated.
+	 * @param string $slug      PHP slug - eg: php74, php81, php85.
 	 *
 	 * @return boolean
 	 */
-	public function is_php_81_installed( $server_id ) {
+	public function is_php_version_installed( $server_id, $slug ) {
 
-		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-
-		if ( version_compare( $initial_plugin_version, '4.12.1' ) > -1 ) {
-			// Versions of the plugin after 4.12.1 automatically install PHP 8.1.
-			return true;
-		} else {
-			// See if it was manually installed via an upgrade process - which would leave a meta field value behind on the server CPT record.
-			$is_php81_installed = (bool) $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_php81_installed', true );   // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-			if ( true === $is_php81_installed ) {
-				return true;
-			} else {
-				return false;
+		return VersionRegistry::isPhpInstalledOnServer(
+			(int) $server_id,
+			$slug,
+			function ( $id, $key, $single ) {
+				return $this->get_server_meta_by_app_id( $id, $key, $single );
 			}
-		}
+		);
 
-		return false;
 	}
 
-	/**
-	 * Returns a boolean true/false if PHP 82 is supposed to be installed.
-	 *
-	 * @param int $server_id ID of server being interrogated.
-	 *
-	 * @return boolean
-	 */
-	public function is_php_82_installed( $server_id ) {
-
-		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-
-		if ( version_compare( $initial_plugin_version, '5.2.6' ) > -1 ) {
-			// Versions of the plugin after 5.2.6 automatically install PHP 8.2.
-			return true;
-		} else {
-			// See if it was manually installed via an upgrade process - which would leave a meta field value behind on the server CPT record.
-			$is_php82_installed = (bool) $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_php82_installed', true );   // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-			if ( true === $is_php82_installed ) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return false;
-	}
-	
-	/**
-	 * Returns a boolean true/false if PHP 83 is supposed to be installed.
-	 *
-	 * @param int $server_id ID of server being interrogated.
-	 *
-	 * @return boolean
-	 */
-	public function is_php_83_installed( $server_id ) {
-
-		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-
-		if ( version_compare( $initial_plugin_version, '5.7.0' ) > -1 ) {
-			// Versions of the plugin after 5.7.0 automatically install PHP 8.3.
-			return true;
-		} else {
-			// See if it was manually installed via an upgrade process - which would leave a meta field value behind on the server CPT record.
-			$is_php83_installed = (bool) $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_php83_installed', true );   // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-			if ( true === $is_php83_installed ) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return false;
-	}	
-	
-	/**
-	 * Returns a boolean true/false if PHP 83 is supposed to be installed.
-	 *
-	 * @param int $server_id ID of server being interrogated.
-	 *
-	 * @return boolean
-	 */
-	public function is_php_84_installed( $server_id ) {
-
-		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-
-		if ( version_compare( $initial_plugin_version, '5.9.1' ) > -1 ) {
-			// Versions of the plugin after 5.9.1 automatically install PHP 8.4.
-			return true;
-		} else {
-			// See if it was manually installed via an upgrade process - which would leave a meta field value behind on the server CPT record.
-			$is_php84_installed = (bool) $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_php84_installed', true );   // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-			if ( true === $is_php84_installed ) {
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		return false;
-	}	
 	/**
 	 * Returns a boolean true/false if a particular PHP version is active.
 	 * Version 4.16 and later of WPCD deactivated earlier versions of PHP
@@ -1339,46 +1227,16 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 
 		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
 
-		$return = true;  // assume true for active.
+		$php = VersionRegistry::php( $php_version );
+		$return = true;
+
 		if ( version_compare( $initial_plugin_version, '4.15.0' ) > -1 ) {
-			// Versions of WPCD later than 4.15 deactivated PHP versions 5.6, 7.1, 7.2 and 7.3.
-			switch ( $php_version ) {
-				case 'php56':
-				case 'php70':
-				case 'php71':
-				case 'php72':
-				case 'php73':
-					$return = false;
-					break;
+			if ( $php !== null && $php->isLegacyInstall() ) {
+				$return = false;
 			}
-		} else {
-			// Versions of WPCD prior to 4.15 activated almost all php versions.  Except PHP 8.0, 8.1, 8.2 & 8.3 are special cases because of the timing of when these were added to servers.
-			switch ( $php_version ) {
-				case 'php80':
-					if ( ! $this->is_php_80_installed( $server_id ) ) {
-						$return = false;
-					}
-					break;
-				case 'php81':
-					if ( ! $this->is_php_81_installed( $server_id ) ) {
-						$return = false;
-					}
-					break;
-				case 'php82':
-					if ( ! $this->is_php_82_installed( $server_id ) ) {
-						$return = false;
-					}
-					break;
-				case 'php83':
-					if ( ! $this->is_php_83_installed( $server_id ) ) {
-						$return = false;
-					}
-					break;
-				case 'php84':
-					if ( ! $this->is_php_84_installed( $server_id ) ) {
-						$return = false;
-					}
-					break;
+		} elseif ( $php !== null && version_compare( $php->getLabel(), '8.0', '>=' ) ) {
+			if ( ! $this->is_php_version_installed( $server_id, $php_version ) ) {
+				$return = false;
 			}
 		}
 
@@ -1985,7 +1843,7 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 	 * Return the PHP version that is the default for this version of the app.
 	 */
 	public function get_wpapp_default_php_version() {
-		return '8.1';
+		return VersionRegistry::defaultAppPhpLabel();
 	}
 
 	/**
@@ -2000,14 +1858,19 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 	 */
 	public function get_default_php_version_for_server( $server_id ) {
 
-		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
-		if ( version_compare( $initial_plugin_version, '4.30.0' ) > -1 ) {
-			// Versions of the plugin after 4.30.0 automatically uses PHP 8.1.
-			return '8.1';
-		} else {
-			// Earlier versions used PHP 7.4.
-			return '7.4';
+		// Servers built since we started recording it state their PHP version
+		// outright, so there is nothing to work out.
+		$stamped = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_default_php_version', true );
+		if ( ! empty( $stamped ) ) {
+			return $stamped;
 		}
+
+		// Older records have to be inferred from the plugin version that built
+		// them - the default has changed over time (7.4, then 8.1, now 8.3), and
+		// answering with today's default would mislabel them.
+		$initial_plugin_version = $this->get_server_meta_by_app_id( $server_id, 'wpcd_server_plugin_initial_version', true );  // This function is smart enough to know if the ID being passed is a server or app id and adjust accordingly.
+
+		return VersionRegistry::defaultAppPhpLabelForPluginVersion( $initial_plugin_version );
 
 	}
 
@@ -2043,15 +1906,10 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 			$initial_plugin_version_on_app = get_post_meta( $app_id, 'wpcd_app_plugin_initial_version', true );
 			if ( empty( $initial_plugin_version_on_app ) ) {
 				// Just get the wpcd default plugin version since we don't have anything else to use.
-				$php_version = '7.4';  // Must be an old version of WPCD since all records should include the wpcd version.
+				$php_version = VersionRegistry::legacyDefaultAppPhpLabel();  // Must be an old version of WPCD since all records should include the wpcd version.
 			} else {
-				if ( version_compare( $initial_plugin_version_on_app, '4.30.0' ) > -1 ) {
-					// Versions of the plugin after 4.30.0 automatically uses PHP 8.1.
-					return '8.1';
-				} else {
-					// Earlier versions used PHP 7.4.
-					return '7.4';
-				}
+				// Answer with the default that applied when the site was built.
+				return VersionRegistry::defaultAppPhpLabelForPluginVersion( $initial_plugin_version_on_app );
 			}
 		}
 
@@ -2085,120 +1943,37 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 		$server_id = $this->get_server_id_by_app_id( $id );
 		$os        = WPCD_SERVER()->get_server_os( $server_id );
 
-		// Create single element array if php 8.0 is installed.
-		if ( $this->is_php_80_installed( $id ) ) {
-			$php80 = array( '8.0' => '8.0' );
-		} else {
-			$php80 = array();
-		}
+		$webserver = in_array( $webserver_type, array( 'ols', 'ols-enterprise' ), true ) ? 'ols' : 'nginx';
 
-		// Create single element array if php 8.1 is installed.
-		if ( $this->is_php_81_installed( $id ) ) {
-			$php81 = array( '8.1' => '8.1' );
-		} else {
-			$php81 = array();
-		}
+		$php_select_options = array();
 
-		// Create single element array if php 8.2 is installed.
-		if ( $this->is_php_82_installed( $id ) ) {
-			$php82 = array( '8.2' => '8.2' );
-		} else {
-			$php82 = array();
-		}
-		
-		// Create single element array if php 8.3 is installed.
-		if ( $this->is_php_83_installed( $id ) ) {
-			$php83 = array( '8.3' => '8.3' );
-		} else {
-			$php83 = array();
-		}
-		// Create single element array if php 8.4 is installed.
-		if ( $this->is_php_84_installed( $id ) ) {
-			$php84 = array( '8.4' => '8.4' );
-		} else {
-			$php84 = array();
-		}
+		foreach ( VersionRegistry::sortedPhp() as $php ) {
+			$slug  = $php->getSlug();
+			$label = $php->getLabel();
 
-		// Array of other PHP versions.
-		switch ( $webserver_type ) {
-			case 'ols':
-			case 'ols-enterprise':
-				/* Different versions of PHP are supported on each OS for OLS.  Notable here is it does not support php 5.6 at all and it doesn't support anything below 7.4 on Ubuntu 22.04. */
-				switch ( $os ) {
-					case 'ubuntu1804lts':
-						$other_php_versions = array(
-							'7.4' => '7.4',
-							'7.3' => '7.3',
-							'7.2' => '7.2',
-							'7.1' => '7.1',
-						);
-						break;
+			if ( ! empty( $os ) && ! VersionRegistry::supportsPhpOnOs( $slug, $os ) ) {
+				continue;
+			}
 
-					case 'ubuntu2004lts':
-						$other_php_versions = array(
-							'7.4' => '7.4',
-							'7.3' => '7.3',
-							'7.2' => '7.2',
-						);
-						break;
+			if ( ! in_array( $webserver, $php->getSupportedWebservers(), true ) ) {
+				continue;
+			}
 
-					case 'ubuntu2204lts':
-						$other_php_versions = array(
-							'7.4' => '7.4',
-						);
-						break;
-
-					default:
-						$other_php_versions = array(
-							'7.4' => '7.4',
-							'7.3' => '7.3',
-							'7.2' => '7.2',
-							'7.1' => '7.1',
-						);
-						break;
+			if ( version_compare( $label, '8.0', '>=' ) ) {
+				if ( ! $this->is_php_version_installed( $server_id ? $server_id : $id, $slug ) ) {
+					continue;
 				}
-				break;
+			}
 
-			case 'nginx':
-			default:
-				$other_php_versions = array(
-					'7.4' => '7.4',
-					'7.3' => '7.3',
-					'7.2' => '7.2',
-					'7.1' => '7.1',
-					'5.6' => '5.6',
-				);
-				break;
+			$php_select_options[ $label ] = $label;
 		}
-
-		// Array of php version options.
-		$php_select_options = array_merge(
-			$other_php_versions,
-			$php80,
-			$php81,
-			$php82,
-			$php83,
-			$php84,
-		);
 
 		// Filter out inactive versions.  Only applies to NGINX.  OLS always have all versions listed in the above switch statement active.
 		if ( 'nginx' === $webserver_type ) {
 			// Remove invalid PHP versions (those that are deactivated on the server).
 			$server_id = $this->get_server_id_by_app_id( $id );
 			if ( ! empty( $server_id ) ) {
-				$php_versions = array(
-					'php56' => '5.6',
-					'php71' => '7.1',
-					'php72' => '7.2',
-					'php73' => '7.3',
-					'php74' => '7.4',
-					'php80' => '8.0',
-					'php81' => '8.1',
-					'php82' => '8.2',
-					'php83' => '8.3',
-					'php84' => '8.4',
-				);
-				foreach ( $php_versions as $php_version_key => $php_version ) {
+				foreach ( VersionRegistry::phpSlugLabelMap() as $php_version_key => $php_version ) {
 					if ( ! $this->is_php_version_active( $server_id, $php_version_key ) ) {
 						if ( ! empty( $php_select_options[ $php_version ] ) ) {
 							unset( $php_select_options[ $php_version ] );
@@ -3237,6 +3012,18 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 		}
 
 		$details = WPCD()->get_provider_api( $attributes['provider'] )->call( 'details', array( 'id' => $attributes['provider_instance_id'] ) );
+
+		/*
+		 * The provider can fail - a deleted instance, an API outage, a server
+		 * that has not registered yet.  Merging a WP_Error here is a fatal, and
+		 * during the deferred cron run that stops every other server from being
+		 * processed, so hand back what we already know instead.
+		 */
+		if ( is_wp_error( $details ) || ! is_array( $details ) ) {
+			do_action( 'wpcd_log_error', 'Unable to get instance details for ' . ( $attributes['provider_instance_id'] ?? '?' ) . ' from ' . $attributes['provider'], 'warn', __FILE__, __LINE__ );
+
+			return $attributes;
+		}
 
 		// Merge post ids and server details into a single array.
 		$attributes = array_merge( $attributes, $details );
@@ -5169,18 +4956,7 @@ class WPCD_WORDPRESS_APP extends WPCD_APP {
 			echo wpcd_kses_select( $app_status );
 
 			// PHP VERSION.
-			$php_version_options = array(
-				'7.4' => '7.4',
-				'7.3' => '7.3',
-				'7.2' => '7.2',
-				'7.1' => '7.1',
-				'5.6' => '5.6',
-				'8.0' => '8.0',
-				'8.1' => '8.1',
-				'8.2' => '8.2',
-				'8.3' => '8.3',
-				'8.4' => '8.4',
-			);
+			$php_version_options = VersionRegistry::phpSelectList();
 			$php_version         = $this->generate_meta_dropdown( 'wpapp_php_version', __( 'PHP Version', 'wpcd' ), $php_version_options );
 			echo wpcd_kses_select( $php_version );
 
