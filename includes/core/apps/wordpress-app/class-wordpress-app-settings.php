@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 /**
  * Class WORDPRESS_APP_SETTINGS
  */
@@ -1415,19 +1417,8 @@ class WORDPRESS_APP_SETTINGS extends WPCD_APP_SETTINGS {
 				'type'            => 'checkbox_list',
 				'name'            => __( 'Show Warning In Health Column For These PHP Versions', 'wpcd' ),
 				'tooltip'         => __( 'If we detect that the default version of PHP for a server is set to any of the selected versions above, we will show a warning in the HEALTH column in the server list.', 'wpcd' ),
-				'options'         => array(
-					'5.6' => '5.6',
-					'7.1' => '7.1',
-					'7.2' => '7.2',
-					'7.3' => '7.3',
-					'7.4' => '7.4',
-					'8.0' => '8.0',
-					'8.1' => '8.1',
-					'8.2' => '8.2',
-					'8.3' => '8.3',
-					'8.4' => '8.4',
-				),
-				'std'             => ( array( '5.6', '7.1', '7.2', '7.3', '8.0' ) ),
+				'options'         => VersionRegistry::phpSelectList(),
+				'std'             => VersionRegistry::defaultPhpWarnVersions(),
 				'select_all_none' => true,
 				'tab'             => 'wordpress-app-servers',
 			),
@@ -1518,14 +1509,7 @@ class WORDPRESS_APP_SETTINGS extends WPCD_APP_SETTINGS {
 				'type'    => 'select',
 				'name'    => __( 'Switch PHP Version For New Sites?', 'wpcd' ),
 				'tooltip' => __( 'After a site is installed, switch the PHP version to the one specified here.', 'wpcd' ),
-				'options' => array(
-					'8.1' => '8.1',
-					'8.0' => '8.0',
-					'7.4' => '7.4',
-					'8.2' => '8.2',
-					'8.3' => '8.3',
-					'8.4' => '8.4',
-				),
+				'options' => VersionRegistry::phpSelectListModern(),
 				'tab'     => 'wordpress-app-sites',
 			),
 

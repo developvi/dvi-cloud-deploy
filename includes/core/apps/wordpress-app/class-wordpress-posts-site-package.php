@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 /**
  * Class WPCD_POSTS_Site_Package
  */
@@ -394,14 +396,11 @@ class WPCD_POSTS_Site_Package extends WPCD_Posts_Base {
 				'name'       => __( 'PHP Version', 'wpcd' ),
 				'id'         => $prefix . 'new_php_version',
 				'type'       => 'select',
-				'options'    => array(
-					'0'   => __( 'No Change', 'wpcd' ),
-					'8.1' => '8.1',
-					'8.0' => '8.0',
-					'7.4' => '7.4',
-					'8.2' => '8.2',
-					'8.3' => '8.3',
-					'8.4' => '8.4',
+				'options'    => array_merge(
+					array(
+						'0' => __( 'No Change', 'wpcd' ),
+					),
+					VersionRegistry::phpSelectListModern()
 				),
 				'save_field' => true,
 				'columns'    => 3,
