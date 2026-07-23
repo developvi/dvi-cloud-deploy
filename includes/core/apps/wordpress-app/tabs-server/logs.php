@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 /**
  * Class WPCD_WORDPRESS_TABS_SERVER_LOGS
  */
@@ -328,29 +330,25 @@ class WPCD_WORDPRESS_TABS_SERVER_LOGS extends WPCD_WORDPRESS_TABS {
 
 			case 'nginx':
 			default:
-				return array(
-					'/var/log/nginx/access.log'       => __( 'NGINX Access Log', 'wpcd' ),
-					'/var/log/nginx/error.log'        => __( 'NGINX Error Log', 'wpcd' ),
-					'/var/log/mysql/error.log'        => __( 'MYSQL Error Log', 'wpcd' ),
-					'/var/log/wp-backup.log'          => __( 'Site WP Backup Logs', 'wpcd' ),
-					'/var/log/wp-full-backup.log'     => __( 'Full Server WP Backup Logs', 'wpcd' ),
-					'/var/log/syslog'                 => __( 'SYSLog', 'wpcd' ),
-					'/var/log/unattended-upgrades/unattended-upgrades.log' => __( 'Unattended Upgrades Summary Log', 'wpcd' ),
-					'/var/log/unattended-upgrades/unattended-upgrades-dpkg.log' => __( 'Unattended Upgrades Detail Log', 'wpcd' ),
-					'/var/log/dpkg.log'               => __( 'Recently installed or removed packages, AKA dpkg.log', 'wpcd' ),
-					'/var/log/redis/redis-server.log' => __( 'REDIS Log', 'wpcd' ),
-					'/var/log/php7.1-fpm.log'         => __( 'PHP 7.1 FPM Log', 'wpcd' ),
-					'/var/log/php7.2-fpm.log'         => __( 'PHP 7.2 FPM Log', 'wpcd' ),
-					'/var/log/php7.3-fpm.log'         => __( 'PHP 7.3 FPM Log', 'wpcd' ),
-					'/var/log/php7.4-fpm.log'         => __( 'PHP 7.4 FPM Log', 'wpcd' ),
-					'/var/log/php8.0-fpm.log'         => __( 'PHP 8.0 FPM Log', 'wpcd' ),
-					'/var/log/php8.1-fpm.log'         => __( 'PHP 8.1 FPM Log', 'wpcd' ),
-					'/var/log/php8.2-fpm.log'         => __( 'PHP 8.2 FPM Log', 'wpcd' ),
-					'/var/log/php8.3-fpm.log'         => __( 'PHP 8.3 FPM Log', 'wpcd' ),
-					'/var/log/php8.4-fpm.log'         => __( 'PHP 8.4 FPM Log', 'wpcd' ),
-					'/var/log/auth.log'               => __( 'Authorization Log', 'wpcd' ),
-					'/var/log/ufw.log'                => __( 'UFW Firewall Log', 'wpcd' ),
-					'/var/log/wp-server-status.log'   => __( 'WPCD Server Status Callback Log', 'wpcd' ),
+				return array_merge(
+					array(
+						'/var/log/nginx/access.log'       => __( 'NGINX Access Log', 'wpcd' ),
+						'/var/log/nginx/error.log'        => __( 'NGINX Error Log', 'wpcd' ),
+						'/var/log/mysql/error.log'        => __( 'MYSQL Error Log', 'wpcd' ),
+						'/var/log/wp-backup.log'          => __( 'Site WP Backup Logs', 'wpcd' ),
+						'/var/log/wp-full-backup.log'     => __( 'Full Server WP Backup Logs', 'wpcd' ),
+						'/var/log/syslog'                 => __( 'SYSLog', 'wpcd' ),
+						'/var/log/unattended-upgrades/unattended-upgrades.log' => __( 'Unattended Upgrades Summary Log', 'wpcd' ),
+						'/var/log/unattended-upgrades/unattended-upgrades-dpkg.log' => __( 'Unattended Upgrades Detail Log', 'wpcd' ),
+						'/var/log/dpkg.log'               => __( 'Recently installed or removed packages, AKA dpkg.log', 'wpcd' ),
+						'/var/log/redis/redis-server.log' => __( 'REDIS Log', 'wpcd' ),
+					),
+					VersionRegistry::phpFpmLogSelectList(),
+					array(
+						'/var/log/auth.log'               => __( 'Authorization Log', 'wpcd' ),
+						'/var/log/ufw.log'                => __( 'UFW Firewall Log', 'wpcd' ),
+						'/var/log/wp-server-status.log'   => __( 'WPCD Server Status Callback Log', 'wpcd' ),
+					)
 				);
 
 				break;

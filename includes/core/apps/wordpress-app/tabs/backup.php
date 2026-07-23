@@ -302,7 +302,7 @@ class WPCD_WORDPRESS_TABS_BACKUP extends WPCD_WORDPRESS_TABS {
 
 			case 'restore-from-backup':
 				// Make sure that PHP 8.1 is installed since all restores go into that version of php.
-				if ( ! $this->is_php_81_installed( $id ) ) {
+				if ( ! $this->is_php_version_installed( $id, 'php81' ) ) {
 					return new \WP_Error( __( 'PHP 8.1 must be installed for all restore actions.  It looks like this app is located on an older server that does not have PHP 8.1 installed on it.', 'wpcd' ) );
 				}
 				// Fallthrough is intentional!

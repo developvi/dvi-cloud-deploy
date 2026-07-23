@@ -34,7 +34,7 @@
 	/* End do not show screen if max sites allowed on server has been exceeded */
 
 	/* Do not show screen if PHP 8.1 is not installed on the server since that is the default version for all new sites. */
-	if ( ! WPCD_WORDPRESS_APP()->is_php_81_installed( $server_id ) ) {
+	if ( ! WPCD_WORDPRESS_APP()->is_php_version_installed( $server_id, 'php81' ) ) {
 		?>
 		<div class="wpcd-install-app-container wpcd-popup">
 			<div class="wpcd-no-install-wp-permission">

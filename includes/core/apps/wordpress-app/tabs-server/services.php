@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 /**
  * Class WPCD_WORDPRESS_TABS_SERVER_SERVICES
  */
@@ -377,44 +379,16 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 				case 'services-status-update-php':
 					$result = $this->refresh_services_status_php( $id, $action );
 					break;
-				case 'php-server-restart-php56':
-				case 'php-server-restart-php70':
-				case 'php-server-restart-php71':
-				case 'php-server-restart-php72':
-				case 'php-server-restart-php73':
-				case 'php-server-restart-php74':
-				case 'php-server-restart-php80':
-				case 'php-server-restart-php81':
-				case 'php-server-restart-php82':
-				case 'php-server-restart-php83':
-				case 'php-server-restart-php84':
-					$result = $this->do_php_restart( $id, $action );
-					break;
-				case 'php-server-activate-php56':
-				case 'php-server-activate-php70':
-				case 'php-server-activate-php71':
-				case 'php-server-activate-php72':
-				case 'php-server-activate-php73':
-				case 'php-server-activate-php74':
-				case 'php-server-activate-php80':
-				case 'php-server-activate-php81':
-				case 'php-server-activate-php82':
-				case 'php-server-activate-php83':
-				case 'php-server-activate-php84':
-					$result = $this->do_php_activation_toggle( $id, $action );
-					break;
-				case 'php-server-deactivate-php56':
-				case 'php-server-deactivate-php70':
-				case 'php-server-deactivate-php71':
-				case 'php-server-deactivate-php72':
-				case 'php-server-deactivate-php73':
-				case 'php-server-deactivate-php74':
-				case 'php-server-deactivate-php80':
-				case 'php-server-deactivate-php81':
-				case 'php-server-deactivate-php82':
-				case 'php-server-deactivate-php83':
-				case 'php-server-deactivate-php84':
-					$result = $this->do_php_activation_toggle( $id, $action );
+				default:
+					$php_service_slug = VersionRegistry::phpSlugFromServiceAction( $action );
+					if ( $php_service_slug !== null ) {
+						if ( str_starts_with( $action, 'php-server-restart-' ) ) {
+							$result = $this->do_php_restart( $id, $action );
+						} else {
+							$result = $this->do_php_activation_toggle( $id, $action );
+						}
+						break;
+					}
 					break;
 				case 'ubuntu-pro-toggle':
 					// Is ubuntu pro enabled or disabled?
@@ -1233,16 +1207,6 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 
 		// Default status text.
 		$default_status = __( 'Installed - Click REFRESH SERVICES to get running status.', 'wpcd' );
-		$php56_status   = $default_status;
-		$php70_status   = $default_status;
-		$php71_status   = $default_status;
-		$php72_status   = $default_status;
-		$php73_status   = $default_status;
-		$php74_status   = $default_status;
-		$php80_status   = $default_status;
-		$php81_status   = $default_status;
-		$php82_status   = $default_status;
-		$php83_status   = $default_status;
 
 		// retrieve php service status from server meta.
 		$services_status     = wpcd_maybe_unserialize( get_post_meta( $id, 'wpcd_wpapp_services_php_status', true ) );
@@ -1252,48 +1216,24 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 		}
 
 		// Create an indexed array to hold the php services status.
-		$php_services_status = array(
-			'php74' => $default_status,
-			'php80' => $default_status,
-			'php81' => $default_status,
-			'php82' => $default_status,
-			'php83' => $default_status,
-			'php84' => $default_status,
-		);
+		$php_services_status = array();
 
-		// Unset php80 and 81 elements as necessary.
-		if ( ! $this->is_php_80_installed( $id ) ) {
-			unset( $php_services_status['php80'] );
-		}
-		if ( ! $this->is_php_81_installed( $id ) ) {
-			unset( $php_services_status['php81'] );
-		}
+		foreach ( VersionRegistry::sortedPhp() as $php ) {
+			$slug  = $php->getSlug();
+			$label = $php->getLabel();
 
-		if ( ! $this->is_php_82_installed( $id ) ) {
-			unset( $php_services_status['php82'] );
-		}
-		
-		if ( ! $this->is_php_83_installed( $id ) ) {
-			unset( $php_services_status['php83'] );
-		}		
-		if ( ! $this->is_php_84_installed( $id ) ) {
-			unset( $php_services_status['php84'] );
-		}		
-		// Add in old php versions (5.6, 7.1, 7.2, 7.3) as necessary.
-		if ( $this->is_old_php_version_installed( $id, '56' ) ) {
-			$php_services_status['php56'] = $default_status;
-		}
+			if ( $php->isLegacyInstall() ) {
+				$compact = str_replace( '.', '', $label );
+				if ( ! $this->is_old_php_version_installed( $id, $compact ) ) {
+					continue;
+				}
+			} elseif ( version_compare( $label, '8.0', '>=' ) ) {
+				if ( ! $this->is_php_version_installed( $id, $slug ) ) {
+					continue;
+				}
+			}
 
-		if ( $this->is_old_php_version_installed( $id, '71' ) ) {
-			$php_services_status['php71'] = $default_status;
-		}
-
-		if ( $this->is_old_php_version_installed( $id, '72' ) ) {
-			$php_services_status['php72'] = $default_status;
-		}
-
-		if ( $this->is_old_php_version_installed( $id, '73' ) ) {
-			$php_services_status['php73'] = $default_status;
+			$php_services_status[ $slug ] = $default_status;
 		}
 
 		// Loop through the $services_status array and update the $php_services_status array for any entries present in $services_status array.
@@ -1959,29 +1899,27 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 		$services_status = array();
 
 		// Array of PHP service commands.
-		$php_services = array(
-			'php74' => 'sudo service php7.4-fpm status',
-			'php80' => 'sudo service php8.0-fpm status',
-			'php81' => 'sudo service php8.1-fpm status',
-			'php82' => 'sudo service php8.2-fpm status',
-			'php83' => 'sudo service php8.3-fpm status',
-			'php84' => 'sudo service php8.4-fpm status',
-		);
+		$php_services = array();
 
-		if ( $this->is_old_php_version_installed( $id, '56' ) ) {
-			$php_services['php56'] = 'sudo service php5.6-fpm status';
-		}
+		foreach ( VersionRegistry::sortedPhp() as $php ) {
+			$slug  = $php->getSlug();
+			$label = $php->getLabel();
 
-		if ( $this->is_old_php_version_installed( $id, '71' ) ) {
-			$php_services['php71'] = 'sudo service php7.1-fpm status';
-		}
+			if ( $php->isLegacyInstall() ) {
+				$compact = str_replace( '.', '', $label );
+				if ( ! $this->is_old_php_version_installed( $id, $compact ) ) {
+					continue;
+				}
+			} elseif ( version_compare( $label, '8.0', '>=' ) ) {
+				if ( ! $this->is_php_version_installed( $id, $slug ) ) {
+					continue;
+				}
+			}
 
-		if ( $this->is_old_php_version_installed( $id, '72' ) ) {
-			$php_services['php72'] = 'sudo service php7.2-fpm status';
-		}
-
-		if ( $this->is_old_php_version_installed( $id, '73' ) ) {
-			$php_services['php73'] = 'sudo service php7.3-fpm status';
+			$command = VersionRegistry::fpmStatusCommand( $slug );
+			if ( $command !== '' ) {
+				$php_services[ $slug ] = $command;
+			}
 		}
 
 		// Loop through the array and get the status of each php service.
@@ -2033,18 +1971,12 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 	private function do_php_restart( $id, $action ) {
 
 		// Array of PHP service commands.
-		$php_services = array(
-			'php-server-restart-php56' => 'sudo service php5.6-fpm restart',
-			'php-server-restart-php71' => 'sudo service php7.1-fpm restart',
-			'php-server-restart-php72' => 'sudo service php7.2-fpm restart',
-			'php-server-restart-php73' => 'sudo service php7.3-fpm restart',
-			'php-server-restart-php74' => 'sudo service php7.4-fpm restart',
-			'php-server-restart-php80' => 'sudo service php8.0-fpm restart',
-			'php-server-restart-php81' => 'sudo service php8.1-fpm restart',
-			'php-server-restart-php82' => 'sudo service php8.2-fpm restart',
-			'php-server-restart-php83' => 'sudo service php8.3-fpm restart',
-			'php-server-restart-php84' => 'sudo service php8.4-fpm restart',
-		);
+		$php_services = array();
+
+		foreach ( VersionRegistry::sortedPhp() as $php ) {
+			$slug = $php->getSlug();
+			$php_services[ VersionRegistry::phpRestartActionSlug( $slug ) ] = VersionRegistry::fpmRestartCommand( $slug );
+		}
 
 		if ( isset( $php_services[ $action ] ) ) {
 			$result = $this->submit_generic_server_command( $id, $action, $php_services[ $action ] . ' && echo "' . __( 'The requested PHP service has been restarted.', 'wpcd' ) . '" ', true );  // notice the last parm is true to force the function to return the raw results to us for evaluation instead of a wp-error object.
@@ -2095,119 +2027,17 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 		}
 
 		// Figure out the action for the bash scripts...
-		switch ( $action ) {
-			case 'php-server-activate-php56':
-				$action      = 'php_version_enable';
-				$php_version = 5.6;
-				$php_key     = 'php56';
-				break;
-			case 'php-server-activate-php70':
-				$action      = 'php_version_enable';
-				$php_version = 7.0;
-				$php_key     = 'php70';
-				break;
-			case 'php-server-activate-php71':
-				$action      = 'php_version_enable';
-				$php_version = 7.1;
-				$php_key     = 'php71';
-				break;
-			case 'php-server-activate-php72':
-				$action      = 'php_version_enable';
-				$php_version = 7.2;
-				$php_key     = 'php72';
-				break;
-			case 'php-server-activate-php73':
-				$action      = 'php_version_enable';
-				$php_version = 7.3;
-				$php_key     = 'php73';
-				break;
-			case 'php-server-activate-php74':
-				$action      = 'php_version_enable';
-				$php_version = 7.4;
-				$php_key     = 'php74';
-				break;
-			case 'php-server-activate-php80':
-				$action      = 'php_version_enable';
-				$php_version = 8.0;
-				$php_key     = 'php80';
-				break;
-			case 'php-server-activate-php81':
-				$action      = 'php_version_enable';
-				$php_version = 8.1;
-				$php_key     = 'php81';
-				break;
-			case 'php-server-activate-php82':
-				$action      = 'php_version_enable';
-				$php_version = 8.2;
-				$php_key     = 'php82';
-				break;
-			case 'php-server-activate-php83':
-				$action      = 'php_version_enable';
-				$php_version = 8.3;
-				$php_key     = 'php83';
-				break;
-			case 'php-server-activate-php84':
-				$action      = 'php_version_enable';
-				$php_version = 8.4;
-				$php_key     = 'php84';
-			break;
-			case 'php-server-deactivate-php56':
-				$action      = 'php_version_disable';
-				$php_version = 5.6;
-				$php_key     = 'php56';
-				break;
-			case 'php-server-deactivate-php70':
-				$action      = 'php_version_disable';
-				$php_version = 7.0;
-				$php_key     = 'php70';
-				break;
-			case 'php-server-deactivate-php71':
-				$action      = 'php_version_disable';
-				$php_version = 7.1;
-				$php_key     = 'php71';
-				break;
-			case 'php-server-deactivate-php72':
-				$action      = 'php_version_disable';
-				$php_version = 7.2;
-				$php_key     = 'php72';
-				break;
-			case 'php-server-deactivate-php73':
-				$action      = 'php_version_disable';
-				$php_version = 7.3;
-				$php_key     = 'php73';
-				break;
-			case 'php-server-deactivate-php74':
-				$action      = 'php_version_disable';
-				$php_version = 7.4;
-				$php_key     = 'php74';
-				break;
-			case 'php-server-deactivate-php80':
-				$action      = 'php_version_disable';
-				$php_version = 8.0;
-				$php_key     = 'php80';
-				break;
-			case 'php-server-deactivate-php81':
-				$action      = 'php_version_disable';
-				$php_version = 8.1;
-				$php_key     = 'php81';
-				break;
-			case 'php-server-deactivate-php82':
-				$action      = 'php_version_disable';
-				$php_version = 8.2;
-				$php_key     = 'php82';
-				break;
-			case 'php-server-deactivate-php83':
-				$action      = 'php_version_disable';
-				$php_version = 8.3;
-				$php_key     = 'php83';
-				break;
-			case 'php-server-deactivate-php84':
-				$action      = 'php_version_disable';
-				$php_version = 8.4;
-				$php_key     = 'php84';
-				break;
-	
+		$original_action = $action;
+		$php_slug        = VersionRegistry::phpSlugFromServiceAction( $original_action );
+		$php             = $php_slug !== null ? VersionRegistry::php( $php_slug ) : null;
+
+		if ( $php === null ) {
+			return new \WP_Error( __( 'Unknown PHP service action.', 'wpcd' ) );
 		}
+
+		$action      = str_starts_with( $original_action, 'php-server-activate-' ) ? 'php_version_enable' : 'php_version_disable';
+		$php_version = $php->getLabel();
+		$php_key     = $php->getSlug();
 
 		// Get the full command to be executed by ssh.
 		$run_cmd = $this->turn_script_into_command(
@@ -2446,40 +2276,27 @@ class WPCD_WORDPRESS_TABS_SERVER_SERVICES extends WPCD_WORDPRESS_TABS {
 	 */
 	public function set_php_service_state( $id, $service, $state ) {
 
-		// Array of PHP services mapped to the array key stored in a metavalue in the database.
-		$php_services = array(
-			'php-server-restart-php56' => 'php56',
-			'php-server-restart-php71' => 'php71',
-			'php-server-restart-php72' => 'php72',
-			'php-server-restart-php73' => 'php73',
-			'php-server-restart-php74' => 'php74',
-			'php-server-restart-php80' => 'php80',
-			'php-server-restart-php81' => 'php81',
-			'php-server-restart-php82' => 'php82',
-			'php-server-restart-php83' => 'php83',
-			'php-server-restart-php84' => 'php84',
-		);
-
-		if ( isset( $php_services[ $service ] ) ) {
-
-			// Get existing meta..
-			$services_status = wpcd_maybe_unserialize( get_post_meta( $id, 'wpcd_wpapp_services_php_status', true ) );
-
-			// If meta is empty or not an array, create an empty array instead.
-			if ( empty( $services_status ) ) {
-				$services_status = array();
-			}
-			if ( ! is_array( $services_status ) ) {
-				$services_status = array();
-			}
-
-			// update array.
-			$services_status[ $php_services[ $service ] ] = $state;
-
-			// write it back to database.
-			update_post_meta( $id, 'wpcd_wpapp_services_php_status', $services_status );
-
+		$php_slug = VersionRegistry::phpSlugFromServiceAction( $service );
+		if ( $php_slug === null ) {
+			return true;
 		}
+
+		// Get existing meta..
+		$services_status = wpcd_maybe_unserialize( get_post_meta( $id, 'wpcd_wpapp_services_php_status', true ) );
+
+		// If meta is empty or not an array, create an empty array instead.
+		if ( empty( $services_status ) ) {
+			$services_status = array();
+		}
+		if ( ! is_array( $services_status ) ) {
+			$services_status = array();
+		}
+
+		// update array.
+		$services_status[ $php_slug ] = $state;
+
+		// write it back to database.
+		update_post_meta( $id, 'wpcd_wpapp_services_php_status', $services_status );
 
 		return true;
 

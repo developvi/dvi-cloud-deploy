@@ -9,6 +9,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use DVICloudDeploy\Core\Version\PhpVersion;
+use DVICloudDeploy\Core\Version\VersionRegistry;
+
 
 /**
  * Class WPCD_WORDPRESS_TABS_SERVER_UPGRADE
@@ -136,6 +139,11 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 
 		// Perform actions if allowed to do so.
 		if ( $this->get_tab_security( $id ) ) {
+			$php_upgrade_slug = VersionRegistry::phpSlugFromUpgradeAction( $action );
+			if ( $php_upgrade_slug !== null ) {
+				return $this->install_php_version( $id, $action );
+			}
+
 			switch ( $action ) {
 				case 'run-linux-updates-all':
 					$action = 'run_updates_cron';  // The bash script expects this.
@@ -181,21 +189,6 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 					$result = $this->upgrade_530_meta_only( $id, $action );
 					break;
 
-				case 'server-upgrade-php81':
-					$result = $this->install_php81( $id, $action );
-					break;
-
-				case 'server-upgrade-php82':
-					$result = $this->install_php82( $id, $action );
-					break;
-
-				case 'server-upgrade-php83':
-					$result = $this->install_php83( $id, $action );
-					break;
-				case 'server-upgrade-php84':
-					$result = $this->install_php84( $id, $action );
-					break;
-	
 				case 'server-upgrade-old-php-versions':
 					$result = $this->install_old_php_version( $id, $action );
 					break;
@@ -294,27 +287,12 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 			$actions          = array_merge( $actions, $remove_6g_fields );
 		}
 
-		// PHP 8.1 install options.  Only applies to NGINX since all OLS servers will have it installed already.
-		if ( ! $this->is_php_81_installed( $id ) && 'nginx' === $webserver_type ) {
-			$upgrade_php_81_fields = $this->get_upgrade_fields_php81( $id );
-			$actions               = array_merge( $actions, $upgrade_php_81_fields );
-		}
+		foreach ( VersionRegistry::sortedPhp() as $php ) {
+			if ( ! $this->should_show_php_upgrade_fields( $id, $php, $webserver_type, $os ) ) {
+				continue;
+			}
 
-		// PHP 8.2.
-		if ( ! $this->is_php_82_installed( $id ) && 'ubuntu1804lts' !== $os ) {
-			$upgrade_php_82_fields = $this->get_upgrade_fields_php82( $id );
-			$actions               = array_merge( $actions, $upgrade_php_82_fields );
-		}
-		
-		// PHP 8.3.
-		if ( ! $this->is_php_83_installed( $id ) && 'ubuntu1804lts' !== $os ) {
-			$upgrade_php_83_fields = $this->get_upgrade_fields_php83( $id );
-			$actions               = array_merge( $actions, $upgrade_php_83_fields );
-		}
-		// PHP 8.4.
-		if ( ! $this->is_php_84_installed( $id ) && 'ubuntu1804lts' !== $os ) {
-			$upgrade_php_84_fields = $this->get_upgrade_fields_php84( $id );
-			$actions               = array_merge( $actions, $upgrade_php_84_fields );
+			$actions = array_merge( $actions, $this->get_upgrade_fields_php_version( $id, $php ) );
 		}
 
 		// WP-CLI Upgrade Options.
@@ -783,201 +761,84 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 	}
 
 	/**
-	 * Gets the fields to show in the UPGRADE tab in the server details screen
-	 * if PHP 8.1 needs to be installed.
-	 *
-	 * @param int $id the post id of the app cpt record.
-	 *
-	 * @return array Array of actions with key as the action slug and value complying with the structure necessary by metabox.io fields.
+	 * Whether optional PHP upgrade fields should show for a registry version.
 	 */
-	private function get_upgrade_fields_php81( $id ) {
+	private function should_show_php_upgrade_fields( $id, PhpVersion $php, $webserver_type, $os ) {
 
-		// Set up metabox items.
-		$actions = array();
+		if ( $this->is_php_version_installed( $id, $php->getSlug() ) ) {
+			return false;
+		}
 
-		$upg_desc  = __( 'Use this button to install PHP 8.1 if it was released after your server was created. WPCD V 4.13 and later automatically installs PHP 8.1 on new servers. But older servers will not have it.', 'wpcd' );
-		$upg_desc .= '<br />';
-		$upg_desc .= __( 'Before running this, you should check to see if your server needs to be restarted because of prior upgrades.  If so, please restart your server before using this option to install PHP 8.1', 'wpcd' );
+		if ( $php->isLegacyInstall() ) {
+			return false;
+		}
 
-		$actions['server-upgrade-header-php81'] = array(
-			'label'          => __( 'Install PHP 8.1', 'wpcd' ),
-			'type'           => 'heading',
-			'raw_attributes' => array(
-				'desc' => $upg_desc,
-			),
-		);
+		if ( version_compare( $php->getLabel(), '8.1', '<' ) ) {
+			return false;
+		}
 
-		$actions['server-upgrade-php81'] = array(
-			'label'          => '',
-			'raw_attributes' => array(
-				'std'                 => __( 'Install PHP 8.1 on this server', 'wpcd' ),
-				// make sure we give the user a confirmation prompt.
-				'confirmation_prompt' => __( 'Are you sure you would like to install PHP 8.1 on this server?', 'wpcd' ),
-			),
-			'type'           => 'button',
-		);
+		if ( '8.1' === $php->getLabel() && 'nginx' !== $webserver_type ) {
+			return false;
+		}
 
-		/*
-		$actions['server-upgrade-php81-meta'] = array(
-		'label'          => '',
-		'raw_attributes' => array(
-			'std'                 => __( 'Remove PHP 8.1 Install Option', 'wpcd' ),
-			'desc'                => __( 'Tag server as having PHP 8.1 installed.', 'wpcd' ),
-			// make sure we give the user a confirmation prompt.
-			'confirmation_prompt' => __( 'Are you sure you would like to tag this server as being upgraded without running the upgrade script?', 'wpcd' ),
-		),
-		'type'           => 'button',
-		);
-		*/
+		if ( version_compare( $php->getLabel(), '8.2', '>=' ) && 'ubuntu1804lts' === $os ) {
+			return false;
+		}
 
-		return $actions;
+		return true;
 
 	}
 
 	/**
-	 * Gets the fields to show in the UPGRADE tab in the server details screen
-	 * if PHP 8.2 needs to be installed.
+	 * Gets upgrade fields for a registry PHP version.
 	 *
-	 * @param int $id the post id of the app cpt record.
+	 * @param int        $id  Server post id.
+	 * @param PhpVersion $php Registry PHP version.
 	 *
-	 * @return array Array of actions with key as the action slug and value complying with the structure necessary by metabox.io fields.
+	 * @return array
 	 */
-	private function get_upgrade_fields_php82( $id ) {
+	private function get_upgrade_fields_php_version( $id, PhpVersion $php ) {
 
-		// Set up metabox items.
+		$slug  = $php->getSlug();
+		$label = $php->getLabel();
+
 		$actions = array();
 
-		$upg_desc  = __( 'Use this button to install PHP 8.2 if it was released after your server was created. WPCD V 5.3 and later automatically installs PHP 8.2 on new servers. But older servers will not have it.', 'wpcd' );
+		$upg_desc  = sprintf(
+			__( 'Use this button to install PHP %1$s if it was released after your server was created. WPCD V %2$s and later automatically installs PHP %1$s on new servers. But older servers will not have it.', 'wpcd' ),
+			$label,
+			$php->getMinPluginVersion()
+		);
 		$upg_desc .= '<br />';
-		$upg_desc .= __( 'Before running this, you should check to see if your server needs to be restarted because of prior upgrades.  If so, please restart your server before using this option to install PHP 8.2', 'wpcd' );
+		$upg_desc .= sprintf(
+			__( 'Before running this, you should check to see if your server needs to be restarted because of prior upgrades.  If so, please restart your server before using this option to install PHP %s', 'wpcd' ),
+			$label
+		);
 
-		$actions['server-upgrade-header-php82'] = array(
-			'label'          => __( '(Optional) Install PHP 8.2', 'wpcd' ),
+		$heading_label = '8.1' === $label
+			? sprintf( __( 'Install PHP %s', 'wpcd' ), $label )
+			: sprintf( __( '(Optional) Install PHP %s', 'wpcd' ), $label );
+
+		$actions[ 'server-upgrade-header-' . $slug ] = array(
+			'label'          => $heading_label,
 			'type'           => 'heading',
 			'raw_attributes' => array(
 				'desc' => $upg_desc,
 			),
 		);
 
-		$actions['server-upgrade-php82'] = array(
+		$actions[ VersionRegistry::phpUpgradeActionSlug( $slug ) ] = array(
 			'label'          => '',
 			'raw_attributes' => array(
-				'std'                 => __( 'Install PHP 8.2 on this server', 'wpcd' ),
-				// make sure we give the user a confirmation prompt.
-				'confirmation_prompt' => __( 'Are you sure you would like to install PHP 8.2 on this server?', 'wpcd' ),
+				'std'                 => sprintf( __( 'Install PHP %s on this server', 'wpcd' ), $label ),
+				'confirmation_prompt' => sprintf( __( 'Are you sure you would like to install PHP %s on this server?', 'wpcd' ), $label ),
 			),
 			'type'           => 'button',
 		);
-
-		/*
-		$actions['server-upgrade-php82-meta'] = array(
-		'label'          => '',
-		'raw_attributes' => array(
-			'std'                 => __( 'Remove PHP 8.2 Install Option', 'wpcd' ),
-			'desc'                => __( 'Tag server as having PHP 8.2 installed.', 'wpcd' ),
-			// make sure we give the user a confirmation prompt.
-			'confirmation_prompt' => __( 'Are you sure you would like to tag this server as being upgraded without running the upgrade script?', 'wpcd' ),
-		),
-		'type'           => 'button',
-		);
-		*/
 
 		return $actions;
 
 	}
-	
-	/**
-	 * Gets the fields to show in the UPGRADE tab in the server details screen
-	 * if PHP 8.3 needs to be installed.
-	 *
-	 * @param int $id the post id of the app cpt record.
-	 *
-	 * @return array Array of actions with key as the action slug and value complying with the structure necessary by metabox.io fields.
-	 */
-	private function get_upgrade_fields_php83( $id ) {
-
-		// Set up metabox items.
-		$actions = array();
-
-		$upg_desc  = __( 'Use this button to install PHP 8.3 if it was released after your server was created. WPCD V 5.8.0 and later automatically installs PHP 8.3 on new servers. But older servers will not have it.', 'wpcd' );
-		$upg_desc .= '<br />';
-		$upg_desc .= __( 'Before running this, you should check to see if your server needs to be restarted because of prior upgrades.  If so, please restart your server before using this option to install PHP 8.3', 'wpcd' );
-
-		$actions['server-upgrade-header-php83'] = array(
-			'label'          => __( '(Optional) Install PHP 8.3', 'wpcd' ),
-			'type'           => 'heading',
-			'raw_attributes' => array(
-				'desc' => $upg_desc,
-			),
-		);
-
-		$actions['server-upgrade-php83'] = array(
-			'label'          => '',
-			'raw_attributes' => array(
-				'std'                 => __( 'Install PHP 8.3 on this server', 'wpcd' ),
-				// make sure we give the user a confirmation prompt.
-				'confirmation_prompt' => __( 'Are you sure you would like to install PHP 8.3 on this server?', 'wpcd' ),
-			),
-			'type'           => 'button',
-		);
-
-		/*
-		$actions['server-upgrade-php83-meta'] = array(
-		'label'          => '',
-		'raw_attributes' => array(
-			'std'                 => __( 'Remove PHP 8.3 Install Option', 'wpcd' ),
-			'desc'                => __( 'Tag server as having PHP 8.3 installed.', 'wpcd' ),
-			// make sure we give the user a confirmation prompt.
-			'confirmation_prompt' => __( 'Are you sure you would like to tag this server as being upgraded without running the upgrade script?', 'wpcd' ),
-		),
-		'type'           => 'button',
-		);
-		*/
-
-		return $actions;
-
-	}	
-
-	/**
-	 * Gets the fields to show in the UPGRADE tab in the server details screen
-	 * if PHP 8.4 needs to be installed.
-	 *
-	 * @param int $id the post id of the app cpt record.
-	 *
-	 * @return array Array of actions with key as the action slug and value complying with the structure necessary by metabox.io fields.
-	 */
-	private function get_upgrade_fields_php84( $id ) {
-
-		// Set up metabox items.
-		$actions = array();
-
-		$upg_desc  = __( 'Use this button to install PHP 8.4 if it was released after your server was created. WPCD V 5.9.1 and later automatically installs PHP 8.4 on new servers. But older servers will not have it.', 'wpcd' );
-		$upg_desc .= '<br />';
-		$upg_desc .= __( 'Before running this, you should check to see if your server needs to be restarted because of prior upgrades.  If so, please restart your server before using this option to install PHP 8.4', 'wpcd' );
-
-		$actions['server-upgrade-header-php84'] = array(
-			'label'          => __( '(Optional) Install PHP 8.4', 'wpcd' ),
-			'type'           => 'heading',
-			'raw_attributes' => array(
-				'desc' => $upg_desc,
-			),
-		);
-
-		$actions['server-upgrade-php84'] = array(
-			'label'          => '',
-			'raw_attributes' => array(
-				'std'                 => __( 'Install PHP 8.4 on this server', 'wpcd' ),
-				// make sure we give the user a confirmation prompt.
-				'confirmation_prompt' => __( 'Are you sure you would like to install PHP 8.4 on this server?', 'wpcd' ),
-			),
-			'type'           => 'button',
-		);
-
-	
-
-		return $actions;
-
-	}	
 
 	/**
 	 * Gets the fields to show in the UPGRADE tab in the server details screen
@@ -1008,11 +869,11 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 			'label'          => __( 'Select PHP Version To Install', 'wpcd' ),
 			'type'           => 'select',
 			'raw_attributes' => array(
-				'options'        => array(
-					'5.6' => __( 'PHP 5.6', 'wpcd' ),
-					'7.1' => __( 'PHP 7.1', 'wpcd' ),
-					'7.2' => __( 'PHP 7.2', 'wpcd' ),
-					'7.3' => __( 'PHP 7.3', 'wpcd' ),
+				'options'        => VersionRegistry::legacyInstallSelectList(
+					static function ( string $label ): string {
+						/* Translators: %s is a PHP version number. */
+						return sprintf( __( 'PHP %s', 'wpcd' ), $label );
+					}
 				),
 				// the key of the field (the key goes in the request).
 				'data-wpcd-name' => 'phpver',
@@ -1683,317 +1544,75 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 	}
 
 	/**
-	 * Run install script for PHP 8.1
+	 * Run install script for a registry PHP version.
 	 *
-	 * @param int    $id         The postID of the server cpt.
-	 * @param string $action     The action to be performed (this matches the string required in the bash scripts if bash scripts are used ).
+	 * @param int    $id     The postID of the server cpt.
+	 * @param string $action Upgrade action slug.
 	 *
-	 * @return boolean success/failure/other
+	 * @return array|\WP_Error
 	 */
-	public function install_php81( $id, $action ) {
+	public function install_php_version( $id, $action ) {
 
-		// Upgrade History Type.
-		$upgrade_history_key_type = 'install-php81';
-		$upgrade_description      = __( 'Installed PHP 8.1', 'wpcd' );
+		$slug = VersionRegistry::phpSlugFromUpgradeAction( $action );
+		$php  = $slug !== null ? VersionRegistry::php( $slug ) : null;
 
-		// Get data about the server.
+		if ( $php === null ) {
+			return new \WP_Error( __( 'An invalid PHP upgrade action was provided.', 'wpcd' ) );
+		}
+
+		$label                    = $php->getLabel();
+		$script                   = $php->getInstallScript();
+		$upgrade_history_key_type = 'install-' . $slug;
+		$upgrade_description      = sprintf( __( 'Installed PHP %s', 'wpcd' ), $label );
+
 		$instance = $this->get_server_instance_details( $id );
 
 		if ( is_wp_error( $instance ) ) {
-			/* translators: %s is replaced with the internal action name. */
 			return new \WP_Error( sprintf( __( 'Unable to execute this request because we cannot get the instance details for action %s', 'wpcd' ), $action ) );
 		}
 
-		// Get the full command to be executed by ssh.
 		$run_cmd = $this->turn_script_into_command(
 			$instance,
-			'run_upgrade_install_php_81.txt',
+			$script,
 			array(
 				'action'      => $action,
 				'interactive' => 'no',
+				'phpver'      => $label,
 			)
 		);
 
-		// log.
-		// phpcs:ignore
-		do_action( 'wpcd_log_error', sprintf( 'attempting to run command for %s = %s ', print_r( $instance, true ), $run_cmd ), 'trace', __FILE__, __LINE__, $instance, false ); //PHPcs warning normally issued because of print_r
+		do_action( 'wpcd_log_error', sprintf( 'attempting to run command for %s = %s ', print_r( $instance, true ), $run_cmd ), 'trace', __FILE__, __LINE__, $instance, false );
 
-		// execute.
 		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
 
-		// Make sure we don't have a wp_error object being returned...
 		if ( is_wp_error( $result ) ) {
-			return new \WP_Error( __( 'There was a problem installing PHP 8.1- please check the server logs for more information.', 'wpcd' ) );
+			return new \WP_Error( sprintf( __( 'There was a problem installing PHP %s - please check the server logs for more information.', 'wpcd' ), $label ) );
 		}
 
-		// evaluate results.
 		if ( str_contains( $result, 'journalctl -xe' ) ) {
-			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
-			update_post_meta( $id, 'wpcd_server_php81_installed', 1 );
+			update_post_meta( $id, $php->getMetaKey(), 1 );
 			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
-			/* translators: %s is replaced with the text of the result of the operation. */
 			return new \WP_Error( sprintf( __( 'There was a problem restarting the nginx server after the upgrade - here is the full output of the upgrade process: %s', 'wpcd' ), $result ) );
 		}
 
-		// If we're here, we know that the nginx server restarted ok so let's do standard success checks.
-		$success = $this->is_ssh_successful( $result, 'run_upgrade_install_php_81.txt' );
+		$success = $this->is_ssh_successful( $result, $script );
 		if ( ! $success ) {
-			/* translators: %1$s is replaced with the internal action name; %2$s is replaced with the result of the call, usually an error message. */
 			return new \WP_Error( sprintf( __( 'Unable to perform action %1$s for server: %2$s', 'wpcd' ), $action, $result ) );
-		} else {
-			// update server field to tag server as being upgraded.
-			update_post_meta( $id, 'wpcd_server_php81_installed', 1 );
-
-			// Let user know command is complete and force a page rfresh.
-			$result = array(
-				'msg'     => __( 'PHP 8.1 install has been completed - this page will now refresh', 'wpcd' ),
-				'refresh' => 'yes',
-			);
-
-			// Add to update history.
-			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
 		}
+
+		update_post_meta( $id, $php->getMetaKey(), 1 );
+
+		$result = array(
+			'msg'     => sprintf( __( 'PHP %s install has been completed - this page will now refresh', 'wpcd' ), $label ),
+			'refresh' => 'yes',
+		);
+
+		$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
 
 		return $result;
 
 	}
 
-	/**
-	 * Run install script for PHP 8.2
-	 *
-	 * @param int    $id         The postID of the server cpt.
-	 * @param string $action     The action to be performed (this matches the string required in the bash scripts if bash scripts are used ).
-	 *
-	 * @return boolean success/failure/other
-	 */
-	public function install_php82( $id, $action ) {
-
-		// Upgrade History Type.
-		$upgrade_history_key_type = 'install-php82';
-		$upgrade_description      = __( 'Installed PHP 8.2', 'wpcd' );
-
-		// Get data about the server.
-		$instance = $this->get_server_instance_details( $id );
-
-		if ( is_wp_error( $instance ) ) {
-			/* translators: %s is replaced with the internal action name. */
-			return new \WP_Error( sprintf( __( 'Unable to execute this request because we cannot get the instance details for action %s', 'wpcd' ), $action ) );
-		}
-
-		// Get the full command to be executed by ssh.
-		$run_cmd = $this->turn_script_into_command(
-			$instance,
-			'run_upgrade_install_php_82.txt',
-			array(
-				'action'      => $action,
-				'interactive' => 'no',
-			)
-		);
-
-		// log.
-		// phpcs:ignore
-		do_action( 'wpcd_log_error', sprintf( 'attempting to run command for %s = %s ', print_r( $instance, true ), $run_cmd ), 'trace', __FILE__, __LINE__, $instance, false ); //PHPcs warning normally issued because of print_r
-
-		// execute.
-		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
-
-		// Make sure we don't have a wp_error object being returned...
-		if ( is_wp_error( $result ) ) {
-			return new \WP_Error( __( 'There was a problem installing PHP 8.2 - please check the server logs for more information.', 'wpcd' ) );
-		}
-
-		// evaluate results.
-		if ( str_contains( $result, 'journalctl -xe' ) ) {
-			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
-			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
-			update_post_meta( $id, 'wpcd_server_php82_installed', 1 );
-			/* translators: %s is replaced with the text of the result of the operation. */
-			return new \WP_Error( sprintf( __( 'There was a problem restarting the nginx server after the upgrade - here is the full output of the upgrade process: %s', 'wpcd' ), $result ) );
-		}
-
-		// If we're here, we know that the nginx server restarted ok so let's do standard success checks.
-		$success = $this->is_ssh_successful( $result, 'run_upgrade_install_php_82.txt' );
-		if ( ! $success ) {
-			/* translators: %1$s is replaced with the internal action name; %2$s is replaced with the result of the call, usually an error message. */
-			return new \WP_Error( sprintf( __( 'Unable to perform action %1$s for server: %2$s', 'wpcd' ), $action, $result ) );
-		} else {
-			// update server field to tag server as being upgraded.
-			update_post_meta( $id, 'wpcd_server_php82_installed', 1 );
-
-			// Let user know command is complete and force a page rfresh.
-			$result = array(
-				'msg'     => __( 'PHP 8.2 install has been completed - this page will now refresh', 'wpcd' ),
-				'refresh' => 'yes',
-			);
-
-			// Add to update history.
-			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
-		}
-
-		return $result;
-
-	}
-	
-	/**
-	 * Run install script for PHP 8.3
-	 *
-	 * @param int    $id         The postID of the server cpt.
-	 * @param string $action     The action to be performed (this matches the string required in the bash scripts if bash scripts are used ).
-	 *
-	 * @return boolean success/failure/other
-	 */
-	public function install_php83( $id, $action ) {
-
-		// Upgrade History Type.
-		$upgrade_history_key_type = 'install-php83';
-		$upgrade_description      = __( 'Installed PHP 8.3', 'wpcd' );
-
-		// Get data about the server.
-		$instance = $this->get_server_instance_details( $id );
-
-		if ( is_wp_error( $instance ) ) {
-			/* translators: %s is replaced with the internal action name. */
-			return new \WP_Error( sprintf( __( 'Unable to execute this request because we cannot get the instance details for action %s', 'wpcd' ), $action ) );
-		}
-
-		// Get the full command to be executed by ssh.
-		$run_cmd = $this->turn_script_into_command(
-			$instance,
-			'run_upgrade_install_php_83.txt',
-			array(
-				'action'      => $action,
-				'interactive' => 'no',
-			)
-		);
-
-		// log.
-		// phpcs:ignore
-		do_action( 'wpcd_log_error', sprintf( 'attempting to run command for %s = %s ', print_r( $instance, true ), $run_cmd ), 'trace', __FILE__, __LINE__, $instance, false ); //PHPcs warning normally issued because of print_r
-
-		// execute.
-		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
-
-		// Make sure we don't have a wp_error object being returned...
-		if ( is_wp_error( $result ) ) {
-			return new \WP_Error( __( 'There was a problem installing PHP 8.3 - please check the server logs for more information.', 'wpcd' ) );
-		}
-
-		// evaluate results.
-		if ( str_contains( $result, 'journalctl -xe' ) ) {
-			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
-			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
-			update_post_meta( $id, 'wpcd_server_php83_installed', 1 );
-			/* translators: %s is replaced with the text of the result of the operation. */
-			return new \WP_Error( sprintf( __( 'There was a problem restarting the nginx server after the upgrade - here is the full output of the upgrade process: %s', 'wpcd' ), $result ) );
-		}
-
-		// If we're here, we know that the nginx server restarted ok so let's do standard success checks.
-		$success = $this->is_ssh_successful( $result, 'run_upgrade_install_php_83.txt' );
-		if ( ! $success ) {
-			/* translators: %1$s is replaced with the internal action name; %2$s is replaced with the result of the call, usually an error message. */
-			return new \WP_Error( sprintf( __( 'Unable to perform action %1$s for server: %2$s', 'wpcd' ), $action, $result ) );
-		} else {
-			// update server field to tag server as being upgraded.
-			update_post_meta( $id, 'wpcd_server_php83_installed', 1 );
-
-			// Let user know command is complete and force a page rfresh.
-			$result = array(
-				'msg'     => __( 'PHP 8.3 install has been completed - this page will now refresh', 'wpcd' ),
-				'refresh' => 'yes',
-			);
-
-			// Add to update history.
-			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
-		}
-
-		return $result;
-
-	}	
-	
-	/**
-	 * Run install script for PHP 8.4
-	 *
-	 * @param int    $id         The postID of the server cpt.
-	 * @param string $action     The action to be performed (this matches the string required in the bash scripts if bash scripts are used ).
-	 *
-	 * @return boolean success/failure/other
-	 */
-	public function install_php84( $id, $action ) {
-
-		// Upgrade History Type.
-		$upgrade_history_key_type = 'install-php84';
-		$upgrade_description      = __( 'Installed PHP 8.4', 'wpcd' );
-
-		// Get data about the server.
-		$instance = $this->get_server_instance_details( $id );
-
-		if ( is_wp_error( $instance ) ) {
-			/* translators: %s is replaced with the internal action name. */
-			return new \WP_Error( sprintf( __( 'Unable to execute this request because we cannot get the instance details for action %s', 'wpcd' ), $action ) );
-		}
-
-		// Get the full command to be executed by ssh.
-		$run_cmd = $this->turn_script_into_command(
-			$instance,
-			'run_upgrade_install_php_84.txt',
-			array(
-				'action'      => $action,
-				'interactive' => 'no',
-			)
-		);
-
-		// log.
-		// phpcs:ignore
-		do_action( 'wpcd_log_error', sprintf( 'attempting to run command for %s = %s ', print_r( $instance, true ), $run_cmd ), 'trace', __FILE__, __LINE__, $instance, false ); //PHPcs warning normally issued because of print_r
-
-		// execute.
-		$result = $this->execute_ssh( 'generic', $instance, array( 'commands' => $run_cmd ) );
-
-		// Make sure we don't have a wp_error object being returned...
-		if ( is_wp_error( $result ) ) {
-			return new \WP_Error( __( 'There was a problem installing PHP 8.4 - please check the server logs for more information.', 'wpcd' ) );
-		}
-
-		// evaluate results.
-		if ( str_contains( $result, 'journalctl -xe' ) ) {
-			// Looks like there was a problem with restarting the NGINX - So update completion meta, add to history and return message.
-			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
-			update_post_meta( $id, 'wpcd_server_php84_installed', 1 );
-			/* translators: %s is replaced with the text of the result of the operation. */
-			return new \WP_Error( sprintf( __( 'There was a problem restarting the nginx server after the upgrade - here is the full output of the upgrade process: %s', 'wpcd' ), $result ) );
-		}
-
-		// If we're here, we know that the nginx server restarted ok so let's do standard success checks.
-		$success = $this->is_ssh_successful( $result, 'run_upgrade_install_php_84.txt' );
-		if ( ! $success ) {
-			/* translators: %1$s is replaced with the internal action name; %2$s is replaced with the result of the call, usually an error message. */
-			return new \WP_Error( sprintf( __( 'Unable to perform action %1$s for server: %2$s', 'wpcd' ), $action, $result ) );
-		} else {
-			// update server field to tag server as being upgraded.
-			update_post_meta( $id, 'wpcd_server_php84_installed', 1 );
-
-			// Let user know command is complete and force a page rfresh.
-			$result = array(
-				'msg'     => __( 'PHP 8.4 install has been completed - this page will now refresh', 'wpcd' ),
-				'refresh' => 'yes',
-			);
-
-			// Add to update history.
-			$this->update_history( $id, $upgrade_history_key_type, $upgrade_description );
-		}
-
-		return $result;
-
-	}	
-
-	/**
-	 * Run install script for PHP 5.6/7.0/7.1/7.2/7.3/
-	 *
-	 * @param int    $id         The postID of the server cpt.
-	 * @param string $action     The action to be performed (this matches the string required in the bash scripts if bash scripts are used ).
-	 *
-	 * @return boolean success/failure/other
-	 */
 	public function install_old_php_version( $id, $action ) {
 
 		// Get data from the POST request.
@@ -2007,8 +1626,8 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 			$phpver = strtolower( sanitize_text_field( $args['phpver'] ) );
 		}
 
-		// Make sure the requested version is one we'll support.
-		if ( ! in_array( $phpver, array( '5.6', '7.1', '7.2', '7.3' ) ) ) {
+		$php = VersionRegistry::phpForLabel( $phpver );
+		if ( $php === null || ! $php->isLegacyInstall() ) {
 			/* Translators: %s is a php version eg: 7.1, 7.2 etc. */
 			$message = sprintf( __( 'An invalid PHP version was provided: %s.', 'wpcd' ), $phpver );
 			return new \WP_Error( $message );
@@ -2055,25 +1674,8 @@ class WPCD_WORDPRESS_TABS_SERVER_UPGRADE extends WPCD_WORDPRESS_TABS {
 			return new \WP_Error( __( 'There was a problem installing this PHP version - please check the server logs for more information.', 'wpcd' ) );
 		}
 
-		// Meta to update if we're successful.
-		switch ( $phpver ) {
-			case '5.6':
-				$meta_to_update = 'wpcd_server_php56_installed';
-				$phpkey         = 'php56';
-				break;
-			case '7.1':
-				$meta_to_update = 'wpcd_server_php70_installed';
-				$phpkey         = 'php71';
-				break;
-			case '7.2':
-				$meta_to_update = 'wpcd_server_php72_installed';
-				$phpkey         = 'php72';
-				break;
-			case '7.3':
-				$meta_to_update = 'wpcd_server_php73_installed';
-				$phpkey         = 'php73';
-				break;
-		}
+		$meta_to_update = $php->getMetaKey();
+		$phpkey         = $php->getSlug();
 
 		// evaluate results.
 		if ( str_contains( $result, 'journalctl -xe' ) ) {
