@@ -109,6 +109,16 @@ class CLOUD_PROVIDER_API_DigitalOcean_Parent extends CLOUD_PROVIDER_API {
 	 */
 	public function get_image_name( $attributes ) {
 		if ( isset( $attributes['initial_os'] ) ) {
+			if ( class_exists( '\DVICloudDeploy\Core\Version\VersionRegistry' ) ) {
+				$image = \DVICloudDeploy\Core\Version\VersionRegistry::osProviderImage(
+					$attributes['initial_os'],
+					$this->get_provider_slug()
+				);
+				if ( $image !== null ) {
+					return $image;
+				}
+			}
+
 			switch ( $attributes['initial_os'] ) {
 				case 'ubuntu1804lts':
 					return 'ubuntu-18-04-x64';  // no break statement needed after this since we're returning out of the function.

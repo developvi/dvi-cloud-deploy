@@ -186,6 +186,17 @@ class WPCD_Server extends WPCD_Base {
 			// Set plugin version so we know what plugin version created the server.
 			update_post_meta( $post_id, 'wpcd_server_plugin_initial_version', wpcd_version );
 			update_post_meta( $post_id, 'wpcd_server_plugin_updated_version', wpcd_version );
+
+			/**
+			 * Record the PHP version this server was built with.
+			 *
+			 * The default has changed over time and older records have to be
+			 * guessed at from the plugin version that created them.  Stamping it
+			 * here means every server built from now on states it outright.
+			 */
+			if ( class_exists( '\DVICloudDeploy\Core\Version\VersionRegistry' ) ) {
+				update_post_meta( $post_id, 'wpcd_server_default_php_version', \DVICloudDeploy\Core\Version\VersionRegistry::defaultAppPhpLabel() );
+			}
 		}
 
 		do_action( 'wpcd_log_error', "Created CPT with ID $post_id " . print_r( $instance, true ), 'debug', __FILE__, __LINE__ );
