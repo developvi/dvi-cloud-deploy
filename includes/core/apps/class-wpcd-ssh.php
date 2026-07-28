@@ -48,12 +48,27 @@ class WPCD_SSH {
 		/* Use a filter to force an override of the user name if necessary - this can be useful when servers such as aws don't use the 'root' user as the default login user */
 		$user = apply_filters( 'wpcd_exec_ssh_user', $user );
 
-		$ssh = new SSH2( $ip );
+		/*
+		 * phpseclib throws when it cannot reach the host at all - a server that
+		 * is still booting, has been powered off, or is behind a closed port.
+		 * Left uncaught that kills the whole request, which during the deferred
+		 * cron run means every other server queued behind this one silently
+		 * stops being processed.  Treat it like a failed login instead.
+		 */
+		try {
+			$ssh = new SSH2( $ip );
 
-		$key = PublicKeyLoader::load( WPCD()->decrypt( $key_attributes['key'] ), $key_attributes['passwd'] );
+			$key = PublicKeyLoader::load( WPCD()->decrypt( $key_attributes['key'] ), $key_attributes['passwd'] );
+
+			$logged_in = $ssh->login( $user, $key );
+		} catch ( \Throwable $e ) {
+			do_action( 'wpcd_log_error', "Unable to connect to server at ip $ip - " . $e->getMessage(), 'error', __FILE__, __LINE__ );
+			WPCD_POSTS_SSH_LOG()->add_ssh_log_entry( $reference_post_id, 'Login', 'Failed: ' . $e->getMessage() );
+			return new \WP_Error( $this->construct_error( __( 'Unfortunately it looks like we are unable to connect to the server at this time.  This generally occurs when the server is initializing for the first time or is being restarted. <br /><br /> Please wait a few minutes and try again.  If the problem continues, please contact our support team.', 'wpcd' ) ) );
+		}
 
 		/* Login */
-		if ( ! $ssh->login( $user, $key ) ) {
+		if ( ! $logged_in ) {
 			do_action( 'wpcd_log_error', "Unable to login to server at ip $ip", 'error', __FILE__, __LINE__ );
 			WPCD_POSTS_SSH_LOG()->add_ssh_log_entry( $reference_post_id, 'Login', 'Failed' );
 			return new \WP_Error( $this->construct_error( __( 'Unfortunately it looks like we are unable to connect to the server at this time.  This generally occurs when the server is initializing for the first time or is being restarted. <br /><br /> Please wait a few minutes and try again.  If the problem continues, please contact our support team.', 'wpcd' ) ) );
@@ -168,11 +183,19 @@ class WPCD_SSH {
 		/* Use a filter to force an override of the user name if necessary - this can be useful when servers such as aws don't use the 'root' user as the default login user */
 		$user = apply_filters( 'wpcd_download_ssh_user', $user, $key_attributes );
 
-		$ssh = new SFTP( $ip );
+		/* An unreachable host makes phpseclib throw - see exec() for why that matters. */
+		try {
+			$ssh = new SFTP( $ip );
 
-		$key = PublicKeyLoader::load( WPCD()->decrypt( $key_attributes['key'] ), $key_attributes['passwd'] );
+			$key = PublicKeyLoader::load( WPCD()->decrypt( $key_attributes['key'] ), $key_attributes['passwd'] );
 
-		if ( ! $ssh->login( $user, $key ) ) {
+			$logged_in = $ssh->login( $user, $key );
+		} catch ( \Throwable $e ) {
+			do_action( 'wpcd_log_error', "Unable to connect to server at ip $ip - " . $e->getMessage(), 'error', __FILE__, __LINE__ );
+			$logged_in = false;
+		}
+
+		if ( ! $logged_in ) {
 			do_action( 'wpcd_log_error', "Unable to login to server at ip $ip", 'error', __FILE__, __LINE__ );
 			switch ( $error_type ) {
 				case 1:
@@ -227,11 +250,19 @@ class WPCD_SSH {
 		/* Use a filter to force an override of the user name if necessary - this can be useful when servers such as aws don't use the 'root' user as the default login user */
 		$user = apply_filters( 'wpcd_upload_ssh_user', $user, $key_attributes );
 
-		$ssh = new SFTP( $ip );
+		/* An unreachable host makes phpseclib throw - see exec() for why that matters. */
+		try {
+			$ssh = new SFTP( $ip );
 
-		$key = PublicKeyLoader::load( WPCD()->decrypt( $key_attributes['key'] ), $key_attributes['passwd'] );
+			$key = PublicKeyLoader::load( WPCD()->decrypt( $key_attributes['key'] ), $key_attributes['passwd'] );
 
-		if ( ! $ssh->login( $user, $key ) ) {
+			$logged_in = $ssh->login( $user, $key );
+		} catch ( \Throwable $e ) {
+			do_action( 'wpcd_log_error', "Unable to connect to server at ip $ip - " . $e->getMessage(), 'error', __FILE__, __LINE__ );
+			$logged_in = false;
+		}
+
+		if ( ! $logged_in ) {
 			do_action( 'wpcd_log_error', "Unable to login to server at ip $ip", 'error', __FILE__, __LINE__ );
 			return new \WP_Error( $this->construct_error( __( 'Unfortunately it looks like we are unable to connect to the server at this time. This generally occurs when the server is initializing for the first time or is being restarted. <br /><br />Please wait a few minutes and try again. If the problem continues, please contact our support team.', 'wpcd' ) ) );
 		}
