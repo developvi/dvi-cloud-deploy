@@ -110,6 +110,14 @@ Note: Even though the entire git development history isn't available on github, 
 ## Change Log ##
 7.0.0
 ----
+* New: `DVICloudDeploy\Core\Version\VersionRegistry` and related types under `src/Core/Version/` — single catalog for deployable OS images, PHP versions, install scripts, OLS service names, and cloud provider image slugs.
+* New: `VersionRegistry::boot()` on plugin load; OS select lists and descriptions use the catalog when available.
+* Update: `wpcd_convert_php_version_to_ols_service()` and `wpcd_convert_ols_phpservice_to_php_version()` delegate to the registry.
+* Update: Server provisioning and PHP upgrade flows use one parameterized install script for modern PHP versions instead of separate raw files per minor version.
+* Update: Script handlers resolve install script basenames and success phrases from the registry; server CLI default PHP validation uses registry labels.
+* Update: WordPress app, settings, site packages, admin columns, server upgrade/services/logs/tools tabs, backup UI, and install popups read PHP/OS options from the registry instead of hard-coded lists.
+* Update: `wpcd_server_default_php_version` post meta set when a server is created; DigitalOcean droplet image slug resolved from the catalog when defined.
+* Fix: SSH/SFTP exec, download, and upload catch phpseclib connection errors so one unreachable server does not abort deferred SSH cron processing for other servers.
 * New: Admin Panel tab style for site and server screens (card dashboard instead of classic left tabs).
 * New: Admin Panel core module (`src/Core/AdminPanel/`) with contracts, repositories, services, and bootstrap.
 * New: Style detection so Admin Panel UI loads only when tab style is set to `adminpanel`.
